@@ -34,8 +34,24 @@ export const HighlightList: React.FC<HighlightListProps> = ({ highlights, onDele
            >
              {h.text}
            </div>
+          {h.comment && (
+            <div
+              style={{
+                fontSize: '12px',
+                color: '#555',
+                backgroundColor: '#fff3cd',
+                padding: '6px 8px',
+                marginTop: '6px',
+                borderRadius: '4px',
+                borderLeft: '3px solid #ffc107',
+                fontStyle: 'italic',
+              }}
+            >
+              📝 {h.comment}
+            </div>
+          )}
           {showHostname && (
-            <div style={{ fontSize: '10px', color: '#999', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: '10px', color: '#999', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '4px' }}>
               {new URL(h.url).hostname}
             </div>
           )}

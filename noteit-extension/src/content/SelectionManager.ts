@@ -16,12 +16,21 @@ export class SelectionManager {
 
   private init() {
     document.addEventListener('mouseup', this.handleMouseUp.bind(this));
-    document.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    // Use capture phase to handle clicks before they reach the menu
+    document.addEventListener('mousedown', this.handleMouseDown.bind(this), true);
   }
 
-  private handleMouseDown() {
-    // If clicking outside, hide menu
-    // Note: FloatingMenu handles its own clicks with stopPropagation
+  private handleMouseDown(e: MouseEvent) {
+    // Check if click is inside the floating menu's host element
+    const target = e.target as HTMLElement;
+    const menuHost = document.querySelector('[data-noteit-menu]');
+    
+    if (menuHost && menuHost.contains(target)) {
+      // Click is inside menu, don't hide
+      return;
+    }
+    
+    // Click outside menu, hide it
     this.floatingMenu.remove();
   }
 
@@ -36,6 +45,8 @@ export class SelectionManager {
       return;
     }
 
+    console.log('[NoteIt] Text selected:', text.substring(0, 50));
+
     this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
     const rect = this.currentSelectionRange.getBoundingClientRect();
     
@@ -43,6 +54,7 @@ export class SelectionManager {
     const x = rect.left + window.scrollX;
     const y = rect.top + window.scrollY - 40; // 40px above
     
+    console.log('[NoteIt] Showing menu at:', x, y);
     this.floatingMenu.show(x, y);
   }
 
@@ -90,7 +102,7 @@ export class SelectionManager {
     return start;
   }
 
-  private async handleColorSelect(color: string) {
+  private async handleColorSelect(color: string, comment?: string) {
     if (!this.currentSelectionRange) return;
 
     const text = this.currentSelectionRange.toString();
@@ -109,6 +121,7 @@ export class SelectionManager {
       timestamp,
       start,
       length,
+      ...(comment && { comment }), // Add comment if provided
     };
 
     console.log('[NoteIt] Creating highlight:', highlight);

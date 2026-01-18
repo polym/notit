@@ -6,6 +6,26 @@ export class HighlightManager {
 
   constructor() {
     this.markInstance = new Mark(document.body);
+    this.injectStyles();
+  }
+
+  private injectStyles() {
+    // Inject CSS for comment highlights
+    const styleId = 'noteit-highlight-styles';
+    if (document.getElementById(styleId)) return;
+
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .noteit-highlight {
+        cursor: pointer;
+      }
+      .noteit-with-comment {
+        border-bottom: 2px dashed #666 !important;
+        padding-bottom: 2px;
+      }
+    `;
+    document.head.appendChild(style);
   }
 
   public loadAll(highlights: IHighlight[]) {
@@ -15,7 +35,7 @@ export class HighlightManager {
   }
 
   public highlight(highlight: IHighlight) {
-    const { text, id, color, start, length } = highlight;
+    const { text, id, color, start, length, comment } = highlight;
 
     if (start !== undefined && length !== undefined) {
       this.markInstance.markRanges([{ start, length }], {
@@ -25,6 +45,9 @@ export class HighlightManager {
           el.style.backgroundColor = color;
           el.dataset.highlightId = id;
           el.classList.add('noteit-highlight');
+          if (comment) {
+            el.classList.add('noteit-with-comment');
+          }
         },
       });
     } else {
@@ -35,6 +58,9 @@ export class HighlightManager {
           el.style.backgroundColor = color;
           el.dataset.highlightId = id;
           el.classList.add('noteit-highlight');
+          if (comment) {
+            el.classList.add('noteit-with-comment');
+          }
         },
         separateWordSearch: false,
         accuracy: 'partially',

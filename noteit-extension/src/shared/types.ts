@@ -14,6 +14,8 @@ export interface IHighlight {
   };
   // Fallback or alternative
   xpath?: string;
+  // User comment attached to the highlight
+  comment?: string;
 }
 
 export interface IStorageSchema {
