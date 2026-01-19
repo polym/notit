@@ -71,37 +71,6 @@ export class SelectionManager {
     await this.handleColorSelect('#ffeb3b');
   }
 
-  private getSelectionOffset(range: Range): number {
-    let start = 0;
-    const iterator = document.createNodeIterator(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: (node) => {
-          if (node.parentNode) {
-            const parent = node.parentNode as HTMLElement;
-            const tag = parent.tagName;
-            // Match mark.js default exclusions
-            if (['SCRIPT', 'STYLE', 'TITLE', 'HEAD', 'HTML', 'META', 'NOSCRIPT'].includes(tag)) {
-              return NodeFilter.FILTER_REJECT;
-            }
-          }
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-
-    let currentNode: Node | null;
-    while ((currentNode = iterator.nextNode())) {
-      if (currentNode === range.startContainer) {
-        start += range.startOffset;
-        break;
-      }
-      start += currentNode.textContent?.length || 0;
-    }
-    return start;
-  }
-
   private async handleColorSelect(color: string, comment?: string) {
     if (!this.currentSelectionRange) return;
 
@@ -110,8 +79,9 @@ export class SelectionManager {
     const url = window.location.href;
     const timestamp = Date.now();
 
-    const start = this.getSelectionOffset(this.currentSelectionRange);
-    const length = text.length;
+    // Temporarily use text-based highlighting instead of ranges for reliability
+    // const start = this.getSelectionOffset(this.currentSelectionRange);
+    // const length = text.length;
 
     const highlight: IHighlight = {
       id,
@@ -119,8 +89,8 @@ export class SelectionManager {
       url,
       color,
       timestamp,
-      start,
-      length,
+      // start,
+      // length,
       ...(comment && { comment }), // Add comment if provided
     };
 
