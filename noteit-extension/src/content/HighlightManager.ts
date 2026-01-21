@@ -19,18 +19,34 @@ export class HighlightManager {
     style.textContent = `
       .noteit-highlight {
         cursor: pointer;
+        padding: 2px 4px !important;
+        border-radius: 3px !important;
+        transition: opacity 0.2s ease !important;
+        box-decoration-break: clone !important;
+        -webkit-box-decoration-break: clone !important;
+      }
+      .noteit-highlight:hover {
+        opacity: 0.8 !important;
       }
       .noteit-with-comment {
-        border-bottom: 2px dashed #666 !important;
-        padding-bottom: 2px;
+        border-bottom: 2px solid #666 !important;
+        padding-bottom: 3px !important;
       }
     `;
     document.head.appendChild(style);
   }
 
   public loadAll(highlights: IHighlight[]) {
-    highlights.forEach((h) => {
-      this.highlight(h);
+    // Optional: Clear existing specific highlights or just rely on idempotency if we had it.
+    // For now, to prevent double wrapping if called repeatedly, we should probably unmark all first
+    // provided we are doing a full refresh.
+    this.markInstance.unmark({
+      className: 'noteit-highlight',
+      done: () => {
+        highlights.forEach((h) => {
+          this.highlight(h);
+        });
+      }
     });
   }
 
@@ -55,7 +71,7 @@ export class HighlightManager {
         className: `noteit-highlight-${id}`,
         each: (element: Element) => {
           const el = element as HTMLElement;
-          el.style.backgroundColor = color;
+          el.style.setProperty('background-color', color, 'important');
           el.dataset.highlightId = id;
           el.classList.add('noteit-highlight');
           if (comment) {

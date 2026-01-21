@@ -28,7 +28,77 @@ const loadHighlights = async () => {
   }
 };
 
-loadHighlights();
+// Debounce helper
+function debounce(func: Function, wait: number) {
+  let timeout: any;
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Observe DOM changes for SPA support
+const observeOptions = {
+  childList: true,
+  subtree: true
+};
+
+const debouncedLoad = debounce(() => {
+  loadHighlights();
+}, 500);
+
+const observer = new MutationObserver((mutations) => {
+  // Filter out mutations that are purely our own highlight changes
+  const isOurMutation = mutations.every(mutation => {
+    // Check added nodes
+    const addedAreOurs = Array.from(mutation.addedNodes).every(node => {
+      // If it is an element element and has our class, it's ours.
+      return node.nodeType === Node.ELEMENT_NODE && 
+             (node as HTMLElement).classList.contains('noteit-highlight');
+    });
+
+    // Check removed nodes (when unmarking)
+    // When mark.js unmarks, it unwraps, so it removes the span and adds text.
+    // The removed node will be our span.
+    const removedAreOurs = Array.from(mutation.removedNodes).every(node => {
+        return node.nodeType === Node.ELEMENT_NODE && 
+               (node as HTMLElement).classList.contains('noteit-highlight');
+    });
+    
+    // If we are modifying textNodes inside our spans... messy.
+    // Simple heuristic: If we see ANY 'noteit-highlight' class involved, we assume it's us?
+    // No, that might miss valid changes happening alongside.
+    
+    // Better: If the ONLY added nodes are ours.
+    if (mutation.addedNodes.length > 0 && !addedAreOurs) return false;
+    if (mutation.removedNodes.length > 0 && !removedAreOurs) return false;
+    
+    return true; 
+  });
+
+  if (!isOurMutation) {
+    // Only trigger if significant nodes added (and they aren't ours)
+    const hasAddedNodes = mutations.some(m => m.addedNodes.length > 0);
+    if (hasAddedNodes) {
+      debouncedLoad();
+    }
+  }
+});
+
+// Wait for DOM to be ready before loading highlights
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    loadHighlights();
+    observer.observe(document.body, observeOptions);
+  });
+} else {
+  loadHighlights();
+  observer.observe(document.body, observeOptions);
+}
 
 // Listen for messages from Side Panel & Background
 chrome.runtime.onMessage.addListener((message) => {
@@ -42,11 +112,33 @@ chrome.runtime.onMessage.addListener((message) => {
   }
   if (message.action === 'SCROLL_TO_HIGHLIGHT' && message.id) {
     console.log('[NoteIt] Received SCROLL_TO_HIGHLIGHT:', message.id);
-    const element = document.querySelector(`[data-highlight-id="${message.id}"]`) as HTMLElement;
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      console.warn('[NoteIt] Highlight element not found for id:', message.id);
+    
+    const scrollToElement = () => {
+        const element = document.querySelector(`[data-highlight-id="${message.id}"]`) as HTMLElement;
+        if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Flash the highlight to make it more visible
+        element.style.transition = 'opacity 0.3s';
+        element.style.opacity = '0.3';
+        setTimeout(() => {
+            element.style.opacity = '1';
+        }, 300);
+        console.log('[NoteIt] Scrolled to highlight:', message.id);
+        return true;
+        }
+        return false;
+    };
+
+    if (!scrollToElement()) {
+        console.warn('[NoteIt] Highlight element not found initially, retrying load...');
+        // Force a re-load and try again after a short delay
+        loadHighlights().then(() => {
+            setTimeout(() => {
+                if (!scrollToElement()) {
+                     console.error('[NoteIt] Failed to scroll to highlight after retry:', message.id);
+                }
+            }, 500);
+        });
     }
   }
 });
