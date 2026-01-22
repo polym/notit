@@ -37,12 +37,14 @@ export class HighlightManager {
   }
 
   public loadAll(highlights: IHighlight[]) {
+    console.log(`[NoteIt] HighlightManager.loadAll called with ${highlights.length} highlights`);
     // Optional: Clear existing specific highlights or just rely on idempotency if we had it.
     // For now, to prevent double wrapping if called repeatedly, we should probably unmark all first
     // provided we are doing a full refresh.
     this.markInstance.unmark({
       className: 'noteit-highlight',
       done: () => {
+        console.log('[NoteIt] Existing highlights cleared, applying new highlights');
         highlights.forEach((h) => {
           this.highlight(h);
         });
@@ -52,11 +54,16 @@ export class HighlightManager {
 
   public highlight(highlight: IHighlight) {
     const { text, id, color, start, length, comment } = highlight;
+    console.log(`[NoteIt] Attempting to highlight:`, { id, text: text.substring(0, 50), start, length });
 
-    if (start !== undefined && length !== undefined) {
+    let matchCount = 0;
+
+    // Use != null to check both null and undefined
+    if (start != null && length != null && typeof start === 'number' && typeof length === 'number') {
       this.markInstance.markRanges([{ start, length }], {
         className: `noteit-highlight-${id}`,
         each: (element: Element) => {
+          matchCount++;
           const el = element as HTMLElement;
           el.style.backgroundColor = color;
           el.dataset.highlightId = id;
@@ -65,11 +72,15 @@ export class HighlightManager {
             el.classList.add('noteit-with-comment');
           }
         },
+        done: () => {
+          console.log(`[NoteIt] Range-based highlight completed for ${id}, matches: ${matchCount}`);
+        },
       });
     } else {
       this.markInstance.mark(text, {
         className: `noteit-highlight-${id}`,
         each: (element: Element) => {
+          matchCount++;
           const el = element as HTMLElement;
           el.style.setProperty('background-color', color, 'important');
           el.dataset.highlightId = id;
@@ -82,6 +93,17 @@ export class HighlightManager {
         accuracy: 'partially',
         acrossElements: true,
         iframes: true,
+        caseSensitive: false,
+        ignoreJoiners: true,
+        done: (markedCount: number) => {
+          console.log(`[NoteIt] Text-based highlight completed for ${id}, matches: ${markedCount}`);
+          if (markedCount === 0) {
+            console.warn(`[NoteIt] Failed to find text for highlight ${id}:`, text.substring(0, 100));
+          }
+        },
+        noMatch: () => {
+          console.error(`[NoteIt] No match found for highlight ${id}:`, text.substring(0, 100));
+        },
       });
     }
   }

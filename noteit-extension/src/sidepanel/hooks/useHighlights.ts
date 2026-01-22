@@ -136,6 +136,15 @@ export const useHighlights = () => {
           };
           chrome.tabs.onUpdated.addListener(listener);
         });
+      } else {
+        // 如果找到了，激活该标签页
+        if (targetTab.id) {
+          await chrome.tabs.update(targetTab.id, { active: true });
+          // 切换到该标签页所在的窗口
+          if (targetTab.windowId) {
+            await chrome.windows.update(targetTab.windowId, { focused: true });
+          }
+        }
       }
 
       // 发送消息到目标标签页

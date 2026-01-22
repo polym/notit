@@ -9,22 +9,38 @@ import type { IHighlight } from '../shared/types';
 const highlightManager = new HighlightManager();
 const selectionManager = new SelectionManager(highlightManager);
 
+// Flag to prevent observer from triggering during our own operations
+let isLoadingHighlights = false;
+
 // Load saved highlights
 const loadHighlights = async () => {
+  if (isLoadingHighlights) {
+    console.log('[NoteIt] loadHighlights already in progress, skipping...');
+    return;
+  }
+  isLoadingHighlights = true;
   try {
     const result = await chrome.storage.local.get('highlights');
     const allHighlights = (result.highlights as IHighlight[]) || [];
     const currentUrl = window.location.href;
     
+    console.log(`[NoteIt] loadHighlights called, total highlights: ${allHighlights.length}, currentUrl: ${currentUrl}`);
+    
     // Simple URL matching (ignoring hash/query if needed, but strict for now)
     const pageHighlights = allHighlights.filter((h) => h.url === currentUrl);
     
+    console.log(`[NoteIt] Found ${pageHighlights.length} highlights for current page`);
     if (pageHighlights.length > 0) {
-      console.log(`[NoteIt] Restoring ${pageHighlights.length} highlights`);
+      console.log('[NoteIt] Highlight details:', pageHighlights.map(h => ({ id: h.id, text: h.text.substring(0, 30), url: h.url })));
       highlightManager.loadAll(pageHighlights);
     }
   } catch (error) {
     console.error('[NoteIt] Failed to load highlights:', error);
+  } finally {
+    // Reset flag after a small delay to ensure all DOM operations complete
+    setTimeout(() => {
+      isLoadingHighlights = false;
+    }, 100);
   }
 };
 
@@ -52,6 +68,11 @@ const debouncedLoad = debounce(() => {
 }, 500);
 
 const observer = new MutationObserver((mutations) => {
+  // Skip if we're currently loading highlights
+  if (isLoadingHighlights) {
+    return;
+  }
+
   // Filter out mutations that are purely our own highlight changes
   const isOurMutation = mutations.every(mutation => {
     // Check added nodes
@@ -92,11 +113,17 @@ const observer = new MutationObserver((mutations) => {
 // Wait for DOM to be ready before loading highlights
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    loadHighlights();
+    // Small delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      loadHighlights();
+    }, 300);
     observer.observe(document.body, observeOptions);
   });
 } else {
-  loadHighlights();
+  // Small delay to ensure DOM is fully rendered
+  setTimeout(() => {
+    loadHighlights();
+  }, 300);
   observer.observe(document.body, observeOptions);
 }
 
