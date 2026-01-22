@@ -122,9 +122,11 @@ export const useHighlights = () => {
       // 查询匹配 URL 的标签页
       const tabs = await chrome.tabs.query({ url: highlight.url });
       let targetTab = tabs[0];
+      let isNewTab = false;
 
       if (!targetTab) {
         // 如果没找到，创建新标签页
+        isNewTab = true;
         targetTab = await chrome.tabs.create({ url: highlight.url });
         // 等待页面加载完成
         await new Promise<void>((resolve) => {
@@ -136,6 +138,9 @@ export const useHighlights = () => {
           };
           chrome.tabs.onUpdated.addListener(listener);
         });
+        
+        // 额外等待确保content script已加载并完成高亮渲染
+        await new Promise(resolve => setTimeout(resolve, 800));
       } else {
         // 如果找到了，激活该标签页
         if (targetTab.id) {
@@ -149,7 +154,26 @@ export const useHighlights = () => {
 
       // 发送消息到目标标签页
       if (targetTab.id) {
-        chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+        // 对于新标签页，使用重试机制确保消息能够送达
+        if (isNewTab) {
+          let retries = 3;
+          while (retries > 0) {
+            try {
+              await chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+              break; // 成功发送，退出循环
+            } catch (error) {
+              retries--;
+              if (retries > 0) {
+                console.log(`[NoteIt] Retry sending message, ${retries} attempts left`);
+                await new Promise(resolve => setTimeout(resolve, 300));
+              } else {
+                console.error('[NoteIt] Failed to send message after retries:', error);
+              }
+            }
+          }
+        } else {
+          chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+        }
       }
     } catch (error) {
       console.error('[NoteIt] Failed to jump to highlight:', error);

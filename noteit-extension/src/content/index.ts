@@ -73,21 +73,35 @@ const observer = new MutationObserver((mutations) => {
     return;
   }
 
+  // Skip if we're creating a new highlight
+  if ((window as any).__noteit_creating_highlight__) {
+    console.log('[NoteIt] Skip reload - creating new highlight');
+    return;
+  }
+
   // Filter out mutations that are purely our own highlight changes
   const isOurMutation = mutations.every(mutation => {
     // Check added nodes
     const addedAreOurs = Array.from(mutation.addedNodes).every(node => {
-      // If it is an element element and has our class, it's ours.
-      return node.nodeType === Node.ELEMENT_NODE && 
-             (node as HTMLElement).classList.contains('noteit-highlight');
+      if (node.nodeType !== Node.ELEMENT_NODE) return true;
+      const el = node as HTMLElement;
+      // Filter out our highlight spans and floating menu
+      return el.classList.contains('noteit-highlight') || 
+             el.hasAttribute('data-noteit-menu') ||
+             el.getAttribute('id')?.startsWith('noteit-') ||
+             false;
     });
 
     // Check removed nodes (when unmarking)
     // When mark.js unmarks, it unwraps, so it removes the span and adds text.
     // The removed node will be our span.
     const removedAreOurs = Array.from(mutation.removedNodes).every(node => {
-        return node.nodeType === Node.ELEMENT_NODE && 
-               (node as HTMLElement).classList.contains('noteit-highlight');
+      if (node.nodeType !== Node.ELEMENT_NODE) return true;
+      const el = node as HTMLElement;
+      return el.classList.contains('noteit-highlight') ||
+             el.hasAttribute('data-noteit-menu') ||
+             el.getAttribute('id')?.startsWith('noteit-') ||
+             false;
     });
     
     // If we are modifying textNodes inside our spans... messy.
@@ -168,6 +182,12 @@ chrome.runtime.onMessage.addListener((message) => {
         });
     }
   }
+});
+
+// Listen for reload event from SelectionManager
+document.addEventListener('noteit-reload-highlights', () => {
+  console.log('[NoteIt] Received reload highlights event');
+  loadHighlights();
 });
 
 console.log('[NoteIt] Managers Initialized');

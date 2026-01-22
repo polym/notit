@@ -24,13 +24,49 @@ export class HighlightManager {
         transition: opacity 0.2s ease !important;
         box-decoration-break: clone !important;
         -webkit-box-decoration-break: clone !important;
+        position: relative;
       }
       .noteit-highlight:hover {
         opacity: 0.8 !important;
       }
       .noteit-with-comment {
-        border-bottom: 2px solid #666 !important;
-        padding-bottom: 3px !important;
+        text-decoration: underline !important;
+        text-decoration-style: dashed !important;
+        text-decoration-color: #000 !important;
+        text-decoration-thickness: 2px !important;
+        text-underline-offset: 4px !important;
+      }
+      .noteit-comment-tooltip {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-8px);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        line-height: 1.4;
+        max-width: 300px;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        z-index: 2147483647;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+      .noteit-comment-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: rgba(0, 0, 0, 0.9);
+      }
+      .noteit-highlight:hover .noteit-comment-tooltip {
+        opacity: 1;
       }
     `;
     document.head.appendChild(style);
@@ -38,16 +74,36 @@ export class HighlightManager {
 
   public loadAll(highlights: IHighlight[]) {
     console.log(`[NoteIt] HighlightManager.loadAll called with ${highlights.length} highlights`);
-    // Optional: Clear existing specific highlights or just rely on idempotency if we had it.
-    // For now, to prevent double wrapping if called repeatedly, we should probably unmark all first
-    // provided we are doing a full refresh.
+    
+    // First, manually remove all existing highlight elements to ensure clean state
+    const existingHighlights = document.querySelectorAll('.noteit-highlight');
+    console.log(`[NoteIt] Removing ${existingHighlights.length} existing highlight elements`);
+    existingHighlights.forEach((el) => {
+      const parent = el.parentNode;
+      if (parent) {
+        // Move all child nodes out of the highlight span
+        while (el.firstChild) {
+          parent.insertBefore(el.firstChild, el);
+        }
+        // Remove the empty highlight span
+        parent.removeChild(el);
+      }
+    });
+    
+    // Normalize text nodes to merge adjacent text nodes
+    document.body.normalize();
+    
+    // Then use mark.js unmark to ensure clean state
     this.markInstance.unmark({
       className: 'noteit-highlight',
       done: () => {
-        console.log('[NoteIt] Existing highlights cleared, applying new highlights');
-        highlights.forEach((h) => {
-          this.highlight(h);
-        });
+        console.log('[NoteIt] Mark.js unmark completed, applying new highlights');
+        // Small delay to ensure DOM is stable
+        setTimeout(() => {
+          highlights.forEach((h) => {
+            this.highlight(h);
+          });
+        }, 50);
       }
     });
   }
@@ -70,6 +126,7 @@ export class HighlightManager {
           el.classList.add('noteit-highlight');
           if (comment) {
             el.classList.add('noteit-with-comment');
+            this.attachCommentTooltip(el, comment);
           }
         },
         done: () => {
@@ -87,6 +144,7 @@ export class HighlightManager {
           el.classList.add('noteit-highlight');
           if (comment) {
             el.classList.add('noteit-with-comment');
+            this.attachCommentTooltip(el, comment);
           }
         },
         separateWordSearch: false,
@@ -106,6 +164,18 @@ export class HighlightManager {
         },
       });
     }
+  }
+
+  private attachCommentTooltip(element: HTMLElement, comment: string) {
+    // Only attach tooltip to the first element with this highlight (avoid duplicates)
+    if (element.querySelector('.noteit-comment-tooltip')) {
+      return;
+    }
+    
+    const tooltip = document.createElement('div');
+    tooltip.className = 'noteit-comment-tooltip';
+    tooltip.textContent = comment;
+    element.appendChild(tooltip);
   }
 
   public remove(id: string) {

@@ -18,6 +18,8 @@ export class SelectionManager {
     document.addEventListener('mouseup', this.handleMouseUp.bind(this));
     // Use capture phase to handle clicks before they reach the menu
     document.addEventListener('mousedown', this.handleMouseDown.bind(this), true);
+    // Add hover listener for existing highlights
+    document.addEventListener('mouseover', this.handleMouseOver.bind(this));
   }
 
   private handleMouseDown(e: MouseEvent) {
@@ -34,6 +36,19 @@ export class SelectionManager {
     this.floatingMenu.remove();
   }
 
+  private handleMouseOver(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    
+    // Check if hovering over a highlight
+    if (target.classList && target.classList.contains('noteit-highlight')) {
+      const rect = target.getBoundingClientRect();
+      const x = rect.left + window.scrollX;
+      const y = rect.top + window.scrollY - 40;
+      
+      this.floatingMenu.showEditMode(x, y, target, this.updateHighlight.bind(this));
+    }
+  }
+
   private async handleMouseUp() {
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) {
@@ -48,6 +63,15 @@ export class SelectionManager {
     console.log('[NoteIt] Text selected:', text.substring(0, 50));
 
     this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
+    
+    // Check if selection contains existing highlight
+    const existingHighlight = this.getExistingHighlightInSelection(selection);
+    if (existingHighlight) {
+      console.log('[NoteIt] Existing highlight detected, edit menu already shown on hover');
+      // Edit menu is already shown on hover, do nothing
+      return;
+    }
+    
     const rect = this.currentSelectionRange.getBoundingClientRect();
     
     // Show menu above the selection
@@ -56,6 +80,97 @@ export class SelectionManager {
     
     console.log('[NoteIt] Showing menu at:', x, y);
     this.floatingMenu.show(x, y);
+  }
+
+  private getExistingHighlightInSelection(selection: Selection): HTMLElement | null {
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer;
+    
+    // Check if the selection itself or its parent is a highlight
+    let element = container.nodeType === Node.ELEMENT_NODE 
+      ? container as HTMLElement 
+      : container.parentElement;
+    
+    while (element) {
+      if (element.classList && element.classList.contains('noteit-highlight')) {
+        return element;
+      }
+      // Don't traverse beyond body
+      if (element === document.body) break;
+      element = element.parentElement;
+    }
+    
+    return null;
+  }
+
+  private async updateHighlight(highlightElement: HTMLElement, color: string, comment?: string) {
+    const highlightId = highlightElement.dataset.highlightId;
+    if (!highlightId) return;
+
+    console.log('[NoteIt] Updating highlight:', highlightId);
+
+    // Set flag to prevent observer from triggering during update
+    (window as any).__noteit_creating_highlight__ = true;
+
+    try {
+      const result = await chrome.storage.local.get('highlights');
+      const highlights = (result.highlights as IHighlight[]) || [];
+      const index = highlights.findIndex(h => h.id === highlightId);
+      
+      if (index !== -1) {
+        // Update the highlight data
+        highlights[index] = {
+          ...highlights[index],
+          color,
+          ...(comment !== undefined && { comment }),
+        };
+        
+        await chrome.storage.local.set({ highlights });
+        console.log('[NoteIt] Highlight updated in storage');
+        
+        // Update all elements with this highlight ID (there may be multiple spans for one highlight)
+        const elements = document.querySelectorAll(`[data-highlight-id="${highlightId}"]`);
+        console.log(`[NoteIt] Updating ${elements.length} elements with new color`);
+        
+        elements.forEach((el) => {
+          const element = el as HTMLElement;
+          // Update color
+          element.style.setProperty('background-color', color, 'important');
+          
+          // Handle comment changes
+          if (comment !== undefined) {
+            if (comment) {
+              // Add or update comment
+              element.classList.add('noteit-with-comment');
+              // Remove old tooltip if exists
+              const oldTooltip = element.querySelector('.noteit-comment-tooltip');
+              if (oldTooltip) {
+                oldTooltip.remove();
+              }
+              // Add new tooltip
+              const tooltip = document.createElement('div');
+              tooltip.className = 'noteit-comment-tooltip';
+              tooltip.textContent = comment;
+              element.appendChild(tooltip);
+            } else {
+              // Remove comment
+              element.classList.remove('noteit-with-comment');
+              const tooltip = element.querySelector('.noteit-comment-tooltip');
+              if (tooltip) {
+                tooltip.remove();
+              }
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error('[NoteIt] Failed to update highlight:', error);
+    } finally {
+      // Reset flag after update completes
+      setTimeout(() => {
+        (window as any).__noteit_creating_highlight__ = false;
+      }, 100);
+    }
   }
 
   public async triggerHighlight() {
@@ -96,11 +211,19 @@ export class SelectionManager {
 
     console.log('[NoteIt] Creating highlight:', highlight);
 
+    // Set loading flag to prevent observer from triggering reload
+    (window as any).__noteit_creating_highlight__ = true;
+
     // 1. Visual Highlight
     this.highlightManager.highlight(highlight);
 
     // 2. Save to Storage
     await this.saveHighlight(highlight);
+
+    // Reset flag after a delay
+    setTimeout(() => {
+      (window as any).__noteit_creating_highlight__ = false;
+    }, 500);
 
     // Clear selection
     window.getSelection()?.removeAllRanges();
