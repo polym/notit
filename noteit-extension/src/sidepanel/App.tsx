@@ -18,23 +18,30 @@ const WebsiteGroup = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleNavigate = () => {
-    chrome.tabs.create({ url });
-  };
+  // Get title and favicon from the first highlight
+  const pageTitle = highlights[0]?.pageTitle || new URL(url).hostname;
+  const favicon = highlights[0]?.favicon || '';
 
   return (
     <div
       style={{
         marginBottom: '8px',
-        border: '1px solid #eee',
-        borderRadius: '4px',
+        background: 'white',
+        border: '1px solid #e8e8e8',
+        borderRadius: '8px',
         overflow: 'hidden',
+        transition: 'border-color 0.2s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = '#d0d0d0';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = '#e8e8e8';
       }}
     >
       <div
         style={{
-          padding: '8px',
-          backgroundColor: '#f5f5f5',
+          padding: '12px',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
@@ -42,69 +49,60 @@ const WebsiteGroup = ({
         }}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-          <span style={{ marginRight: '8px', fontSize: '12px' }}>
-            {isExpanded ? '▼' : '▶'}
-          </span>
-          <div style={{ overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', flex: 1 }}>
+          {favicon && (
+            <img 
+              src={favicon} 
+              alt="" 
+              style={{
+                width: '16px',
+                height: '16px',
+                marginRight: '10px',
+                borderRadius: '2px',
+              }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          )}
+          <div style={{ overflow: 'hidden', flex: 1 }}>
             <div
               style={{
-                fontWeight: 'bold',
-                fontSize: '13px',
+                fontSize: '14px',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                color: '#1a1a1a',
               }}
             >
-              {new URL(url).hostname}
-            </div>
-            <div
-              style={{
-                fontSize: '11px',
-                color: '#666',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {new URL(url).pathname}
+              {pageTitle}
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '12px', gap: '12px' }}>
           <span
             style={{
-              fontSize: '11px',
-              color: '#888',
-              marginRight: '8px',
-              backgroundColor: '#e0e0e0',
-              padding: '2px 6px',
-              borderRadius: '10px',
+              fontSize: '12px',
+              color: '#999',
             }}
           >
             {highlights.length}
           </span>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleNavigate();
-            }}
-            title="Open in new tab"
-            style={{
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              fontSize: '14px',
-              padding: '2px',
+          <span 
+            style={{ 
+              fontSize: '10px',
+              color: '#999',
+              transition: 'transform 0.2s ease',
+              transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
             }}
           >
-            🔗
-          </button>
+            ▶
+          </span>
         </div>
       </div>
 
       {isExpanded && (
-        <div style={{ padding: '8px' }}>
+        <div style={{ padding: '0 12px 12px 12px', borderTop: '1px solid #f5f5f5' }}>
           <HighlightList
             highlights={highlights}
             onDelete={onDelete}
@@ -142,6 +140,18 @@ function App() {
     (h) => normalizeUrl(h.url) === currentNormalized
   );
 
+  // Helper to get time category
+  const getTimeCategory = (timestamp: number) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const dayInMs = 24 * 60 * 60 * 1000;
+    
+    if (diff < dayInMs) return 'Today';
+    if (diff < 2 * dayInMs) return 'Yesterday';
+    if (diff < 7 * dayInMs) return 'This Week';
+    return 'Earlier';
+  };
+
   // Group for websites tab
   const groupedHighlights = highlights.reduce((acc, h) => {
     const key = normalizeUrl(h.url);
@@ -151,6 +161,26 @@ function App() {
     acc[key].push(h);
     return acc;
   }, {} as Record<string, IHighlight[]>);
+
+  // Sort websites by most recent highlight and group by time
+  const sortedWebsites = Object.entries(groupedHighlights)
+    .map(([url, groupHighlights]) => {
+      const latestTimestamp = Math.max(...groupHighlights.map(h => h.timestamp));
+      return { url, highlights: groupHighlights, latestTimestamp };
+    })
+    .sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+
+  // Group by time category
+  const websitesByTime = sortedWebsites.reduce((acc, item) => {
+    const category = getTimeCategory(item.latestTimestamp);
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(item);
+    return acc;
+  }, {} as Record<string, typeof sortedWebsites>);
+
+  const timeOrder = ['Today', 'Yesterday', 'This Week', 'Earlier'];
 
   return (
     <div style={{ padding: '16px', fontFamily: 'sans-serif' }}>
@@ -176,20 +206,21 @@ function App() {
         style={{
           display: 'flex',
           marginBottom: '16px',
-          borderBottom: '1px solid #eee',
+          borderBottom: '1px solid #e8e8e8',
         }}
       >
         <button
           onClick={() => setActiveTab('current')}
           style={{
             flex: 1,
-            padding: '8px',
+            padding: '10px',
             border: 'none',
             background: 'transparent',
-            borderBottom: activeTab === 'current' ? '2px solid #007bff' : 'none',
-            fontWeight: activeTab === 'current' ? 'bold' : 'normal',
+            borderBottom: activeTab === 'current' ? '2px solid #1a1a1a' : '2px solid transparent',
             cursor: 'pointer',
-            color: activeTab === 'current' ? '#007bff' : '#333',
+            color: activeTab === 'current' ? '#1a1a1a' : '#999',
+            fontSize: '14px',
+            transition: 'all 0.2s ease',
           }}
         >
           Current Page
@@ -198,13 +229,14 @@ function App() {
           onClick={() => setActiveTab('websites')}
           style={{
             flex: 1,
-            padding: '8px',
+            padding: '10px',
             border: 'none',
             background: 'transparent',
-            borderBottom: activeTab === 'websites' ? '2px solid #007bff' : 'none',
-            fontWeight: activeTab === 'websites' ? 'bold' : 'normal',
+            borderBottom: activeTab === 'websites' ? '2px solid #1a1a1a' : '2px solid transparent',
             cursor: 'pointer',
-            color: activeTab === 'websites' ? '#007bff' : '#333',
+            color: activeTab === 'websites' ? '#1a1a1a' : '#999',
+            fontSize: '14px',
+            transition: 'all 0.2s ease',
           }}
         >
           Websites
@@ -227,15 +259,35 @@ function App() {
         </div>
       ) : (
         <div>
-          {Object.entries(groupedHighlights).map(([url, groupHighlights]) => (
-            <WebsiteGroup
-              key={url}
-              url={url}
-              highlights={groupHighlights}
-              onDelete={removeHighlight}
-              onJumpTo={jumpToHighlight}
-            />
-          ))}
+          {timeOrder.map((category) => {
+            const websites = websitesByTime[category];
+            if (!websites || websites.length === 0) return null;
+            
+            return (
+              <div key={category} style={{ marginBottom: '24px' }}>
+                <h3 style={{ 
+                  fontSize: '12px', 
+                  fontWeight: '600', 
+                  color: '#999', 
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  marginBottom: '12px',
+                  marginTop: 0,
+                }}>
+                  {category}
+                </h3>
+                {websites.map(({ url, highlights: groupHighlights }) => (
+                  <WebsiteGroup
+                    key={url}
+                    url={url}
+                    highlights={groupHighlights}
+                    onDelete={removeHighlight}
+                    onJumpTo={jumpToHighlight}
+                  />
+                ))}
+              </div>
+            );
+          })}
           {Object.keys(groupedHighlights).length === 0 && (
             <p style={{ color: '#666', textAlign: 'center' }}>
               No highlights yet.

@@ -16,6 +16,9 @@ export interface IHighlight {
   xpath?: string;
   // User comment attached to the highlight
   comment?: string;
+  // Page metadata
+  pageTitle?: string;
+  favicon?: string;
 }
 
 export interface IStorageSchema {

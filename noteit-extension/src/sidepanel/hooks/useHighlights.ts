@@ -10,18 +10,22 @@ export const useHighlights = () => {
   // Sync with Supabase on load
   useEffect(() => {
     const syncWithSupabase = async () => {
-      const supabase = await getSupabaseClient();
-      if (!supabase) return;
+      try {
+        const supabase = await getSupabaseClient();
+        if (!supabase) return;
 
-      const { data, error } = await supabase.from('highlights').select('*');
-      if (!error && data) {
-        isSyncingFromSupabase.current = true;
-        // Merge or replace? Let's replace local with server for now to ensure consistency
-        // But we need to be careful not to lose offline work.
-        // For MVP: Server wins.
-        await chrome.storage.local.set({ highlights: data });
-        setHighlights(data as IHighlight[]);
-        isSyncingFromSupabase.current = false;
+        const { data, error } = await supabase.from('highlights').select('*');
+        if (!error && data) {
+          isSyncingFromSupabase.current = true;
+          // Merge or replace? Let's replace local with server for now to ensure consistency
+          // But we need to be careful not to lose offline work.
+          // For MVP: Server wins.
+          await chrome.storage.local.set({ highlights: data });
+          setHighlights(data as IHighlight[]);
+          isSyncingFromSupabase.current = false;
+        }
+      } catch (error) {
+        console.warn('[NoteIt] Supabase sync failed on load:', error);
       }
     };
     syncWithSupabase();
@@ -46,33 +50,43 @@ export const useHighlights = () => {
 
         // Sync to Supabase if change didn't come from Supabase sync
         if (!isSyncingFromSupabase.current) {
-          const supabase = await getSupabaseClient();
-          if (supabase) {
-            // Find added/updated highlights
-            // This is a naive sync: upsert all. 
-            // Optimization: find diff.
-            // For MVP, let's just upsert the whole list? No, that's too heavy if list is long.
-            // Let's try to find the diff.
-            const oldHighlights = (changes.highlights.oldValue || []) as IHighlight[];
-            
-            // Added or Updated
-            const toUpsert = newHighlights.filter(nh => {
-                const oh = oldHighlights.find(h => h.id === nh.id);
-                return !oh || JSON.stringify(oh) !== JSON.stringify(nh);
-            });
+          try {
+            const supabase = await getSupabaseClient();
+            if (supabase) {
+              // Find added/updated highlights
+              // This is a naive sync: upsert all. 
+              // Optimization: find diff.
+              // For MVP, let's just upsert the whole list? No, that's too heavy if list is long.
+              // Let's try to find the diff.
+              const oldHighlights = (changes.highlights.oldValue || []) as IHighlight[];
+              
+              // Added or Updated
+              const toUpsert = newHighlights.filter(nh => {
+                  const oh = oldHighlights.find(h => h.id === nh.id);
+                  return !oh || JSON.stringify(oh) !== JSON.stringify(nh);
+              });
 
-            if (toUpsert.length > 0) {
-                await supabase.from('highlights').upsert(toUpsert);
+              if (toUpsert.length > 0) {
+                  const { error } = await supabase.from('highlights').upsert(toUpsert);
+                  if (error) {
+                    console.warn('[NoteIt] Supabase upsert failed:', error);
+                  }
+              }
+              
+              // Deleted
+              // We handle deletion in removeHighlight explicitly, but if content script deletes?
+              // Content script usually only adds.
+              // If we want to support deletion sync from storage change, we need to find missing IDs.
+               const toDelete = oldHighlights.filter(oh => !newHighlights.find(nh => nh.id === oh.id));
+               if (toDelete.length > 0) {
+                   const { error } = await supabase.from('highlights').delete().in('id', toDelete.map(h => h.id));
+                   if (error) {
+                     console.warn('[NoteIt] Supabase delete failed:', error);
+                   }
+               }
             }
-            
-            // Deleted
-            // We handle deletion in removeHighlight explicitly, but if content script deletes?
-            // Content script usually only adds.
-            // If we want to support deletion sync from storage change, we need to find missing IDs.
-             const toDelete = oldHighlights.filter(oh => !newHighlights.find(nh => nh.id === oh.id));
-             if (toDelete.length > 0) {
-                 await supabase.from('highlights').delete().in('id', toDelete.map(h => h.id));
-             }
+          } catch (error) {
+            console.warn('[NoteIt] Supabase sync failed:', error);
           }
         }
       }
@@ -185,9 +199,16 @@ export const useHighlights = () => {
     await chrome.storage.local.set({ highlights: newHighlights });
 
     // Sync delete to Supabase
-    const supabase = await getSupabaseClient();
-    if (supabase) {
-        await supabase.from('highlights').delete().eq('id', id);
+    try {
+      const supabase = await getSupabaseClient();
+      if (supabase) {
+          const { error } = await supabase.from('highlights').delete().eq('id', id);
+          if (error) {
+            console.warn('[NoteIt] Supabase delete failed:', error);
+          }
+      }
+    } catch (error) {
+      console.warn('[NoteIt] Supabase delete failed:', error);
     }
 
     // Also send message to content script to remove visual highlight

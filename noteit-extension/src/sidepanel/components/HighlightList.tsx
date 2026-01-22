@@ -21,6 +21,7 @@ export const HighlightList: React.FC<HighlightListProps> = ({ highlights, onDele
           style={{
             borderLeft: `4px solid ${h.color}`,
             padding: '8px',
+            paddingRight: '28px',
             marginBottom: '8px',
             backgroundColor: '#f9f9f9',
             borderRadius: '4px',

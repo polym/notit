@@ -194,6 +194,21 @@ export class SelectionManager {
     const url = window.location.href;
     const timestamp = Date.now();
 
+    // Get page metadata
+    const pageTitle = document.title || new URL(url).hostname;
+    
+    // Get favicon
+    let favicon = '';
+    const linkElements = document.querySelectorAll('link[rel*="icon"]');
+    if (linkElements.length > 0) {
+      const iconLink = linkElements[0] as HTMLLinkElement;
+      favicon = iconLink.href;
+    } else {
+      // Fallback to default favicon location
+      const urlObj = new URL(url);
+      favicon = `${urlObj.origin}/favicon.ico`;
+    }
+
     // Temporarily use text-based highlighting instead of ranges for reliability
     // const start = this.getSelectionOffset(this.currentSelectionRange);
     // const length = text.length;
@@ -204,6 +219,8 @@ export class SelectionManager {
       url,
       color,
       timestamp,
+      pageTitle,
+      favicon,
       // start,
       // length,
       ...(comment && { comment }), // Add comment if provided
