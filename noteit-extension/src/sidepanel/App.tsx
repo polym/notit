@@ -20,7 +20,17 @@ const WebsiteGroup = ({
 
   // Get title and favicon from the first highlight
   const pageTitle = highlights[0]?.pageTitle || new URL(url).hostname;
-  const favicon = highlights[0]?.favicon || '';
+  const favicon = highlights[0]?.favicon;
+  const [iconError, setIconError] = useState(false);
+  const showDefaultIcon = !favicon || iconError;
+
+  // Default globe icon SVG
+  const DefaultIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="7" stroke="#9CA3AF" strokeWidth="1.5" fill="none"/>
+      <path d="M8 1C8 1 6 4 6 8C6 12 8 15 8 15M8 1C8 1 10 4 10 8C10 12 8 15 8 15M8 1V15M2 8H14M3 5H13M3 11H13" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
 
   return (
     <div
@@ -50,21 +60,30 @@ const WebsiteGroup = ({
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', flex: 1 }}>
-          {favicon && (
-            <img 
-              src={favicon} 
-              alt="" 
-              style={{
-                width: '16px',
-                height: '16px',
-                marginRight: '10px',
-                borderRadius: '2px',
-              }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          )}
+          <div style={{ 
+            width: '16px', 
+            height: '16px', 
+            marginRight: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            {showDefaultIcon ? (
+              <DefaultIcon />
+            ) : (
+              <img 
+                src={favicon} 
+                alt="" 
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  borderRadius: '2px',
+                }}
+                onError={() => setIconError(true)}
+              />
+            )}
+          </div>
           <div style={{ overflow: 'hidden', flex: 1 }}>
             <div
               style={{
