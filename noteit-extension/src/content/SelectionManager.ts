@@ -62,7 +62,24 @@ export class SelectionManager {
 
     console.log('[NoteIt] Text selected:', text.substring(0, 50));
 
-    this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
+    // Clone the range and trim whitespace
+    const range = selection.getRangeAt(0).cloneRange();
+    
+    // Trim leading whitespace
+    while (range.startContainer.nodeType === Node.TEXT_NODE && range.startOffset < range.startContainer.textContent!.length) {
+      const char = range.startContainer.textContent![range.startOffset];
+      if (!/\s/.test(char)) break;
+      range.setStart(range.startContainer, range.startOffset + 1);
+    }
+    
+    // Trim trailing whitespace
+    while (range.endContainer.nodeType === Node.TEXT_NODE && range.endOffset > 0) {
+      const char = range.endContainer.textContent![range.endOffset - 1];
+      if (!/\s/.test(char)) break;
+      range.setEnd(range.endContainer, range.endOffset - 1);
+    }
+    
+    this.currentSelectionRange = range;
     
     // Check if selection contains existing highlight
     const existingHighlight = this.getExistingHighlightInSelection(selection);
@@ -189,7 +206,9 @@ export class SelectionManager {
   private async handleColorSelect(color: string, comment?: string) {
     if (!this.currentSelectionRange) return;
 
-    const text = this.currentSelectionRange.toString();
+    const text = this.currentSelectionRange.toString().trim();
+    if (!text) return;
+    
     const id = uuidv4();
     const url = window.location.href;
     const timestamp = Date.now();

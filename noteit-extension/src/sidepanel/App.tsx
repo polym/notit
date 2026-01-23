@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHighlights } from './hooks/useHighlights';
 import { HighlightList } from './components/HighlightList';
 import { Settings } from './components/Settings';
@@ -21,8 +21,13 @@ const WebsiteGroup = ({
   // Get title and favicon from the first highlight
   const pageTitle = highlights[0]?.pageTitle || new URL(url).hostname;
   const favicon = highlights[0]?.favicon;
-  const [iconError, setIconError] = useState(false);
-  const showDefaultIcon = !favicon || iconError;
+  const hasFavicon = favicon && favicon.trim() !== '';
+  const [showFavicon, setShowFavicon] = useState(hasFavicon);
+
+  // Sync showFavicon when favicon changes
+  useEffect(() => {
+    setShowFavicon(hasFavicon);
+  }, [hasFavicon]);
 
   // Default globe icon SVG
   const DefaultIcon = () => (
@@ -69,19 +74,20 @@ const WebsiteGroup = ({
             justifyContent: 'center',
             flexShrink: 0,
           }}>
-            {showDefaultIcon ? (
-              <DefaultIcon />
-            ) : (
+            {showFavicon ? (
               <img 
-                src={favicon} 
+                src={favicon!} 
                 alt="" 
                 style={{
                   width: '16px',
                   height: '16px',
                   borderRadius: '2px',
+                  display: 'block',
                 }}
-                onError={() => setIconError(true)}
+                onError={() => setShowFavicon(false)}
               />
+            ) : (
+              <DefaultIcon />
             )}
           </div>
           <div style={{ overflow: 'hidden', flex: 1 }}>
