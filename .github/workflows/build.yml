@@ -1,0 +1,45 @@
+name: Build Extension
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: noteit-extension/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./noteit-extension
+      run: npm ci
+      
+    - name: Build extension
+      working-directory: ./noteit-extension
+      run: npm run build
+      
+    - name: Package extension
+      working-directory: ./noteit-extension
+      run: |
+        cd dist
+        zip -r ../noteit-extension.zip .
+        cd ..
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: noteit-extension
+        path: noteit-extension/noteit-extension.zip
+        retention-days: 30
