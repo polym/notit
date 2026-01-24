@@ -16,7 +16,7 @@ export class FloatingMenu {
 
     this.host = document.createElement('div');
     this.host.setAttribute('data-noteit-menu', 'true');
-    this.host.style.position = 'absolute';
+    this.host.style.position = 'fixed'; // Use fixed positioning so it stays in viewport
     this.host.style.left = `${x}px`;
     this.host.style.top = `${y}px`;
     this.host.style.zIndex = '2147483647'; // Max z-index
@@ -310,7 +310,7 @@ export class FloatingMenu {
 
     this.host = document.createElement('div');
     this.host.setAttribute('data-noteit-menu', 'true');
-    this.host.style.position = 'absolute';
+    this.host.style.position = 'fixed'; // Use fixed positioning so it stays in viewport
     this.host.style.left = `${x}px`;
     this.host.style.top = `${y}px`;
     this.host.style.zIndex = '2147483647';

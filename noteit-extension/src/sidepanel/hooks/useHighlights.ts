@@ -64,7 +64,11 @@ export const useHighlights = () => {
               const toUpsert = newHighlights.filter(nh => {
                   const oh = oldHighlights.find(h => h.id === nh.id);
                   return !oh || JSON.stringify(oh) !== JSON.stringify(nh);
-              });
+              }).map(h => ({
+                  ...h,
+                  // Convert empty favicon to null for database
+                  favicon: h.favicon && h.favicon.trim() !== '' ? h.favicon : null
+              }));
 
               if (toUpsert.length > 0) {
                   const { error } = await supabase.from('highlights').upsert(toUpsert);

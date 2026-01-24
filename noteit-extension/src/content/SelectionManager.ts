@@ -42,8 +42,8 @@ export class SelectionManager {
     // Check if hovering over a highlight
     if (target.classList && target.classList.contains('noteit-highlight')) {
       const rect = target.getBoundingClientRect();
-      const x = rect.left + window.scrollX;
-      const y = rect.top + window.scrollY - 40;
+      const x = rect.left;
+      const y = rect.top - 40; // 40px above, using viewport coordinates
       
       this.floatingMenu.showEditMode(x, y, target, this.updateHighlight.bind(this));
     }
@@ -91,9 +91,9 @@ export class SelectionManager {
     
     const rect = this.currentSelectionRange.getBoundingClientRect();
     
-    // Show menu above the selection
-    const x = rect.left + window.scrollX;
-    const y = rect.top + window.scrollY - 40; // 40px above
+    // Show menu above the selection, using viewport coordinates
+    const x = rect.left;
+    const y = rect.top - 40; // 40px above
     
     console.log('[NoteIt] Showing menu at:', x, y);
     this.floatingMenu.show(x, y);
@@ -228,9 +228,12 @@ export class SelectionManager {
       favicon = `${urlObj.origin}/favicon.ico`;
     }
 
-    // Temporarily use text-based highlighting instead of ranges for reliability
-    // const start = this.getSelectionOffset(this.currentSelectionRange);
-    // const length = text.length;
+    // Validate favicon accessibility
+    favicon = await this.validateFavicon(favicon);
+
+    // Calculate precise position to ensure only the selected instance is highlighted
+    const start = this.getSelectionOffset(this.currentSelectionRange);
+    const length = text.length;
 
     const highlight: IHighlight = {
       id,
@@ -240,8 +243,8 @@ export class SelectionManager {
       timestamp,
       pageTitle,
       favicon,
-      // start,
-      // length,
+      start,
+      length,
       ...(comment && { comment }), // Add comment if provided
     };
 
@@ -276,5 +279,50 @@ export class SelectionManager {
     } catch (error) {
       console.error('[NoteIt] Failed to save highlight:', error);
     }
+  }
+
+  /**
+   * Calculate the character offset of the range start position
+   * relative to the document body text content
+   */
+  private getSelectionOffset(range: Range): number {
+    const preRange = document.createRange();
+    preRange.selectNodeContents(document.body);
+    preRange.setEnd(range.startContainer, range.startOffset);
+    const offset = preRange.toString().length;
+    preRange.detach();
+    return offset;
+  }
+
+  /**
+   * Validate if a favicon URL is accessible
+   * Uses Image object to test loading - this works reliably even with CORS restrictions
+   * Returns the URL if accessible, empty string if not
+   */
+  private async validateFavicon(faviconUrl: string): Promise<string> {
+    if (!faviconUrl) return '';
+    
+    return new Promise((resolve) => {
+      const img = new Image();
+      const timeout = setTimeout(() => {
+        img.src = ''; // Cancel loading
+        console.warn('[NoteIt] Favicon validation timeout:', faviconUrl);
+        resolve(''); // Timeout = not accessible
+      }, 3000); // 3 second timeout
+      
+      img.onload = () => {
+        clearTimeout(timeout);
+        console.log('[NoteIt] Favicon validated successfully:', faviconUrl);
+        resolve(faviconUrl); // Successfully loaded
+      };
+      
+      img.onerror = () => {
+        clearTimeout(timeout);
+        console.warn('[NoteIt] Favicon not accessible:', faviconUrl);
+        resolve(''); // Failed to load
+      };
+      
+      img.src = faviconUrl; // Start loading
+    });
   }
 }

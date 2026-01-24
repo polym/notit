@@ -114,27 +114,10 @@ export class HighlightManager {
 
     let matchCount = 0;
 
-    // Use != null to check both null and undefined
+    // Prioritize range-based highlighting for precision (only highlights the exact selected instance)
     if (start != null && length != null && typeof start === 'number' && typeof length === 'number') {
+      console.log(`[NoteIt] Using range-based highlighting for precise positioning`);
       this.markInstance.markRanges([{ start, length }], {
-        className: `noteit-highlight-${id}`,
-        each: (element: Element) => {
-          matchCount++;
-          const el = element as HTMLElement;
-          el.style.backgroundColor = color;
-          el.dataset.highlightId = id;
-          el.classList.add('noteit-highlight');
-          if (comment) {
-            el.classList.add('noteit-with-comment');
-            this.attachCommentTooltip(el, comment);
-          }
-        },
-        done: () => {
-          console.log(`[NoteIt] Range-based highlight completed for ${id}, matches: ${matchCount}`);
-        },
-      });
-    } else {
-      this.markInstance.mark(text, {
         className: `noteit-highlight-${id}`,
         each: (element: Element) => {
           matchCount++;
@@ -147,23 +130,56 @@ export class HighlightManager {
             this.attachCommentTooltip(el, comment);
           }
         },
-        separateWordSearch: false,
-        accuracy: 'partially',
-        acrossElements: true,
-        iframes: true,
-        caseSensitive: false,
-        ignoreJoiners: true,
-        done: (markedCount: number) => {
-          console.log(`[NoteIt] Text-based highlight completed for ${id}, matches: ${markedCount}`);
-          if (markedCount === 0) {
-            console.warn(`[NoteIt] Failed to find text for highlight ${id}:`, text.substring(0, 100));
+        done: () => {
+          console.log(`[NoteIt] Range-based highlight completed for ${id}, matches: ${matchCount}`);
+          if (matchCount === 0) {
+            console.warn(`[NoteIt] Range-based highlighting failed for ${id}, falling back to text matching`);
+            // Fallback to text-based if range fails (e.g., DOM changed)
+            this.highlightByText(text, id, color, comment);
           }
         },
-        noMatch: () => {
-          console.error(`[NoteIt] No match found for highlight ${id}:`, text.substring(0, 100));
-        },
       });
+    } else {
+      console.log(`[NoteIt] No position data available, using text-based matching (may highlight duplicates)`);
+      this.highlightByText(text, id, color, comment);
     }
+  }
+
+  /**
+   * Highlight text using text matching (may match multiple instances)
+   * This is used as a fallback when position data is not available
+   */
+  private highlightByText(text: string, id: string, color: string, comment?: string) {
+    let matchCount = 0;
+    this.markInstance.mark(text, {
+      className: `noteit-highlight-${id}`,
+      each: (element: Element) => {
+        matchCount++;
+        const el = element as HTMLElement;
+        el.style.setProperty('background-color', color, 'important');
+        el.dataset.highlightId = id;
+        el.classList.add('noteit-highlight');
+        if (comment) {
+          el.classList.add('noteit-with-comment');
+          this.attachCommentTooltip(el, comment);
+        }
+      },
+      separateWordSearch: false,
+      accuracy: 'partially',
+      acrossElements: true,
+      iframes: true,
+      caseSensitive: false,
+      ignoreJoiners: true,
+      done: (markedCount: number) => {
+        console.log(`[NoteIt] Text-based highlight completed for ${id}, matches: ${markedCount}`);
+        if (markedCount === 0) {
+          console.warn(`[NoteIt] Failed to find text for highlight ${id}:`, text.substring(0, 100));
+        }
+      },
+      noMatch: () => {
+        console.error(`[NoteIt] No match found for highlight ${id}:`, text.substring(0, 100));
+      },
+    });
   }
 
   private attachCommentTooltip(element: HTMLElement, comment: string) {

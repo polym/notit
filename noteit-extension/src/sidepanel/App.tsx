@@ -24,6 +24,20 @@ const WebsiteGroup = ({
   const hasFavicon = favicon && favicon.trim() !== '';
   const [showFavicon, setShowFavicon] = useState(hasFavicon);
 
+  // Sort highlights by their position in the article (start offset)
+  // Highlights without start position fall back to timestamp ordering
+  const sortedHighlights = [...highlights].sort((a, b) => {
+    // If both have start positions, sort by position
+    if (a.start != null && b.start != null) {
+      return a.start - b.start;
+    }
+    // If only one has start, prioritize it
+    if (a.start != null) return -1;
+    if (b.start != null) return 1;
+    // If neither has start, sort by timestamp
+    return a.timestamp - b.timestamp;
+  });
+
   // Sync showFavicon when favicon changes
   useEffect(() => {
     setShowFavicon(hasFavicon);
@@ -129,7 +143,7 @@ const WebsiteGroup = ({
       {isExpanded && (
         <div style={{ padding: '0 12px 12px 12px', borderTop: '1px solid #f5f5f5' }}>
           <HighlightList
-            highlights={highlights}
+            highlights={sortedHighlights}
             onDelete={onDelete}
             onJumpTo={onJumpTo}
             showHostname={false}
@@ -161,9 +175,18 @@ function App() {
 
   const currentNormalized = normalizeUrl(currentUrl);
 
-  const currentHighlights = highlights.filter(
-    (h) => normalizeUrl(h.url) === currentNormalized
-  );
+  const currentHighlights = highlights
+    .filter((h) => normalizeUrl(h.url) === currentNormalized)
+    .sort((a, b) => {
+      // Sort by position in article (start offset)
+      if (a.start != null && b.start != null) {
+        return a.start - b.start;
+      }
+      if (a.start != null) return -1;
+      if (b.start != null) return 1;
+      // Fallback to timestamp for old data without position
+      return a.timestamp - b.timestamp;
+    });
 
   // Helper to get time category
   const getTimeCategory = (timestamp: number) => {

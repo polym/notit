@@ -182,6 +182,26 @@
 - 确认已设置表权限（Policies）
 - 打开浏览器开发者工具（F12）→ Console，查看是否有错误信息
 
+**Q: 批注功能不工作，数据库中没有 comment 字段？**
+- 如果你的数据库表是在添加批注功能之前创建的，可能缺少 `comment` 字段
+- 解决方法：在 Supabase SQL Editor 中运行以下 SQL：
+  ```sql
+  ALTER TABLE highlights ADD COLUMN IF NOT EXISTS comment TEXT;
+  ```
+- 或者运行项目中的完整架构脚本：`supabase-migrations/complete-schema.sql`
+- 验证字段已添加：
+  ```sql
+  SELECT column_name FROM information_schema.columns WHERE table_name = 'highlights';
+  ```
+
+**Q: 如何验证批注功能是否正常？**
+- 在浏览器中打开项目根目录下的 `test-annotation.html` 文件
+- 按照页面上的测试步骤操作
+- 使用开发者工具检查数据：
+  ```javascript
+  chrome.storage.local.get('highlights', (result) => console.log(result.highlights))
+  ```
+
 **Q: 我的数据安全吗？**
 - 所有数据存储在你自己的 Supabase 项目中
 - Supabase 提供行业标准的加密和安全措施
@@ -200,9 +220,29 @@
 ### 创建高亮
 
 1. 在任何网页上用鼠标选中想要高亮的文字
-2. 会弹出颜色选择菜单
-3. 点击一个颜色按钮，高亮即刻生成
-4. （可选）点击 💬 按钮添加文字注释
+2. 会弹出颜色选择菜单（包含4个颜色按钮和1个笔记按钮）
+3. **直接高亮**：点击任一颜色按钮，立即生成对应颜色的高亮
+4. **添加批注**：点击 📝 笔记按钮，输入批注内容后保存
+
+### 添加和编辑批注
+
+**创建带批注的高亮：**
+1. 选中文本后，点击浮动菜单中的 📝 按钮（最右侧）
+2. 在弹出的输入框中输入你的批注内容
+3. 点击 "Save Note" 按钮或按 `Ctrl+Enter` (Mac: `Cmd+Enter`) 保存
+4. 批注会以紫色高亮显示
+
+**编辑已有批注：**
+1. 将鼠标悬停在高亮文本上
+2. 浮动菜单会自动出现
+3. 点击 📝 按钮打开编辑界面
+4. 修改批注内容后保存
+5. 要删除批注，清空输入框后保存即可
+
+**查看批注：**
+- 将鼠标悬停在带有批注的高亮文本上
+- 批注内容会以工具提示形式显示
+- 在侧边栏中也可以看到批注内容（显示在高亮文本下方）
 
 ### 查看高亮
 
