@@ -210,4 +210,17 @@ export class HighlightManager {
       }
     });
   }
+
+  public clearAll() {
+    // Remove all highlights from the page
+    const elements = document.querySelectorAll('.noteit-highlight');
+    elements.forEach((el) => {
+      const parent = el.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(el.textContent || ''), el);
+        parent.normalize();
+      }
+    });
+    console.log('[NoteIt] Cleared all highlights from page');
+  }
 }

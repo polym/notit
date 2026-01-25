@@ -158,6 +158,91 @@ function App() {
   const { highlights, removeHighlight, jumpToHighlight, currentUrl } = useHighlights();
   const [activeTab, setActiveTab] = useState<'current' | 'websites'>('current');
   const [showSettings, setShowSettings] = useState(false);
+  const [isExtensionEnabled, setIsExtensionEnabled] = useState<boolean | null>(null);
+
+  // Get extension state for current page
+  useEffect(() => {
+    const checkExtensionState = async () => {
+      if (!currentUrl) return;
+      
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab?.id) return;
+
+        // Request current state from content script
+        chrome.tabs.sendMessage(tab.id, { action: 'GET_EXTENSION_STATE' }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.log('Could not get extension state:', chrome.runtime.lastError);
+            // Default to checking storage
+            checkStorageState();
+            return;
+          }
+          if (response && typeof response.enabled === 'boolean') {
+            setIsExtensionEnabled(response.enabled);
+          }
+        });
+      } catch (error) {
+        console.error('Failed to check extension state:', error);
+        checkStorageState();
+      }
+    };
+
+    const checkStorageState = async () => {
+      if (!currentUrl) return;
+      try {
+        const result = await chrome.storage.local.get(['enabledSites', 'highlights']);
+        const enabledSites = (result.enabledSites as string[]) || [];
+        const allHighlights = (result.highlights as IHighlight[]) || [];
+        
+        // Check if enabled or has highlights
+        const hasHighlights = allHighlights.some(h => h.url === currentUrl);
+        const isEnabled = enabledSites.includes(currentUrl) || hasHighlights;
+        setIsExtensionEnabled(isEnabled);
+      } catch (error) {
+        console.error('Failed to check storage state:', error);
+      }
+    };
+
+    checkExtensionState();
+
+    // Listen for state changes
+    const handleStorageChange = (changes: any) => {
+      if (changes.enabledSites) {
+        checkStorageState();
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+    return () => chrome.storage.onChanged.removeListener(handleStorageChange);
+  }, [currentUrl]);
+
+  const toggleExtension = async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab?.id) return;
+
+      // Toggle local state immediately for better UX
+      const newState = !isExtensionEnabled;
+      setIsExtensionEnabled(newState);
+      
+      // Send message to content script
+      chrome.tabs.sendMessage(tab.id, { action: 'TOGGLE_EXTENSION' });
+      
+      // Wait a bit and verify state from storage (only check enabledSites, not auto-enable from highlights)
+      setTimeout(async () => {
+        try {
+          const result = await chrome.storage.local.get(['enabledSites']);
+          const enabledSites = (result.enabledSites as string[]) || [];
+          const isEnabled = enabledSites.includes(currentUrl);
+          setIsExtensionEnabled(isEnabled);
+        } catch (error) {
+          console.error('Failed to verify state:', error);
+        }
+      }, 200);
+    } catch (error) {
+      console.error('Failed to toggle extension:', error);
+    }
+  };
 
   if (showSettings) {
     return <Settings onBack={() => setShowSettings(false)} />;
@@ -234,19 +319,56 @@ function App() {
     <div style={{ padding: '16px', fontFamily: 'sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h1 style={{ fontSize: '20px', margin: 0 }}>NoteIt 📝</h1>
-        <button
-          onClick={() => setShowSettings(true)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '20px',
-            padding: '4px',
-          }}
-          title="Settings"
-        >
-          ⚙️
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Toggle Switch */}
+          <button
+            onClick={toggleExtension}
+            disabled={isExtensionEnabled === null}
+            style={{
+              position: 'relative',
+              width: '48px',
+              height: '28px',
+              background: isExtensionEnabled ? '#22c55e' : '#d1d5db',
+              border: 'none',
+              borderRadius: '14px',
+              cursor: isExtensionEnabled === null ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.3s ease',
+              opacity: isExtensionEnabled === null ? 0.5 : 1,
+              padding: 0,
+              outline: 'none',
+            }}
+            title={isExtensionEnabled ? 'Disable for this site' : 'Enable for this site'}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: '2px',
+                left: isExtensionEnabled ? '22px' : '2px',
+                width: '24px',
+                height: '24px',
+                background: 'white',
+                borderRadius: '50%',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                transition: 'left 0.3s ease',
+              }}
+            />
+          </button>
+          
+          {/* Settings Button */}
+          <button
+            onClick={() => setShowSettings(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '20px',
+              padding: '4px',
+            }}
+            title="Settings"
+          >
+            ⚙️
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

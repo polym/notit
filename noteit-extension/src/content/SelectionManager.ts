@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HighlightManager } from './HighlightManager';
 import { FloatingMenu } from './FloatingMenu';
 import type { IHighlight } from '../shared/types';
+import { getExtensionEnabled } from './index';
 
 export class SelectionManager {
   private highlightManager: HighlightManager;
@@ -37,6 +38,11 @@ export class SelectionManager {
   }
 
   private handleMouseOver(e: MouseEvent) {
+    // Don't show edit menu if extension is disabled
+    if (!getExtensionEnabled()) {
+      return;
+    }
+    
     const target = e.target as HTMLElement;
     
     // Check if hovering over a highlight
@@ -50,6 +56,11 @@ export class SelectionManager {
   }
 
   private async handleMouseUp() {
+    // Don't show menu if extension is disabled
+    if (!getExtensionEnabled()) {
+      return;
+    }
+    
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) {
       return;

@@ -12,12 +12,145 @@ const selectionManager = new SelectionManager(highlightManager);
 // Flag to prevent observer from triggering during our own operations
 let isLoadingHighlights = false;
 
+// Extension enabled state for current site
+let isExtensionEnabled = false;
+
+// Export getter for extension state (for SelectionManager)
+export const getExtensionEnabled = () => isExtensionEnabled;
+
+// Create status indicator UI
+const createStatusIndicator = () => {
+  const indicator = document.createElement('div');
+  indicator.id = 'noteit-status-indicator';
+  indicator.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    z-index: 999999;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.3s;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+  `;
+  
+  indicator.addEventListener('click', () => {
+    const currentUrl = window.location.href;
+    if (isExtensionEnabled) {
+      disableExtension(currentUrl);
+    } else {
+      enableExtension(currentUrl);
+    }
+  });
+  
+  document.body.appendChild(indicator);
+  return indicator;
+};
+
+// Update status indicator
+const updateStatusIndicator = (enabled: boolean) => {
+  let indicator = document.getElementById('noteit-status-indicator') as HTMLElement;
+  if (!indicator) {
+    indicator = createStatusIndicator();
+  }
+  
+  indicator.textContent = enabled ? '✓ NoteIt Enabled' : '✗ NoteIt Disabled';
+  indicator.style.background = enabled ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+  indicator.style.opacity = '1';
+  indicator.style.transform = 'translateY(0)';
+  indicator.style.pointerEvents = 'auto';
+  
+  // Hide after 3 seconds
+  setTimeout(() => {
+    indicator.style.opacity = '0';
+    indicator.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      indicator.style.pointerEvents = 'none';
+    }, 300);
+  }, 3000);
+};
+
+// Check if current site has any highlights
+const checkIfSiteHasHighlights = async (url: string): Promise<boolean> => {
+  try {
+    const result = await chrome.storage.local.get('highlights');
+    const allHighlights = (result.highlights as IHighlight[]) || [];
+    return allHighlights.some(h => h.url === url);
+  } catch (error) {
+    console.error('[NoteIt] Failed to check highlights:', error);
+    return false;
+  }
+};
+
+// Check if extension is enabled for current site
+const checkExtensionEnabled = async (url: string): Promise<boolean> => {
+  try {
+    const result = await chrome.storage.local.get('enabledSites');
+    const enabledSites = (result.enabledSites as string[]) || [];
+    return enabledSites.includes(url);
+  } catch (error) {
+    console.error('[NoteIt] Failed to check enabled sites:', error);
+    return false;
+  }
+};
+
+// Enable extension for current site
+const enableExtension = async (url: string) => {
+  try {
+    const result = await chrome.storage.local.get('enabledSites');
+    const enabledSites = (result.enabledSites as string[]) || [];
+    if (!enabledSites.includes(url)) {
+      enabledSites.push(url);
+      await chrome.storage.local.set({ enabledSites });
+    }
+    isExtensionEnabled = true;
+    console.log('[NoteIt] Extension enabled for:', url);
+    updateStatusIndicator(true);
+    await loadHighlights();
+  } catch (error) {
+    console.error('[NoteIt] Failed to enable extension:', error);
+  }
+};
+
+// Disable extension for current site
+const disableExtension = async (url: string) => {
+  try {
+    const result = await chrome.storage.local.get('enabledSites');
+    const enabledSites = (result.enabledSites as string[]) || [];
+    const index = enabledSites.indexOf(url);
+    if (index > -1) {
+      enabledSites.splice(index, 1);
+      await chrome.storage.local.set({ enabledSites });
+    }
+    isExtensionEnabled = false;
+    console.log('[NoteIt] Extension disabled for:', url);
+    updateStatusIndicator(false);
+    // Clear all highlights from the page
+    highlightManager.clearAll();
+  } catch (error) {
+    console.error('[NoteIt] Failed to disable extension:', error);
+  }
+};
+
 // Load saved highlights
 const loadHighlights = async () => {
   if (isLoadingHighlights) {
     console.log('[NoteIt] loadHighlights already in progress, skipping...');
     return;
   }
+  
+  // Only load highlights if extension is enabled for this site
+  if (!isExtensionEnabled) {
+    console.log('[NoteIt] Extension disabled for this site, skipping highlight load');
+    return;
+  }
+  
   isLoadingHighlights = true;
   try {
     const result = await chrome.storage.local.get('highlights');
@@ -126,30 +259,69 @@ const observer = new MutationObserver((mutations) => {
 
 // Wait for DOM to be ready before loading highlights
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    // Small delay to ensure DOM is fully rendered
-    setTimeout(() => {
-      loadHighlights();
-    }, 300);
+  document.addEventListener('DOMContentLoaded', async () => {
+    const currentUrl = window.location.href;
+    
+    // Check if site has highlights or is manually enabled
+    const hasHighlights = await checkIfSiteHasHighlights(currentUrl);
+    const manuallyEnabled = await checkExtensionEnabled(currentUrl);
+    
+    if (hasHighlights || manuallyEnabled) {
+      console.log('[NoteIt] Auto-enabling extension (hasHighlights:', hasHighlights, ', manuallyEnabled:', manuallyEnabled, ')');
+      await enableExtension(currentUrl);
+    } else {
+      console.log('[NoteIt] Extension disabled by default for this site');
+    }
+    
     observer.observe(document.body, observeOptions);
   });
 } else {
-  // Small delay to ensure DOM is fully rendered
-  setTimeout(() => {
-    loadHighlights();
-  }, 300);
-  observer.observe(document.body, observeOptions);
+  (async () => {
+    const currentUrl = window.location.href;
+    
+    // Check if site has highlights or is manually enabled
+    const hasHighlights = await checkIfSiteHasHighlights(currentUrl);
+    const manuallyEnabled = await checkExtensionEnabled(currentUrl);
+    
+    if (hasHighlights || manuallyEnabled) {
+      console.log('[NoteIt] Auto-enabling extension (hasHighlights:', hasHighlights, ', manuallyEnabled:', manuallyEnabled, ')');
+      await enableExtension(currentUrl);
+    } else {
+      console.log('[NoteIt] Extension disabled by default for this site');
+    }
+    
+    observer.observe(document.body, observeOptions);
+  })();
 }
 
 // Listen for messages from Side Panel & Background
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === 'DELETE_HIGHLIGHT' && message.id) {
     console.log('[NoteIt] Received DELETE_HIGHLIGHT:', message.id);
     highlightManager.remove(message.id);
   }
   if (message.action === 'TRIGGER_HIGHLIGHT') {
     console.log('[NoteIt] Received TRIGGER_HIGHLIGHT');
-    selectionManager.triggerHighlight();
+    // Auto-enable extension when user creates a highlight
+    const currentUrl = window.location.href;
+    enableExtension(currentUrl).then(() => {
+      selectionManager.triggerHighlight();
+    });
+  }
+  if (message.action === 'TOGGLE_EXTENSION') {
+    console.log('[NoteIt] Received TOGGLE_EXTENSION');
+    const currentUrl = window.location.href;
+    if (isExtensionEnabled) {
+      disableExtension(currentUrl);
+    } else {
+      enableExtension(currentUrl);
+    }
+  }
+  if (message.action === 'GET_EXTENSION_STATE') {
+    console.log('[NoteIt] Received GET_EXTENSION_STATE, current state:', isExtensionEnabled);
+    // Send back the current state synchronously
+    sendResponse({ enabled: isExtensionEnabled });
+    return true; // Required to keep the message channel open for async response
   }
   if (message.action === 'SCROLL_TO_HIGHLIGHT' && message.id) {
     console.log('[NoteIt] Received SCROLL_TO_HIGHLIGHT:', message.id);

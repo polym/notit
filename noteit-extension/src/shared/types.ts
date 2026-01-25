@@ -23,4 +23,5 @@ export interface IHighlight {
 
 export interface IStorageSchema {
   highlights: IHighlight[];
+  enabledSites?: string[]; // URLs where the extension is enabled
 }
