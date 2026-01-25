@@ -1,0 +1,49 @@
+name: Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # 当推送如 v1.0.0 格式的 tag 时触发
+
+permissions:
+  contents: write  # 允许创建 release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: noteit-extension/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./noteit-extension
+      run: npm ci
+      
+    - name: Build extension
+      working-directory: ./noteit-extension
+      run: npm run build
+      
+    - name: Package extension
+      working-directory: ./noteit-extension
+      run: |
+        cd dist
+        zip -r ../noteit-extension-${{ github.ref_name }}.zip .
+        cd ..
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: noteit-extension/noteit-extension-${{ github.ref_name }}.zip
+        generate_release_notes: true  # 自动生成 release notes
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
