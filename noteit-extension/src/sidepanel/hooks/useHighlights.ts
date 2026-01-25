@@ -5,6 +5,7 @@ import { getSupabaseClient } from '../utils/supabase';
 export const useHighlights = () => {
   const [highlights, setHighlights] = useState<IHighlight[]>([]);
   const [currentUrl, setCurrentUrl] = useState<string>('');
+  const [invalidHighlights, setInvalidHighlights] = useState<Set<string>>(new Set());
   const isSyncingFromSupabase = useRef(false);
 
   // Sync with Supabase on load
@@ -177,7 +178,19 @@ export const useHighlights = () => {
           let retries = 3;
           while (retries > 0) {
             try {
-              await chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+              const response = await chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+              // Check if highlight was found
+              if (response && response.success === false) {
+                console.warn('[NoteIt] Highlight not found in page:', id);
+                setInvalidHighlights(prev => new Set(prev).add(id));
+              } else if (response && response.success === true) {
+                // Remove from invalid set if it was previously marked
+                setInvalidHighlights(prev => {
+                  const newSet = new Set(prev);
+                  newSet.delete(id);
+                  return newSet;
+                });
+              }
               break; // 成功发送，退出循环
             } catch (error) {
               retries--;
@@ -190,7 +203,23 @@ export const useHighlights = () => {
             }
           }
         } else {
-          chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+          try {
+            const response = await chrome.tabs.sendMessage(targetTab.id, { action: 'SCROLL_TO_HIGHLIGHT', id });
+            // Check if highlight was found
+            if (response && response.success === false) {
+              console.warn('[NoteIt] Highlight not found in page:', id);
+              setInvalidHighlights(prev => new Set(prev).add(id));
+            } else if (response && response.success === true) {
+              // Remove from invalid set if it was previously marked
+              setInvalidHighlights(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(id);
+                return newSet;
+              });
+            }
+          } catch (error) {
+            console.error('[NoteIt] Failed to send message:', error);
+          }
         }
       }
     } catch (error) {
@@ -223,7 +252,14 @@ export const useHighlights = () => {
     if (tab?.id) {
         chrome.tabs.sendMessage(tab.id, { action: 'DELETE_HIGHLIGHT', id });
     }
+    
+    // Remove from invalid highlights set
+    setInvalidHighlights(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      return newSet;
+    });
   };
 
-  return { highlights, removeHighlight, jumpToHighlight, currentUrl };
+  return { highlights, removeHighlight, jumpToHighlight, currentUrl, invalidHighlights };
 };

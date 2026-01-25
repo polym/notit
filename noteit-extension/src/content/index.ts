@@ -349,9 +349,18 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
             setTimeout(() => {
                 if (!scrollToElement()) {
                      console.error('[NoteIt] Failed to scroll to highlight after retry:', message.id);
+                     // Send response indicating failure
+                     sendResponse({ success: false });
+                } else {
+                     // Send response indicating success after retry
+                     sendResponse({ success: true });
                 }
             }, 500);
         });
+        return true; // Required to keep the message channel open for async response
+    } else {
+        // Send response indicating immediate success
+        sendResponse({ success: true });
     }
   }
 });

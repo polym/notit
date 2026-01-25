@@ -10,11 +10,13 @@ const WebsiteGroup = ({
   highlights,
   onDelete,
   onJumpTo,
+  invalidHighlights,
 }: {
   url: string;
   highlights: IHighlight[];
   onDelete: (id: string) => void;
   onJumpTo: (id: string) => void;
+  invalidHighlights?: Set<string>;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -147,6 +149,7 @@ const WebsiteGroup = ({
             onDelete={onDelete}
             onJumpTo={onJumpTo}
             showHostname={false}
+            invalidHighlights={invalidHighlights}
           />
         </div>
       )}
@@ -155,7 +158,7 @@ const WebsiteGroup = ({
 };
 
 function App() {
-  const { highlights, removeHighlight, jumpToHighlight, currentUrl } = useHighlights();
+  const { highlights, removeHighlight, jumpToHighlight, currentUrl, invalidHighlights } = useHighlights();
   const [activeTab, setActiveTab] = useState<'current' | 'websites'>('current');
   const [showSettings, setShowSettings] = useState(false);
   const [isExtensionEnabled, setIsExtensionEnabled] = useState<boolean | null>(null);
@@ -421,6 +424,7 @@ function App() {
                 onDelete={removeHighlight}
                 onJumpTo={jumpToHighlight}
                 showHostname={false}
+                invalidHighlights={invalidHighlights}
               />
           ) : (
               <p style={{ color: '#666', textAlign: 'center' }}>Loading...</p>
@@ -453,6 +457,7 @@ function App() {
                     highlights={groupHighlights}
                     onDelete={removeHighlight}
                     onJumpTo={jumpToHighlight}
+                    invalidHighlights={invalidHighlights}
                   />
                 ))}
               </div>
