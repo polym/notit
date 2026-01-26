@@ -2,11 +2,13 @@ export class FloatingMenu {
   private host: HTMLElement | null = null;
   private shadowRoot: ShadowRoot | null = null;
   private onColorSelect: (color: string, comment?: string) => void;
+  private onClose: (() => void) | null = null;
   private currentEditElement: HTMLElement | null = null;
   private onUpdate: ((element: HTMLElement, color: string, comment?: string) => void) | null = null;
 
-  constructor(onColorSelect: (color: string, comment?: string) => void) {
+  constructor(onColorSelect: (color: string, comment?: string) => void, onClose?: () => void) {
     this.onColorSelect = onColorSelect;
+    this.onClose = onClose || null;
   }
 
   public show(x: number, y: number) {
@@ -75,6 +77,31 @@ export class FloatingMenu {
         box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
       }
       .note-btn:active {
+        transform: scale(1.05);
+      }
+      .close-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #c62828;
+        font-weight: bold;
+        line-height: 1;
+      }
+      .close-btn:hover {
+        transform: scale(1.15);
+        border-color: #c62828;
+        box-shadow: 0 4px 12px rgba(198, 40, 40, 0.4);
+      }
+      .close-btn:active {
         transform: scale(1.05);
       }
       .input-container {
@@ -212,6 +239,21 @@ export class FloatingMenu {
     });
     menu.appendChild(noteBtn);
 
+    // Add Close button
+    const closeBtn = document.createElement('div');
+    closeBtn.className = 'close-btn';
+    closeBtn.textContent = '×';
+    closeBtn.title = 'Close';
+    closeBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (this.onClose) {
+        this.onClose();
+      }
+      this.remove();
+    });
+    menu.appendChild(closeBtn);
+
     // Clear and rebuild
     this.shadowRoot.innerHTML = '';
     if (styleElement) {
@@ -237,8 +279,33 @@ export class FloatingMenu {
     headerIcon.textContent = '📝';
     const headerText = document.createElement('span');
     headerText.textContent = 'Add Note';
+    const closeBtn = document.createElement('span');
+    closeBtn.style.marginLeft = 'auto';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.color = '#c62828';
+    closeBtn.style.fontSize = '20px';
+    closeBtn.style.fontWeight = 'bold';
+    closeBtn.style.lineHeight = '1';
+    closeBtn.style.transition = 'all 0.2s ease';
+    closeBtn.textContent = '×';
+    closeBtn.title = 'Close';
+    closeBtn.addEventListener('mouseenter', () => {
+      closeBtn.style.transform = 'scale(1.2)';
+    });
+    closeBtn.addEventListener('mouseleave', () => {
+      closeBtn.style.transform = 'scale(1)';
+    });
+    closeBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (this.onClose) {
+        this.onClose();
+      }
+      this.remove();
+    });
     header.appendChild(headerIcon);
     header.appendChild(headerText);
+    header.appendChild(closeBtn);
     container.appendChild(header);
 
     const textarea = document.createElement('textarea');
@@ -365,6 +432,31 @@ export class FloatingMenu {
         border-color: #4caf50;
         box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
       }
+      .close-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #c62828;
+        font-weight: bold;
+        line-height: 1;
+      }
+      .close-btn:hover {
+        transform: scale(1.15);
+        border-color: #c62828;
+        box-shadow: 0 4px 12px rgba(198, 40, 40, 0.4);
+      }
+      .close-btn:active {
+        transform: scale(1.05);
+      }
       .input-container {
         display: flex;
         flex-direction: column;
@@ -487,6 +579,21 @@ export class FloatingMenu {
     });
     menu.appendChild(noteBtn);
 
+    // Add Close button
+    const closeBtn = document.createElement('div');
+    closeBtn.className = 'close-btn';
+    closeBtn.textContent = '×';
+    closeBtn.title = 'Close';
+    closeBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (this.onClose) {
+        this.onClose();
+      }
+      this.remove();
+    });
+    menu.appendChild(closeBtn);
+
     this.shadowRoot.innerHTML = '';
     if (styleElement) {
       this.shadowRoot.appendChild(styleElement);
@@ -505,7 +612,32 @@ export class FloatingMenu {
     header.className = 'input-header';
     const headerText = document.createElement('span');
     headerText.textContent = '📝 Edit Note';
+    const closeBtn = document.createElement('span');
+    closeBtn.style.marginLeft = 'auto';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.color = '#c62828';
+    closeBtn.style.fontSize = '20px';
+    closeBtn.style.fontWeight = 'bold';
+    closeBtn.style.lineHeight = '1';
+    closeBtn.style.transition = 'all 0.2s ease';
+    closeBtn.textContent = '×';
+    closeBtn.title = 'Close';
+    closeBtn.addEventListener('mouseenter', () => {
+      closeBtn.style.transform = 'scale(1.2)';
+    });
+    closeBtn.addEventListener('mouseleave', () => {
+      closeBtn.style.transform = 'scale(1)';
+    });
+    closeBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (this.onClose) {
+        this.onClose();
+      }
+      this.remove();
+    });
     header.appendChild(headerText);
+    header.appendChild(closeBtn);
     container.appendChild(header);
 
     // Get existing comment if any

@@ -8,11 +8,20 @@ export class SelectionManager {
   private highlightManager: HighlightManager;
   private floatingMenu: FloatingMenu;
   private currentSelectionRange: Range | null = null;
+  private justClosedMenu: boolean = false;
 
   constructor(highlightManager: HighlightManager) {
     this.highlightManager = highlightManager;
-    this.floatingMenu = new FloatingMenu(this.handleColorSelect.bind(this));
+    this.floatingMenu = new FloatingMenu(this.handleColorSelect.bind(this), this.onMenuClose.bind(this));
     this.init();
+  }
+
+  private onMenuClose() {
+    // Set flag to prevent immediate reopening
+    this.justClosedMenu = true;
+    setTimeout(() => {
+      this.justClosedMenu = false;
+    }, 100);
   }
 
   private init() {
@@ -58,6 +67,11 @@ export class SelectionManager {
   private async handleMouseUp() {
     // Don't show menu if extension is disabled
     if (!getExtensionEnabled()) {
+      return;
+    }
+    
+    // Don't show menu if it was just closed
+    if (this.justClosedMenu) {
       return;
     }
     
