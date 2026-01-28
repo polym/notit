@@ -24,13 +24,14 @@ const createStatusIndicator = () => {
   indicator.id = 'noteit-status-indicator';
   indicator.style.cssText = `
     position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 8px 16px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    border-radius: 20px;
-    font-size: 12px;
+    top: 16px;
+    right: 16px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a1a;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     z-index: 999999;
     cursor: pointer;
@@ -38,8 +39,13 @@ const createStatusIndicator = () => {
     opacity: 0;
     transform: translateY(-10px);
     pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   `;
-  
+
   indicator.addEventListener('click', () => {
     const currentUrl = window.location.href;
     if (isExtensionEnabled) {
@@ -48,7 +54,7 @@ const createStatusIndicator = () => {
       enableExtension(currentUrl);
     }
   });
-  
+
   document.body.appendChild(indicator);
   return indicator;
 };
@@ -59,13 +65,31 @@ const updateStatusIndicator = (enabled: boolean) => {
   if (!indicator) {
     indicator = createStatusIndicator();
   }
-  
-  indicator.textContent = enabled ? '✓ NoteIt Enabled' : '✗ NoteIt Disabled';
-  indicator.style.background = enabled ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)';
+
+  if (enabled) {
+    // 开启状态 - 绿色主题
+    indicator.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="8" fill="#22c55e"/>
+        <path d="M5 8L7 10L11 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span style="color: #22c55e;">插件已开启</span>
+    `;
+  } else {
+    // 关闭状态 - 灰色/红色主题
+    indicator.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="8" fill="#9ca3af"/>
+        <path d="M5 5L11 11M11 5L5 11" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span style="color: #9ca3af;">插件已关闭</span>
+    `;
+  }
+
   indicator.style.opacity = '1';
   indicator.style.transform = 'translateY(0)';
   indicator.style.pointerEvents = 'auto';
-  
+
   // Hide after 3 seconds
   setTimeout(() => {
     indicator.style.opacity = '0';
