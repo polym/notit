@@ -114,7 +114,7 @@ export class HighlightManager {
 
     let matchCount = 0;
 
-    // Prioritize range-based highlighting for precision (only highlights the exact selected instance)
+    // Strategy 1: precise character-offset positioning (fastest, exact instance)
     if (start != null && length != null && typeof start === 'number' && typeof length === 'number') {
       console.log(`[NoteIt] Using range-based highlighting for precise positioning`);
       this.markInstance.markRanges([{ start, length }], {
@@ -133,16 +133,147 @@ export class HighlightManager {
         done: () => {
           console.log(`[NoteIt] Range-based highlight completed for ${id}, matches: ${matchCount}`);
           if (matchCount === 0) {
-            console.warn(`[NoteIt] Range-based highlighting failed for ${id}, falling back to text matching`);
-            // Fallback to text-based if range fails (e.g., DOM changed)
-            this.highlightByText(text, id, color, comment);
+            console.warn(`[NoteIt] Range-based highlighting failed for ${id}, trying context-based anchoring`);
+            // Strategy 2: context-based anchoring using prefix/suffix
+            this.highlightByContext(highlight).then((success) => {
+              if (!success) {
+                console.warn(`[NoteIt] Context-based anchoring failed for ${id}, falling back to text matching`);
+                // Strategy 3: fuzzy text search (may match multiple instances)
+                this.highlightByText(text, id, color, comment);
+              }
+            });
           }
         },
       });
     } else {
-      console.log(`[NoteIt] No position data available, using text-based matching (may highlight duplicates)`);
-      this.highlightByText(text, id, color, comment);
+      // No position data — try context first, then plain text
+      console.log(`[NoteIt] No position data, trying context-based anchoring`);
+      this.highlightByContext(highlight).then((success) => {
+        if (!success) {
+          console.log(`[NoteIt] No context data or no match, using text-based matching (may highlight duplicates)`);
+          this.highlightByText(text, id, color, comment);
+        }
+      });
     }
+  }
+
+  /**
+   * Strategy 2: context-based anchoring.
+   *
+   * Searches all occurrences of the highlight text in the page, then scores each
+   * candidate by how closely the surrounding characters match the stored prefix/suffix.
+   * The candidate with the highest score is re-anchored with markRanges so that
+   * only one exact instance is highlighted — even when character offsets have shifted
+   * due to dynamic content changes (ads, SPA navigation, lazy loading, etc.).
+   *
+   * Returns true if a highlight was successfully applied.
+   */
+  private async highlightByContext(highlight: IHighlight): Promise<boolean> {
+    const { text, id, color, comment, context } = highlight;
+    if (!context || (!context.prefix && !context.suffix)) return false;
+
+    const { prefix, suffix } = context;
+
+    // Use the same text representation that mark.js and Range.toString() use:
+    // the concatenation of all text-node contents under document.body.
+    const bodyText = document.body.textContent || '';
+    const lowerBody = bodyText.toLowerCase();
+    const lowerText = text.toLowerCase();
+
+    // Find all candidate positions and score by context similarity
+    const candidates: { pos: number; score: number }[] = [];
+    let searchPos = 0;
+
+    while (true) {
+      const pos = lowerBody.indexOf(lowerText, searchPos);
+      if (pos === -1) break;
+
+      const actualPrefix = bodyText.slice(Math.max(0, pos - prefix.length), pos);
+      const actualSuffix = bodyText.slice(pos + text.length, pos + text.length + suffix.length);
+
+      const score =
+        this.scorePrefixMatch(prefix, actualPrefix) +
+        this.scoreSuffixMatch(suffix, actualSuffix);
+
+      candidates.push({ pos, score });
+      searchPos = pos + 1;
+    }
+
+    if (candidates.length === 0) return false;
+
+    // Pick the best-matching candidate
+    candidates.sort((a, b) => b.score - a.score);
+    const best = candidates[0];
+
+    // Require at least 25% combined match quality (out of max 2.0)
+    if (best.score < 0.5) {
+      console.warn(`[NoteIt] Context match quality too low (${best.score.toFixed(2)}) for ${id}`);
+      return false;
+    }
+
+    console.log(
+      `[NoteIt] Context-based anchoring for ${id}: best pos=${best.pos}, score=${best.score.toFixed(2)}, candidates=${candidates.length}`
+    );
+
+    return new Promise((resolve) => {
+      let matched = false;
+      this.markInstance.markRanges([{ start: best.pos, length: text.length }], {
+        className: `noteit-highlight-${id}`,
+        each: (element: Element) => {
+          matched = true;
+          const el = element as HTMLElement;
+          el.style.setProperty('background-color', color, 'important');
+          el.dataset.highlightId = id;
+          el.classList.add('noteit-highlight');
+          if (comment) {
+            el.classList.add('noteit-with-comment');
+            this.attachCommentTooltip(el, comment);
+          }
+        },
+        done: () => {
+          console.log(`[NoteIt] Context-based highlight ${matched ? 'succeeded' : 'failed'} for ${id}`);
+          resolve(matched);
+        },
+      });
+    });
+  }
+
+  /**
+   * Score how well the prefix (text before the selection) matches.
+   * Compares characters outward from the selection boundary (right-aligned).
+   * Returns a value in [0, 1].
+   */
+  private scorePrefixMatch(stored: string, actual: string): number {
+    if (!stored) return 1;
+    if (!actual) return 0;
+    const norm = (s: string) => s.replace(/\s+/g, ' ').toLowerCase();
+    const a = norm(stored);
+    const b = norm(actual);
+    let matches = 0;
+    const len = Math.min(a.length, b.length);
+    for (let i = 0; i < len; i++) {
+      if (a[a.length - 1 - i] === b[b.length - 1 - i]) matches++;
+    }
+    return matches / Math.max(a.length, b.length, 1);
+  }
+
+  /**
+   * Score how well the suffix (text after the selection) matches.
+   * Compares characters outward from the selection boundary (left-aligned).
+   * Returns a value in [0, 1].
+   */
+  private scoreSuffixMatch(stored: string, actual: string): number {
+    if (!stored) return 1;
+    if (!actual) return 0;
+    const norm = (s: string) => s.replace(/\s+/g, ' ').toLowerCase();
+    const a = norm(stored);
+    const b = norm(actual);
+    let matches = 0;
+    const len = Math.min(a.length, b.length);
+    for (let i = 0; i < len; i++) {
+      if (a[i] === b[i]) matches++;
+    }
+    return matches / Math.max(a.length, b.length, 1);
   }
 
   /**

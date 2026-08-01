@@ -260,6 +260,9 @@ export class SelectionManager {
     const start = this.getSelectionOffset(this.currentSelectionRange);
     const length = text.length;
 
+    // Capture surrounding context for robust re-anchoring when page content changes
+    const context = this.getSelectionContext(this.currentSelectionRange);
+
     const highlight: IHighlight = {
       id,
       text,
@@ -270,6 +273,7 @@ export class SelectionManager {
       favicon,
       start,
       length,
+      context,
       ...(comment && { comment }), // Add comment if provided
     };
 
@@ -317,6 +321,33 @@ export class SelectionManager {
     const offset = preRange.toString().length;
     preRange.detach();
     return offset;
+  }
+
+  /**
+   * Capture the text immediately before and after the selection.
+   * This prefix/suffix context is used to re-anchor the highlight when the
+   * page's character offsets change (e.g. SPA navigation, lazy-loaded ads).
+   */
+  private getSelectionContext(range: Range): IHighlight['context'] {
+    const CONTEXT_LENGTH = 64;
+
+    const preRange = document.createRange();
+    preRange.selectNodeContents(document.body);
+    preRange.setEnd(range.startContainer, range.startOffset);
+    const preText = preRange.toString();
+    preRange.detach();
+
+    const postRange = document.createRange();
+    postRange.selectNodeContents(document.body);
+    postRange.setStart(range.endContainer, range.endOffset);
+    const postText = postRange.toString();
+    postRange.detach();
+
+    return {
+      prefix: preText.slice(-CONTEXT_LENGTH),
+      suffix: postText.slice(0, CONTEXT_LENGTH),
+      offset: preText.length,
+    };
   }
 
   /**
