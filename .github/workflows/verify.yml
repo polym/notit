@@ -82,8 +82,10 @@ jobs:
       - name: test:corpus
         run: npm run test:corpus
 
+      # CI runners are slower than the machine that recorded tests/perf/baseline.json, so CI gates on
+      # the NFR1-NFR4 absolute budgets; the 20% regression rule stays for local runs.
       - name: test:perf
-        run: npm run test:perf
+        run: npm run test:perf -- --absolute
 
       - name: Package extension
         run: cd dist && zip -r ../noteit-extension.zip .
