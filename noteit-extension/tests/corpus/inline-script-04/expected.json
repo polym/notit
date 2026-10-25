@@ -1,0 +1,16 @@
+{
+  "name": "inline-script-04",
+  "category": "inline-script",
+  "source": {
+    "url": "https://docs.python.org/3/library/bisect.html",
+    "license": "PSF-2.0 (Python documentation)",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; body inline scripts kept (one precedes the content, issue #5); analytics.python.org removed."
+  },
+  "highlights": [
+    { "id": "is04-1", "text": "This module provides support for maintaining a list in sorted order without", "scope": "div.body" },
+    { "id": "is04-2", "text": "The module is called bisect because it uses a basic bisection", "scope": "div.body" },
+    { "id": "is04-3", "text": "The functions in this module are not thread-safe.", "scope": "div.body" },
+    { "id": "is04-4", "text": "insertion point", "scope": "div.body", "occurrence": 5, "note": "repeated phrase" }
+  ]
+}

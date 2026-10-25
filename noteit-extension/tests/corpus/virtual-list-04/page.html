@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Search - x.com style results (corpus snapshot)</title>
+<!-- Post text: Wikipedia "Annotation" (CC BY-SA 4.0), split into posts. Layout authored locally to model x.com search results: virtualized cellInnerDiv rows, a 400 ms simulated fetch, and the fourth post replaced by a deletion tombstone on even visits. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; background: #fff; color: #0f1419; }
+  header { position: sticky; top: 0; z-index: 3; background: rgba(255,255,255,.9); border-bottom: 1px solid #eff3f4; padding: 12px 16px; font-weight: 700; }
+  main { max-width: 600px; margin: 0 auto; border-left: 1px solid #eff3f4; border-right: 1px solid #eff3f4; }
+  #new-posts { text-align: center; color: #1d9bf0; padding: 12px; border-bottom: 1px solid #eff3f4; }
+  [data-testid="cellInnerDiv"] { position: absolute; left: 0; right: 0; height: 120px; box-sizing: border-box; overflow: hidden; border-bottom: 1px solid #eff3f4; }
+  article[data-testid="tweet"] { padding: 12px 16px; }
+  [data-testid="User-Name"] { font-size: 14px; color: #536471; }
+  [data-testid="User-Name"] b { color: #0f1419; }
+  [data-testid="tweetText"] { font-size: 15px; line-height: 20px; margin-top: 4px; }
+  .tombstone { color: #536471; font-style: italic; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-xsearch-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var MODE = "search"
+    var POSTS = [["Ink Daily","An annotation is extra information associated with a particular point in a document or other piece of information."],["Paper Trails","Annotations are sometimes presented in the margin of book pages."],["Marginal Notes","For annotations of different digital media, see web annotation and text annotation."],["Stationery Club","Annotation Practices are highlighting a phrase or sentence and including a comment, circling a word that needs defining, posing a question when something is not fully understood and writing a short summary of a key section."],["Archive Room","It also invites students to \"(re)construct a history through material engagement and exciting DIY (Do-It-Yourself) annotation practices.\" Text and film annotation is a technique that involves embedding comments or textual notes within a film."],["Desk Studio","Analyzing videos is an undertaking that is never entirely free of preconceived notions, and the first step for researchers is to find their bearings within the field of possible research approaches and thus reflect on their own basic assumptions."],["Ink Daily","Annotations can take part within the video, and can be used when the data video is recorded."],["Paper Trails","It is being used as a tool in text and film to write one's thoughts and emotion into the markings."],["Marginal Notes","In any number of steps of analysis, it can also be supplemented with more annotations."],["Stationery Club","Anthropologists Clifford Geertz calls it a \"thick description.\" This can give a sense of how useful annotation is, especially by adding a description of how it can be implemented in film."],["Archive Room","Marginalia are notes or drawings in the margins of manuscripts."],["Desk Studio","Readers commonly wrote notes in the margins of books to enhance the understanding of later readers."],["Ink Daily","Textual scholarship is a discipline that often uses the technique of annotation to describe or add additional historical context to texts and physical documents to make it easier to understand."],["Paper Trails","Students often highlight passages in books in order to actively engage with the text."],["Marginal Notes","Students can use annotations to refer back to key phrases easily, or add marginalia to aid studying and finding connections between the text and prior knowledge or running themes."],["Stationery Club","Annotation work is often assigned to high school level students as a means of ensuring engagement with the text."],["Archive Room","Annotated bibliographies add commentary on the relevance or quality of each source, in addition to the usual bibliographic information that merely identifies the source."],["Desk Studio","Students use annotation not only for academic purposes, but interpreting their own thoughts, feelings, and emotions."],["Ink Daily","Some students may elect to use different color highlighters or pens to signify different thoughts, feelings and opinions."],["Paper Trails","Mathematical expressions (symbols and formulae) can be annotated with their natural language meaning."],["Marginal Notes","This is essential for disambiguation, since symbols may have different meanings (e.g., \"E\" can be \"energy\" or \"expectation value\", etc.)."],["Stationery Club","The annotation process can be facilitated and accelerated through recommendation, e.g., using the \"AnnoMathTeX\" system that is hosted by Wikimedia."],["Archive Room","From a cognitive perspective, annotation has an important role in learning and instruction."],["Desk Studio","As part of guided noticing it involves highlighting, naming or labeling and commenting aspects of visual representations to help focus learners' attention on specific visual aspects."],["Ink Daily","In other words, it means the assignment of typological representations (culturally meaningful categories), to topological representations (e.g. images)."],["Paper Trails","This is especially important when experts, such as medical doctors, interpret visualizations in detail and explain their interpretations to others, for example by means of digital technology."],["Marginal Notes","Here, annotation can be a way to establish common ground between interactants with different levels of knowledge."],["Stationery Club","Annotations were removed on January 15, 2019, from YouTube after around a decade of service."],["Archive Room","They had allowed users to provide information that popped up during videos, but YouTube indicated they did not work well on small mobile screens, and were being abused."],["Desk Studio","Markup languages like XML and HTML annotate text in a way that is syntactically distinguishable from that text."]]
+    var ROW = 120
+    var OVERSCAN = 2
+    var items = POSTS.map(function (p, i) { return { id: 'p' + i, user: p[0], text: p[1] } })
+    if (MODE === 'timeline' && visit % 2 === 0) {
+      // "Show new posts": two posts arrived since the last visit and are prepended.
+      items.unshift({ id: 'n1', user: 'Paper Trails', text: 'New: a short thread on how readers marked their place before bookmarks existed.' },
+                    { id: 'n0', user: 'Ink Daily', text: 'Fresh ink reviews are up. Which nib do you write with?' })
+    }
+    if (MODE === 'thread' && visit % 2 === 0) {
+      // Replies are ranked differently on each visit; the root post stays first.
+      var replies = items.slice(1).reverse()
+      items = [items[0]].concat(replies)
+    }
+    if (MODE === 'search' && visit % 2 === 0) {
+      // One post was deleted by its author since the last visit; x.com shows a tombstone in its place.
+      items = items.map(function (it, i) { return i === 3 ? { id: it.id, user: '', text: '', gone: true } : it })
+    }
+
+    function cell(it, index) {
+      var c = document.createElement('div')
+      c.setAttribute('data-testid', 'cellInnerDiv')
+      c.style.transform = 'translateY(' + index * ROW + 'px)'
+      var a = document.createElement('article')
+      a.setAttribute('data-testid', 'tweet')
+      a.dataset.postId = it.id
+      if (it.gone) {
+        a.className = 'tombstone'
+        a.textContent = 'This post was deleted by the post author.'
+      } else {
+        var u = document.createElement('div')
+        u.setAttribute('data-testid', 'User-Name')
+        var b = document.createElement('b')
+        b.textContent = it.user
+        u.append(b, ' @' + it.user.toLowerCase().replace(/[^a-z]/g, '') + ' \u00b7 ' + (index + 1) + 'h')
+        var t = document.createElement('div')
+        t.setAttribute('data-testid', 'tweetText')
+        t.lang = 'en'
+        t.textContent = it.text
+        a.append(u, t)
+      }
+      c.append(a)
+      return c
+    }
+    function render(list) {
+      var top = list.getBoundingClientRect().top + window.scrollY
+      var first = Math.max(0, Math.floor((window.scrollY - top) / ROW) - OVERSCAN)
+      var last = Math.min(items.length, Math.ceil((window.scrollY - top + window.innerHeight) / ROW) + OVERSCAN)
+      var cells = []
+      for (var i = first; i < last; i++) cells.push(cell(items[i], i))
+      list.replaceChildren.apply(list, cells)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var list = document.getElementById('timeline-list')
+      if (MODE === 'timeline' && visit % 2 === 0) document.getElementById('new-posts').textContent = 'Show 2 posts'
+      // Simulated GraphQL fetch before the first render.
+      setTimeout(function () {
+        list.style.height = items.length * ROW + 'px'
+        render(list)
+        window.addEventListener('scroll', function () { render(list) })
+      }, 400)
+    })
+  })()
+</script>
+</head>
+<body>
+<header>Search</header>
+<main>
+  <div id="new-posts"></div>
+  <section aria-label="Timeline" id="timeline"><div id="timeline-list" style="position: relative"></div></section>
+</main>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Effective Go formatting - ad-dense layout (corpus snapshot)</title>
+<!-- Article text: "Effective Go" (CC BY 4.0, go.dev). Layout models an ad-funded tutorial aggregator with a sticky
+     banner and in-text ad links; the original ad scripts are replaced by this local, deterministic simulation. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 0; background: #fafafa; color: #222; }
+  header { background: #00add8; color: #fff; padding: 12px 24px; }
+  #banner { position: sticky; top: 0; z-index: 2; background: #fff3cd; padding: 10px 24px; font-size: 14px; }
+  main { max-width: 760px; margin: 0 auto; background: #fff; padding: 24px; line-height: 1.6; }
+  .native { border-left: 4px solid #f0ad4e; background: #fffaf0; padding: 8px 12px; margin: 16px 0; font-size: 14px; }
+  a.adlink { color: #0b6e99; text-decoration: underline dotted; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-ad6-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var NATIVE = [
+      'Recommended: the formatting tool every team needs. Try it free.',
+      'Readers also liked: ten tips for clean code reviews and why the machine should take care of formatting.',
+    ]
+    // Wraps the n-th occurrence of `word` inside `el` in an ad link, splitting the host text node.
+    function wrap(el, word) {
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      for (var n = walker.nextNode(); n; n = walker.nextNode()) {
+        var i = n.data.indexOf(word)
+        if (i === -1) continue
+        var hit = n.splitText(i)
+        hit.splitText(word.length)
+        var a = document.createElement('a')
+        a.className = 'adlink'
+        a.href = '#ad'
+        hit.parentNode.replaceChild(a, hit)
+        a.appendChild(hit)
+        return
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      if (visit % 2 === 0) {
+        document.getElementById('banner').textContent = 'Go developers: get 40% off a year of cloud builds.'
+        wrap(document.getElementById('p2'), 'gofmt')
+        wrap(document.getElementById('p4'), 'tabs')
+      }
+      var cards = document.querySelectorAll('.native')
+      for (var i = 0; i < cards.length; i++) cards[i].textContent = NATIVE[(visit + i) % NATIVE.length]
+    })
+  })()
+</script>
+</head>
+<body>
+<div id="banner"></div>
+<header>Tutorials · Go · Formatting</header>
+<main id="story">
+  <h1>Formatting</h1>
+  <p id="p1">Formatting issues are the most contentious but the least consequential. People can adapt to different formatting styles but it's better if they don't have to, and less time is devoted to the topic if everyone adheres to the same style.</p>
+  <div class="native"></div>
+  <p id="p2">With Go we take an unusual approach and let the machine take care of most formatting issues. The gofmt program reads a Go program and emits the source in a standard style of indentation and vertical alignment, retaining and if necessary reformatting comments.</p>
+  <p id="p3">If you want to know how to handle some new layout situation, run gofmt; if the answer doesn't seem right, rearrange your program, don't work around it. All Go code in the standard packages has been formatted with gofmt.</p>
+  <div class="native"></div>
+  <p id="p4">We use tabs for indentation and gofmt emits them by default. Use spaces only if you must. Go has no line length limit. Don't worry about overflowing a punched card. If a line feels too long, wrap it and indent with an extra tab.</p>
+  <p id="p5">Go needs fewer parentheses than C and Java: control structures do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer.</p>
+</main>
+<footer>Text from Effective Go (go.dev), available under CC BY 4.0.</footer>
+</body>
+</html>

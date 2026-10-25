@@ -1,0 +1,25 @@
+{
+  "name": "inline-script-02",
+  "category": "inline-script",
+  "source": {
+    "url": "https://docs.python.org/3/library/itertools.html",
+    "license": "PSF-2.0 (Python documentation)",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; body inline scripts kept (one precedes the content, issue #5); analytics.python.org removed."
+  },
+  "highlights": [
+    { "id": "is02-1", "text": "This module implements a number of iterator building blocks inspired", "scope": "div.body" },
+    { "id": "is02-2", "text": "useful by themselves or in combination.", "scope": "div.body" },
+    { "id": "is02-3", "text": "streams of infinite length, so they should only be accessed by functions or", "scope": "div.body" },
+    { "id": "is02-4", "text": "an accumulated total and a value from the iterable", "scope": "div.body" },
+    { "id": "is02-5", "text": "iterable", "scope": "div.body", "occurrence": 9, "note": "repeated word" },
+    {
+      "id": "is02-gone",
+      "text": "This recipe is no longer recommended and was dropped from the docs.",
+      "scope": "div.body",
+      "sourceGone": true,
+      "seedBefore": "div.body h1",
+      "note": "recipe removed after the highlight was made"
+    }
+  ]
+}

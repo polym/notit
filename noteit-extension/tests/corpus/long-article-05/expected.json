@@ -1,0 +1,47 @@
+{
+  "name": "long-article-05",
+  "category": "long-article",
+  "source": {
+    "url": "https://go.dev/doc/effective_go",
+    "license": "CC BY 4.0 (Go documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external go.dev scripts, analytics and web fonts removed. Replaces Wikipedia for this category because Wikipedia was unreachable when the snapshot was taken."
+  },
+  "highlights": [
+    {
+      "id": "la05-1",
+      "text": "focuses on simplicity, reliability,\nand efficiency",
+      "scope": "#main-content"
+    },
+    {
+      "id": "la05-2",
+      "text": "Formatting issues are the most contentious\nbut the least consequential.",
+      "scope": "#main-content"
+    },
+    {
+      "id": "la05-3",
+      "text": "With Go we take an unusual\napproach and let the machine\ntake care of most formatting issues.",
+      "scope": "#main-content"
+    },
+    {
+      "id": "la05-4",
+      "text": "Java programs\nare written in Java, not Go.",
+      "scope": "#main-content"
+    },
+    {
+      "id": "la05-5",
+      "text": "formatting",
+      "scope": "#main-content",
+      "occurrence": 3,
+      "note": "repeated word; only the 4th instance is correct"
+    },
+    {
+      "id": "la05-gone",
+      "text": "This guide was last revised for the Go 1.0 release candidate.",
+      "scope": "#main-content",
+      "sourceGone": true,
+      "seedBefore": "#main-content h2",
+      "note": "sentence removed from the guide after the highlight was made"
+    }
+  ]
+}

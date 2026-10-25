@@ -1,0 +1,40 @@
+{
+  "name": "ad-dense-04",
+  "category": "ad-dense",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Annotation",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Article text from the source; in-text ad layout authored locally. On even visits the words highlighting, bibliographies, metadata and comments are wrapped in sponsored links 400 ms after load (text unchanged, text nodes split)."
+  },
+  "highlights": [
+    {
+      "id": "ad04-1",
+      "text": "An annotation is extra information associated with a particular point in a",
+      "scope": "#a1"
+    },
+    {
+      "id": "ad04-2",
+      "text": "Marginalia are notes or drawings in the margins of",
+      "scope": "#a4"
+    },
+    {
+      "id": "ad04-3",
+      "text": "Students often highlight passages in books in order to actively",
+      "scope": "#a6",
+      "note": "contains a keyword wrapped by the in-text ad script"
+    },
+    {
+      "id": "ad04-4",
+      "text": "From a cognitive perspective, annotation has an important role in learning",
+      "scope": "#a10"
+    },
+    {
+      "id": "ad04-5",
+      "text": "annotation",
+      "scope": "#story",
+      "occurrence": 5,
+      "note": "repeated word"
+    }
+  ]
+}

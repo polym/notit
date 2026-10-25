@@ -1,0 +1,25 @@
+{
+  "name": "long-article-01",
+  "category": "long-article",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Highlighter",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; head and footer inline scripts kept."
+  },
+  "highlights": [
+    { "id": "la01-1", "text": "felt-tip marker filled with transparent fluorescent ink", "scope": "#mw-content-text" },
+    { "id": "la01-2", "text": "highlighter ink glows under black light", "scope": "#mw-content-text" },
+    { "id": "la01-3", "text": "Pastel highlighters", "scope": "#mw-content-text" },
+    { "id": "la01-4", "text": "reverse video", "scope": "#mw-content-text" },
+    { "id": "la01-5", "text": "highlighter", "scope": "#mw-content-text", "occurrence": 5, "note": "repeated word; only the 6th instance is correct" },
+    {
+      "id": "la01-gone",
+      "text": "Highlighters were briefly sold in a scented edition.",
+      "scope": "#mw-content-text",
+      "sourceGone": true,
+      "seedBefore": "#mw-content-text p:nth-of-type(3)",
+      "note": "sentence removed from the article after the highlight was made"
+    }
+  ]
+}

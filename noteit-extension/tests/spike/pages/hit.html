@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NoteIt renderer spike</title>
+    <style>
+      body { margin: 40px; font: 22px/1.8 monospace; color: #222; }
+      p { margin: 0 0 28px; }
+    </style>
+  </head>
+  <body>
+    <h1 id="title">Renderer spike page</h1>
+    <!-- S2 adjacent: "first word" and "second word" touch. -->
+    <p id="adjacent">Lead in first wordsecond word and the rest.</p>
+    <!-- S2 overlap: "alpha beta gamma" and "gamma delta epsilon" share "gamma". -->
+    <p id="overlap">Start alpha beta gamma delta epsilon end.</p>
+    <!-- S2 cross-element: one highlight spans plain, bold and italic text. -->
+    <p id="cross">Plain head <b id="bold">bold middle</b> and <i id="italic">italic tail</i> after.</p>
+    <!-- S3: same text, one highlight with a comment and one without. -->
+    <p id="plain">Underline sample text here.</p>
+    <p id="commented">Underline sample text here.</p>
+    <p id="free">Nothing is highlighted in this paragraph at all.</p>
+  </body>
+</html>

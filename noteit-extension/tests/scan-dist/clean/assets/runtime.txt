@@ -1,0 +1,2 @@
+// Fixture: shared runtime chunk imported by the content chunk.
+export const r = 1;

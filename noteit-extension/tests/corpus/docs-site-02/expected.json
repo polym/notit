@@ -1,0 +1,24 @@
+{
+  "name": "docs-site-02",
+  "category": "docs-site",
+  "source": {
+    "url": "https://nodejs.org/docs/latest-v24.x/api/url.html",
+    "license": "MIT (Node.js documentation)",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external api.js and web fonts removed; the e-mail-like userinfo in the URL diagram is redacted by sanitize."
+  },
+  "highlights": [
+    { "id": "ds02-1", "text": "A URL string is a structured string containing multiple meaningful components.", "scope": "#apicontent" },
+    { "id": "ds02-2", "text": "The node:url module provides two APIs for working with URLs", "scope": "#apicontent" },
+    { "id": "ds02-3", "text": "implemented as getters and setters on the class prototype", "scope": "#apicontent" },
+    { "id": "ds02-4", "text": "WHATWG URL Standard", "scope": "#apicontent", "occurrence": 2, "note": "phrase repeated across sections" },
+    {
+      "id": "ds02-gone",
+      "text": "The url.parse() API is scheduled for removal in this release.",
+      "scope": "#apicontent",
+      "sourceGone": true,
+      "seedBefore": "#apicontent h2",
+      "note": "deprecation notice rewritten after the highlight was made"
+    }
+  ]
+}

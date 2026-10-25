@@ -1,0 +1,18 @@
+[
+  {
+    "id": "n1",
+    "canonical_url": "https://example.com/a",
+    "text": "alpha",
+    "anchor": null,
+    "edited_at": 1000,
+    "deleted_at": null
+  },
+  {
+    "id": "n2",
+    "canonical_url": "https://example.com/a",
+    "text": "alpha",
+    "anchor": null,
+    "edited_at": 2000,
+    "deleted_at": null
+  }
+]

@@ -1,0 +1,2 @@
+// Fixture: a JWT whose decoded role is authenticated, not anon (fake signature, not a real key).
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJleHAiOjE5ODM4MTI5OTZ9.fake-signature-not-a-real-key";

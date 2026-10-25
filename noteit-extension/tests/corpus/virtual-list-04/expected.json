@@ -1,0 +1,35 @@
+{
+  "name": "virtual-list-04",
+  "category": "virtual-list",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Annotation",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Post text from the source; x.com-style search results authored locally. On even visits the fourth post is deleted and shown as a tombstone."
+  },
+  "highlights": [
+    {
+      "id": "vl04-1",
+      "text": "An annotation is extra information associated with a particular point in",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl04-2",
+      "text": "Annotations are sometimes presented in the margin of book pages.",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl04-3",
+      "text": "For annotations of different digital media, see web annotation",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl04-gone",
+      "text": "Annotation Practices are highlighting a phrase or sentence and including a comment, circling a word that needs defining, posing a question when something is not fully understood and writing a short summary of a key section.",
+      "scope": "#timeline-list",
+      "sourceGone": true,
+      "seedBefore": "#timeline-list",
+      "note": "post deleted by its author before the reload (tombstone)"
+    }
+  ]
+}

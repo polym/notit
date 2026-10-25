@@ -1,0 +1,109 @@
+# Full merge gate (NFR23, architecture.md "Testing & CI Architecture"). Replaces build.yml.
+# Gate step order must match noteit-extension/scripts/verify.ts (asserted by scripts/verify.test.ts).
+# Uses only the local Supabase stack started in the runner; no hosted Supabase credentials or secrets.
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: noteit-extension
+    env:
+      CI: 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: noteit-extension/.nvmrc
+          cache: npm
+          cache-dependency-path: noteit-extension/package-lock.json
+
+      - name: install
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: lint
+        run: npm run lint
+
+      - name: typecheck
+        run: npm run typecheck
+
+      - name: test:unit
+        run: npm run test:unit
+
+      - name: test:browser
+        run: npm run test:browser
+
+      - name: test:module-boundary
+        run: npm run test:module-boundary
+
+      - name: supabase start
+        run: npm run db:start
+
+      - name: db reset
+        run: npm run db:reset
+
+      - name: env:local
+        run: npm run env:local
+
+      - name: test:integration
+        run: npm run test:integration
+
+      - name: build
+        run: npm run build
+
+      - name: scan:dist
+        run: npm run scan:dist
+
+      - name: test:e2e
+        run: npm run test:e2e
+
+      - name: test:corpus
+        run: npm run test:corpus
+
+      - name: test:perf
+        run: npm run test:perf
+
+      - name: Package extension
+        run: cd dist && zip -r ../noteit-extension.zip .
+
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: noteit-extension
+          path: noteit-extension/noteit-extension.zip
+          retention-days: 30
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            noteit-extension/playwright-report
+            noteit-extension/test-results
+            noteit-extension/tests/corpus/corpus-report.json
+            noteit-extension/tests/perf/perf-report.json
+          if-no-files-found: ignore
+          retention-days: 14

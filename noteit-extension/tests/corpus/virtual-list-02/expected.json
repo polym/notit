@@ -1,0 +1,32 @@
+{
+  "name": "virtual-list-02",
+  "category": "virtual-list",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Fountain_pen",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Post text from the source; x.com-style home timeline authored locally (x.com itself requires login and cannot be snapshotted). Even visits prepend two posts, shifting every row down by 240 px."
+  },
+  "highlights": [
+    {
+      "id": "vl02-1",
+      "text": "It is distinguished from earlier dip pens by using an internal reservoir to hold ink, eliminating the need to repeatedly dip the pen in an inkwell during use.",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl02-2",
+      "text": "The pen draws ink from the reservoir through a feed",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl02-3",
+      "text": "employ removable reservoirs in the form of pre-filled ink",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl02-4",
+      "text": "There is compelling evidence that a working fountain pen was constructed and used during the Renaissance by artist and inventor Leonardo da Vinci.",
+      "scope": "#timeline-list"
+    }
+  ]
+}

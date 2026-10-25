@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NoteIt long article</title>
+    <!-- Explicit local favicon so the content script never falls back to a remote one. -->
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <h1>Long article</h1>
+    <p id="intro">The opening paragraph sits at the top of the page.</p>
+    <!-- Keeps the target well below the first viewport so a jump has to scroll. -->
+    <div style="height: 3000px"></div>
+    <p id="target">The jump target lives far below the fold.</p>
+    <div style="height: 1500px"></div>
+    <p id="outro">This paragraph exists so the target is not the last block.</p>
+  </body>
+</html>

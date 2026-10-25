@@ -1,0 +1,44 @@
+[
+  {
+    "id": "c1",
+    "canonical_url": "https://example.com/a",
+    "text": "alpha",
+    "anchor": {
+      "start": 0,
+      "end": 5,
+      "exact": "alpha",
+      "prefix": "",
+      "suffix": ""
+    },
+    "edited_at": 1000,
+    "deleted_at": null
+  },
+  {
+    "id": "c2",
+    "canonical_url": "https://example.com/a",
+    "text": "beta",
+    "anchor": {
+      "start": 10,
+      "end": 14,
+      "exact": "beta",
+      "prefix": "",
+      "suffix": ""
+    },
+    "edited_at": 2000,
+    "deleted_at": null
+  },
+  {
+    "id": "c3",
+    "canonical_url": "https://example.com/b",
+    "text": "gamma",
+    "anchor": {
+      "start": 3,
+      "end": 8,
+      "exact": "gamma",
+      "prefix": "",
+      "suffix": ""
+    },
+    "edited_at": 3000,
+    "deleted_at": 3500
+  }
+]

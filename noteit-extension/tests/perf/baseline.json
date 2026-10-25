@@ -1,0 +1,21 @@
+{
+  "engine": "legacy-mark.js",
+  "p95": {
+    "selectionToMenu": {
+      "online": 0.6,
+      "offline": 0.5
+    },
+    "colorToHighlight": {
+      "online": 10.8,
+      "offline": 10.6
+    },
+    "sidepanelList": {
+      "online": 70.6,
+      "offline": 68.2
+    },
+    "restoreLongTask": {
+      "online": 0,
+      "offline": 0
+    }
+  }
+}

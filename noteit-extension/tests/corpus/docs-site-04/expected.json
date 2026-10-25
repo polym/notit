@@ -1,0 +1,17 @@
+{
+  "name": "docs-site-04",
+  "category": "docs-site",
+  "source": {
+    "url": "https://nodejs.org/docs/latest-v24.x/api/readline.html",
+    "license": "MIT (Node.js documentation)",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external api.js and web fonts removed."
+  },
+  "highlights": [
+    { "id": "ds04-1", "text": "one line at a time", "scope": "#apicontent" },
+    { "id": "ds04-2", "text": "readline.Interface is closed because the interface waits for data to be", "scope": "#apicontent" },
+    { "id": "ds04-3", "text": "presses Enter or Return.", "scope": "#apicontent" },
+    { "id": "ds04-4", "text": "The primary purpose is to allow a listener to persist the history.", "scope": "#apicontent" },
+    { "id": "ds04-5", "text": "event is emitted", "scope": "#apicontent", "occurrence": 4, "note": "phrase repeated in every event section" }
+  ]
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ownership feed - recycled virtual list (corpus snapshot)</title>
+<!-- Feed text: The Rust Programming Language, "What Is Ownership?" (MIT OR Apache-2.0), split into posts. Models a
+     public feed built on a recycling virtual list: rows render after a simulated fetch, and a background refresh
+     1.5 s later rebuilds every row node (same text, new elements), as feeds do when fresh data arrives. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 0; background: #fafafa; color: #111; }
+  header { padding: 12px 16px; border-bottom: 1px solid #ddd; background: #fff; }
+  #feed { height: 640px; overflow-y: auto; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #ddd; }
+  #spacer { position: relative; }
+  .row { position: absolute; left: 0; right: 0; height: 104px; box-sizing: border-box; padding: 12px 16px; border-bottom: 1px solid #eee; overflow: hidden; }
+  .row .handle { font-weight: 600; font-size: 13px; color: #555; }
+  .row p { margin: 4px 0 0; font-size: 15px; line-height: 1.4; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-feed6-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var POSTS = [
+      'Ownership is a set of rules that govern how a Rust program manages memory.',
+      'Some languages have garbage collection that regularly looks for no-longer-used memory as the program runs.',
+      'Rust uses a third approach: memory is managed through a system of ownership with a set of rules that the compiler checks.',
+      'None of the features of ownership will slow down your program while it is running.',
+      'The stack stores values in the order it gets them and removes the values in the opposite order.',
+      'All data stored on the stack must have a known, fixed size.',
+      'The heap is less organized: when you put data on the heap, you request a certain amount of space.',
+      'Pushing to the stack is faster than allocating on the heap.',
+      'Accessing data in the heap is generally slower than accessing data on the stack because you have to follow a pointer to get there.',
+      'Each value in Rust has an owner. There can only be one owner at a time. When the owner goes out of scope, the value will be dropped.',
+    ]
+    var ROW_HEIGHT = 104
+    var OVERSCAN = 2
+    var TOTAL = 60
+    // The feed is sorted by an engagement score that differs per visit: odd visits start with the first post,
+    // even visits rotate the list by two, so the same text lands in different rows and offsets.
+    var shift = visit % 2 === 0 ? 2 : 0
+    var items = []
+    for (var i = 0; i < TOTAL; i++) {
+      var k = (i + shift) % POSTS.length
+      items.push({ handle: '@rustacean' + ((i * 7) % 23), text: POSTS[k] })
+    }
+
+    function render(feed, spacer) {
+      var first = Math.max(0, Math.floor(feed.scrollTop / ROW_HEIGHT) - OVERSCAN)
+      var last = Math.min(items.length, Math.ceil((feed.scrollTop + feed.clientHeight) / ROW_HEIGHT) + OVERSCAN)
+      var rows = []
+      for (var i = first; i < last; i++) {
+        var row = document.createElement('div')
+        row.className = 'row'
+        row.style.top = i * ROW_HEIGHT + 'px'
+        var handle = document.createElement('div')
+        handle.className = 'handle'
+        handle.textContent = items[i].handle
+        var p = document.createElement('p')
+        p.textContent = items[i].text
+        row.append(handle, p)
+        rows.push(row)
+      }
+      spacer.replaceChildren.apply(spacer, rows)
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var feed = document.getElementById('feed')
+      var spacer = document.getElementById('spacer')
+      setTimeout(function () {
+        spacer.style.height = items.length * ROW_HEIGHT + 'px'
+        render(feed, spacer)
+        feed.addEventListener('scroll', function () { render(feed, spacer) })
+        // Background refresh: every row element is replaced with a fresh copy.
+        setTimeout(function () { render(feed, spacer) }, 1500)
+      }, 300)
+    })
+  })()
+</script>
+</head>
+<body>
+<header>Ownership feed</header>
+<div id="feed"><div id="spacer"></div></div>
+</body>
+</html>

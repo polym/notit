@@ -188,7 +188,7 @@
   ```sql
   ALTER TABLE highlights ADD COLUMN IF NOT EXISTS comment TEXT;
   ```
-- 或者运行项目中的完整架构脚本：`supabase-migrations/complete-schema.sql`
+- 或者运行项目中的完整架构脚本：`supabase/legacy/complete-schema.sql`
 - 验证字段已添加：
   ```sql
   SELECT column_name FROM information_schema.columns WHERE table_name = 'highlights';

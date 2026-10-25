@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What Is Ownership - ad-dense tech blog layout (corpus snapshot)</title>
+<!-- Article text: The Rust Programming Language, "What Is Ownership?" (MIT OR Apache-2.0). Layout and ad slots model a
+     public ad-funded tech blog; the original ad network scripts are replaced by this local, deterministic simulation. -->
+<style>
+  body { font-family: Georgia, serif; margin: 0; background: #f6f6f6; color: #222; }
+  header, footer { background: #1f2933; color: #eee; padding: 12px 24px; }
+  .layout { display: flex; gap: 24px; max-width: 1100px; margin: 0 auto; padding: 16px; }
+  article { flex: 1; background: #fff; padding: 24px; line-height: 1.6; }
+  aside { width: 300px; }
+  .ad { background: #eef7ee; border: 1px dashed #4c8c4c; padding: 12px; margin: 16px 0; font: 14px/1.4 sans-serif; }
+  .ad .label { font-size: 11px; text-transform: uppercase; color: #2f6b2f; }
+</style>
+<script>
+  // Simulated ad server: odd visits insert a sponsored paragraph before the article body, even visits
+  // fill the in-article slots with creatives of different lengths, so offsets shift between visits.
+  (function () {
+    var KEY = 'corpus-ad5-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var CREATIVES = [
+      'Ship faster with managed build servers. Free tier for open source projects.',
+      'Memory leaks keeping you up at night? Try our profiler for thirty days.',
+      'Join the systems programming conference. Early bird tickets end Friday, and workshops on memory safety are filling up fast.',
+    ]
+    function fill(el, text) {
+      var label = document.createElement('div')
+      label.className = 'label'
+      label.textContent = 'Advertisement'
+      var body = document.createElement('p')
+      body.textContent = text
+      el.replaceChildren(label, body)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var slots = document.querySelectorAll('[data-ad-slot]')
+      for (var i = 0; i < slots.length; i++) {
+        if (visit % 2 === 0) fill(slots[i], CREATIVES[(visit + i) % CREATIVES.length])
+      }
+      if (visit % 2 === 1) {
+        var sponsor = document.createElement('div')
+        sponsor.className = 'ad'
+        fill(sponsor, 'Sponsored: this article about ownership is brought to you by a memory-safe hosting provider.')
+        document.getElementById('story').insertBefore(sponsor, document.getElementById('p1'))
+      }
+      // Late slot in the sidebar, filled after an auction delay.
+      setTimeout(function () { fill(document.getElementById('late'), CREATIVES[visit % CREATIVES.length]) }, 900)
+    })
+  })()
+</script>
+</head>
+<body>
+<header><nav>Blog · Systems · Languages · Tooling</nav></header>
+<div class="layout">
+  <article id="story">
+    <h1>What Is Ownership?</h1>
+    <p id="p1">Ownership is a set of rules that govern how a Rust program manages memory. All programs have to manage the way they use a computer's memory while running. Some languages have garbage collection that regularly looks for no-longer-used memory as the program runs; in other languages, the programmer must explicitly allocate and free the memory.</p>
+    <div class="ad" data-ad-slot="0"></div>
+    <p id="p2">Rust uses a third approach: memory is managed through a system of ownership with a set of rules that the compiler checks. If any of the rules are violated, the program won't compile. None of the features of ownership will slow down your program while it's running.</p>
+    <p id="p3">Because ownership is a new concept for many programmers, it does take some time to get used to. The good news is that the more experienced you become with Rust and the rules of the ownership system, the easier you'll find it to naturally develop code that is safe and efficient.</p>
+    <div class="ad" data-ad-slot="1"></div>
+    <p id="p4">Both the stack and the heap are parts of memory available to your code to use at runtime, but they are structured in different ways. The stack stores values in the order it gets them and removes the values in the opposite order. This is referred to as last in, first out.</p>
+    <div class="ad" data-ad-slot="2"></div>
+    <p id="p5">The heap is less organized: when you put data on the heap, you request a certain amount of space. The memory allocator finds an empty spot in the heap that is big enough, marks it as being in use, and returns a pointer, which is the address of that location.</p>
+    <p id="p6">Pushing to the stack is faster than allocating on the heap because the allocator never has to search for a place to store new data; that location is always at the top of the stack.</p>
+  </article>
+  <aside>
+    <div class="ad" id="late"></div>
+    <div class="ad"><div class="label">Sponsored</div><p>Learn ownership and borrowing with interactive exercises on the stack and the heap.</p></div>
+  </aside>
+</div>
+<footer>Text from The Rust Programming Language, available under MIT OR Apache-2.0.</footer>
+</body>
+</html>

@@ -1,0 +1,5 @@
+// Fixture: content chunk with an anon JWT and the bare sb_secret_ prefix check the Supabase client ships.
+import { r } from "./runtime.txt";
+const anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.fake-signature-not-a-real-key";
+const isNewKey = (k) => k.startsWith(`sb_publishable_`) || k.startsWith(`sb_secret_`);
+export { r, anonKey, isNewKey };

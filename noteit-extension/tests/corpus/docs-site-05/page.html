@@ -1,0 +1,2962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="nodejs.org:node-version" content="v24.22.0">
+  <title>OS | Node.js v24.22.0 Documentation</title>
+  <style data-noteit-inlined="https://fonts.googleapis.com/css?family=Lato:400,700,400italic&amp;display=fallback">@font-face {
+  font-family: 'Lato';
+  font-style: italic;
+  font-weight: 400;
+  font-display: fallback;
+  src: url("data:,") format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  font-display: fallback;
+  src: url("data:,") format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-display: fallback;
+  src: url("data:,") format('truetype');
+}
+</style>
+  <style data-noteit-inlined="https://nodejs.org/docs/latest-v24.x/api/assets/style.css">/*--------------------- CSS Variables ----------------------------*/
+:root {
+  --black: #000000;
+  --black1: #090c15;
+  --black2: #2c3437;
+  --black3: #0d111d;
+  --blue1: #0a56b2;
+  --white: #ffffff;
+  --white-smoke: #f2f2f2;
+  --grey-smoke: #e9edf0;
+  --red1: #d60027;
+  --red2: #d50027;
+  --red3: #ca5010;
+  --red4: #ff7070;
+  --green1: #3e7a38;
+  --green2: #5a8147;
+  --green3: #64de64;
+  --green4: #99cc7d;
+  --green5: #84ba64;
+  --gray1: #707070;
+  --gray2: #b4b4b4;
+  --gray3: #cccccc;
+  --gray4: #040404;
+  --gray5: #7a7a7a;
+  --gray6: #333333;
+  --gray7: #c1c1c1;
+  --grey8: #ddd;
+
+  --background-color-api-stability-link: rgba(255, 255, 255, .4);
+  --background-color-highlight: var(--white-smoke);
+  --color-brand-primary: var(--gray6);
+  --color-brand-secondary: var(--green1);
+  --color-critical: var(--red1);
+  --color-fill-app: var(--white);
+  --color-fill-side-nav: var(--gray6);
+  --color-links: var(--green1);
+  --color-text-mark: var(--gray1);
+  --color-text-nav: var(--gray3);
+  --color-text-primary: var(--gray6);
+  --color-text-secondary: var(--green2);
+}
+
+.dark-mode {
+  --background-color-highlight: var(--black2);
+  --color-critical: var(--red4);
+  --color-fill-app: var(--black1);
+  --color-fill-side-nav: var(--black3);
+  --color-links: var(--green5);
+  --color-text-mark: var(--gray5);
+  --color-text-primary: var(--white);
+}
+
+.dark-mode code,
+.dark-mode tt {
+  color: var(--grey-smoke);
+  background-color: var(--background-color-highlight);
+}
+.dark-mode a code {
+  color: var(--green3);
+}
+
+/*--------------------- Layout and Typography ----------------------------*/
+html {
+  font-size: 1rem;
+  overflow-wrap: break-word;
+  scroll-padding-top: 4rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-variant-ligatures: none;
+          font-variant-ligatures: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Lato, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-primary);
+  background-color: var(--color-fill-app);
+}
+
+h1, h1 code { font-size: 2.5rem; }
+h2, h2 code { font-size: 2rem; }
+h3, h3 code { font-size: 1.75rem; }
+h4, h4 code { font-size: 1.5rem; }
+h5, h5 code { font-size: 1.25rem; }
+h6, h6 code { font-size: 1rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: inherit;
+  position: relative;
+  margin: 1.5rem 0 1rem;
+  text-rendering: optimizeLegibility;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+  color: inherit;
+  font-family: inherit;
+}
+
+pre,
+tt,
+code,
+.pre,
+span.type,
+a.type {
+  font-family: SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: .9em;
+}
+
+.skip-to-content {
+  position: fixed;
+  top: -300%;
+}
+.skip-to-content:focus {
+  display: block;
+  top: 0;
+  left: 0;
+  background-color: var(--green1);
+  padding: 1rem;
+  z-index: 999999;
+}
+
+#content {
+  position: relative;
+}
+
+a:link,
+a:active,
+a:visited {
+  color: var(--color-links);
+  border-radius: 2px;
+  padding: 1px 3px;
+}
+
+a:hover,
+a:focus {
+  color: var(--white);
+  background-color:var(--green1);
+  outline: none;
+}
+
+strong {
+  font-weight: 700;
+}
+
+code a:hover {
+  background-color: transparent;
+}
+
+em code {
+  font-style: normal;
+}
+
+#changelog #gtoc {
+  display: none;
+}
+
+#gtoc {
+  margin-top: .5rem;
+  margin-bottom: 1rem;
+}
+
+#gtoc > ul {
+  list-style: none;
+  margin-left: 0;
+  line-height: 1.5rem;
+}
+
+.critical, .critical code {
+  color: var(--color-critical);
+}
+
+li.picker-header {
+  position: relative;
+}
+
+li.picker-header .picker-arrow {
+  display: inline-block;
+  width: .6rem;
+  height: .6rem;
+  border-top: .3rem solid transparent;
+  border-bottom: .3rem solid transparent;
+  border-left: .6rem solid currentColor;
+  border-right: none;
+  margin: 0 .2rem .05rem 0;
+}
+
+li.picker-header.expanded .picker-arrow,
+:root:not(.has-js) li.picker-header:focus-within .picker-arrow,
+:root:not(.has-js) li.picker-header:hover .picker-arrow  {
+  border-top: .6rem solid currentColor;
+  border-bottom: none;
+  border-left: .35rem solid transparent;
+  border-right: .35rem solid transparent;
+  margin-bottom: 0;
+}
+
+li.picker-header.expanded > a,
+:root:not(.has-js) li.picker-header:focus-within > a,
+:root:not(.has-js) li.picker-header:hover > a {
+  border-radius: 2px 2px 0 0;
+}
+
+li.picker-header.expanded > .picker, 
+:root:not(.has-js) li.picker-header:focus-within > .picker,
+:root:not(.has-js) li.picker-header:hover > .picker {
+  display: block;
+}
+
+li.picker-header a span {
+  font-size: .7rem;
+}
+
+.picker {
+  background-color: var(--color-fill-app);
+  border: 1px solid var(--color-brand-secondary);
+  border-radius: 0 0 2px 2px;
+  display: none;
+  list-style: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: max-content;
+  min-width: min(300px, 75vw);
+  max-width: 75vw;
+  max-height: min(600px, 60vh);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.picker > ul, .picker > ol {
+  list-style: none;
+  margin-left: 0;
+  line-height: 1.5rem;
+}
+
+.picker li {
+  display: block;
+  border-right: 0;
+  margin-right: 0;
+}
+
+.picker li a {
+  border-radius: 0;
+  display: block;
+  margin: 0;
+  padding: .1rem;
+  padding-left: 1rem;
+}
+
+.picker li a.active,
+.picker li a.active:hover,
+.picker li a.active:focus {
+  font-weight: 700;
+}
+
+.picker li:last-child a {
+  border-bottom-right-radius: 1px;
+  border-bottom-left-radius: 1px;
+}
+
+.gtoc-picker-header {
+  display: none;
+}
+
+.line {
+  width: calc(100% - 1rem);
+  display: block;
+  padding-bottom: 1px;
+}
+
+.picker .line {
+  margin: 0;
+  width: 100%;
+}
+
+.api_stability {
+  color: var(--white) !important;
+  margin: 0 0 1rem;
+  padding: 1rem;
+  line-height: 1.5;
+
+  position: sticky;
+  top: 3rem;
+  z-index: 1;
+}
+
+#api-section-documentation .api_stability {
+  position: static;
+}
+
+.api_stability * {
+  color: var(--white) !important;
+}
+
+.api_stability a {
+  text-decoration: underline;
+}
+
+.api_stability a:hover,
+.api_stability a:active,
+.api_stability a:focus {
+  background-color: var(--background-color-api-stability-link);
+}
+
+.api_stability a code {
+  background-color: transparent;
+}
+
+.api_stability_0 {
+  background-color: var(--red1);
+}
+
+.api_stability_1 {
+  background-color: var(--red3);
+}
+
+.api_stability_2 {
+  background-color: var(--green2);
+}
+
+.api_stability_3 {
+  background-color: var(--blue1);
+}
+
+.module_stability {
+  vertical-align: middle;
+}
+
+.api_metadata {
+  font-size: .85rem;
+  margin-bottom: 1rem;
+}
+
+.api_metadata span {
+  margin-right: 1rem;
+}
+
+.api_metadata span:last-child {
+  margin-right: 0;
+}
+
+ul.plain {
+  list-style: none;
+}
+
+abbr {
+  border-bottom: 1px dotted #454545;
+}
+
+p {
+  text-rendering: optimizeLegibility;
+  margin: 0 0 1.125rem;
+  line-height: 1.5;
+}
+
+#apicontent > *:last-child {
+  margin-bottom: 0;
+  padding-bottom: 2rem;
+}
+
+/* prevent the module-level sticky stability header from overlapping the section headers when clicked */
+#apicontent:has(> .api_stability) a {
+  scroll-margin-top: 50px;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0 0 1.5rem;
+}
+
+th,
+td {
+  border: 1px solid #aaa;
+  padding: .5rem;
+  vertical-align: top;
+}
+
+th {
+  text-align: left;
+}
+
+td {
+  word-break: break-all; /* Fallback if break-word isn't supported */
+  word-break: break-word;
+}
+
+@media only screen and (min-width: 600px) {
+  th,
+  td {
+    padding: .75rem 1rem;
+  }
+
+  td:first-child {
+    word-break: normal;
+  }
+}
+
+ol,
+ul,
+dl {
+  margin: 0 0 .6rem;
+  padding: 0;
+}
+
+ol ul,
+ol ol,
+ol dl,
+ul ul,
+ul ol,
+ul dl,
+dl ul,
+dl ol,
+dl dl {
+  margin-bottom: 0;
+}
+
+ul,
+ol {
+  margin-left: 2rem;
+}
+
+dl dt {
+  position: relative;
+  margin: 1.5rem 0 0;
+}
+
+dl dd {
+  position: relative;
+  margin: 0 1rem;
+}
+
+dd + dt.pre {
+  margin-top: 1.6rem;
+}
+
+#apicontent {
+  padding-top: 1rem;
+}
+
+#api-section-all #apicontent section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px auto 5000px;
+}
+
+#apicontent .line {
+  width: calc(50% - 1rem);
+  margin: 1rem 1rem .95rem;
+  background-color: #ccc;
+}
+
+h2 + h2 {
+  margin: 0 0 .5rem;
+}
+
+h3 + h3 {
+  margin: 0 0 .5rem;
+}
+
+h2,
+h3,
+h4,
+h5 {
+  position: relative;
+  padding-right: 40px;
+}
+
+.srclink {
+  float: right;
+  font-size: smaller;
+  margin-right: 30px;
+}
+
+h1 span,
+h2 span,
+h3 span,
+h4 span {
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+}
+
+h1 span:hover,
+h2 span:hover,
+h3 span:hover,
+h4 span:hover {
+  opacity: 1;
+}
+
+h1 span a,
+h2 span a,
+h3 span a,
+h4 span a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+pre,
+tt,
+code {
+  line-height: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.pre {
+  line-height: 1.5rem;
+}
+
+pre {
+  padding: 1rem;
+  vertical-align: top;
+  background-color: var(--background-color-highlight);
+  margin: 1rem;
+  overflow-x: auto;
+}
+
+pre > code {
+  padding: 0;
+}
+
+pre + h3 {
+  margin-top: 2.225rem;
+}
+
+code.pre {
+  white-space: pre;
+}
+
+#intro {
+  margin-top: 1.25rem;
+  margin-left: 1rem;
+}
+
+#intro a {
+  color: var(--grey8);
+  font-weight: 700;
+}
+
+hr {
+  background-color: transparent;
+  border: medium none;
+  border-bottom: 1px solid var(--gray5);
+  margin: 0 0 1rem;
+}
+
+#toc > ul {
+  margin-top: 1.5rem;
+}
+
+#toc p {
+  margin: 0;
+}
+
+#toc ul a {
+  text-decoration: none;
+}
+
+#toc ul li {
+  margin-bottom: .666rem;
+  list-style: square outside;
+}
+
+#toc li > ul {
+  margin-top: .666rem;
+}
+
+.toc ul {
+  margin: 0;
+}
+.toc>ul:first-child {
+  margin-left: 1rem;
+}
+.toc li {
+  display: list-item;
+  list-style: square;
+}
+.toc li a {
+  display: inline;
+  padding-left: 0;
+}
+
+.toc li a:hover::before {
+  color: var(--white);
+}
+
+.toc ul {
+  padding-left: 1rem;
+}
+
+#toc .stability_0::after,
+.deprecated-inline::after {
+  background-color: var(--red2);
+  color: var(--white);
+  content: "deprecated";
+  margin-left: .25rem;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+#toc .stability_3::after {
+  background-color: var(--blue1);
+  color: var(--white);
+  content: "legacy";
+  margin-left: .25rem;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+.experimental-inline::after {
+  background-color: var(--red3);
+  color: var(--white);
+  content: "experimental";
+  margin-left: .25rem;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+#apicontent li {
+  margin-bottom: .5rem;
+}
+
+#apicontent li:last-child {
+  margin-bottom: 0;
+}
+
+tt,
+code {
+  color: #040404;
+  background-color: #f2f2f2;
+  border-radius: 2px;
+  padding: 1px 3px;
+}
+
+.api_stability code {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+a code {
+  color: inherit;
+  background-color: inherit;
+  padding: 0;
+}
+
+.type {
+  line-height: 1.5rem;
+}
+
+#column1.interior {
+  margin-left: 234px;
+  padding: 0 2rem;
+  -webkit-padding-start: 1.5rem;
+}
+
+#column2.interior {
+  width: 234px;
+  background-color: var(--color-fill-side-nav);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#column2 ul {
+  list-style: none;
+  margin: .9rem 0 .5rem;
+  background-color: var(--color-fill-side-nav);
+}
+
+#column2 > :first-child {
+  margin: 1.25rem;
+  font-size: 1.5rem;
+}
+
+#column2 > ul:nth-child(2) {
+  margin: 1.25rem 0 .5rem;
+}
+
+#column2 > ul:last-child {
+  margin: .9rem 0 1.25rem;
+}
+
+#column2 ul li {
+  padding-left: 1.25rem;
+  margin-bottom: .5rem;
+  padding-bottom: .5rem;
+}
+
+#column2 .line {
+  margin: 0 .5rem;
+  border-color: #707070;
+}
+
+#column2 ul li:last-child {
+  margin-bottom: 0;
+}
+
+#column2 ul li a,
+#column2 ul li a code {
+  color: var(--color-text-nav);
+  border-radius: 0;
+}
+
+#column2 ul li a.active,
+#column2 ul li a.active:hover,
+#column2 ul li a.active:focus {
+  font-weight: 700;
+  color: var(--white);
+  background-color: transparent;
+}
+
+#intro a:hover,
+#intro a:focus,
+#column2 ul li a:hover,
+#column2 ul li a:focus {
+  color: var(--white);
+  background-color: transparent;
+}
+
+span > .mark,
+span > .mark:visited {
+  color: var(--color-text-mark);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+span > .mark:hover,
+span > .mark:focus,
+span > .mark:active {
+  color: var(--color-brand-secondary);
+  background-color: transparent;
+}
+
+th > *:last-child,
+td > *:last-child {
+  margin-bottom: 0;
+}
+
+kbd {
+  background-color: #eee;
+  border-radius: 3px;
+  border: 1px solid #b4b4b4;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+  color: #333;
+  display: inline-block;
+  font-size: .85em;
+  font-weight: 700;
+  padding: 2px 4px;
+  white-space: nowrap;
+  vertical-align: middle;
+ }
+
+.changelog > summary {
+  margin: .5rem 0;
+  padding: .5rem 0;
+  cursor: pointer;
+}
+
+/* simpler clearfix */
+.clearfix::after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+/* API reference sidebar */
+@media only screen and (min-width: 1025px) {
+  .apidoc #column2 > .line {
+    pointer-events: none;
+  }
+  .apidoc #column2 > :first-child,
+  .apidoc #column2 > ul,
+  .apidoc #column2 > ul > li {
+    margin: 0;
+    padding: 0;
+  }
+  .apidoc #column2 > :first-child > a[href] {
+    border-radius: 0;
+    padding: 1.25rem 1.4375rem .625rem;
+    display: block;
+  }
+  .apidoc #column2 > ul > li > a[href] {
+    padding: .5rem 1.4375rem;
+    display: block;
+  }
+  .apidoc #column2 > ul > :first-child > a[href] {
+    padding-top: .625rem;
+  }
+  .apidoc #column2 > ul > :last-child > a[href] {
+    padding-bottom: .625rem;
+  }
+  .apidoc #column2 > ul:first-of-type > :last-child  > a[href] {
+    padding-bottom: 1rem;
+  }
+  .apidoc #column2 > ul:nth-of-type(2) > :first-child > a[href] {
+    padding-top: .875rem;
+  }
+  .apidoc #column2 > ul:nth-of-type(2) > :last-child > a[href] {
+    padding-bottom: .9375rem;
+  }
+  .apidoc #column2 > ul:last-of-type > :first-child > a[href] {
+    padding-top: 1rem;
+  }
+  .apidoc #column2 > ul:last-of-type > :last-child > a[href] {
+    padding-bottom: 1.75rem;
+  }
+}
+
+.header {
+  position: sticky;
+  top: -1px;
+  z-index: 10;
+  padding-top: 1rem;
+  background-color: var(--color-fill-app);
+}
+
+@media not screen, (max-width: 600px) {
+  .header {
+    position: relative;
+    top: 0;
+  }
+  .api_stability {
+    top: 0;
+  }
+  #apicontent a {
+    scroll-margin-top: 0;
+  }
+}
+
+@media not screen, (max-height: 1000px) {
+  :root:not(.has-js) .header {
+    position: relative;
+    top: 0;
+  }
+}
+
+.header .pinned-header {
+  display: none;
+  margin-right: 0.4rem;
+  font-weight: 700;
+}
+
+.header.is-pinned .header-container {
+  display: none;
+}
+
+.header.is-pinned .pinned-header {
+  display: inline;
+}
+
+.header.is-pinned #gtoc {
+  margin: 0;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+}
+
+.header-container h1 {
+  margin: 0;
+}
+
+.theme-toggle-btn {
+  border: none;
+  background: transparent;
+  outline: var(--brand3) dotted 2px;
+}
+
+@media only screen and (min-width: 601px) {
+  #gtoc > ul > li {
+    display: inline;
+    border-right: 1px currentColor solid;
+    margin-right: .4rem;
+    padding-right: .4rem;
+  }
+
+  #gtoc > ul > li:last-child {
+    border-right: none;
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  .header #gtoc > ul > li.pinned-header {
+    display: none;
+  }
+
+  .header.is-pinned #gtoc > ul > li.pinned-header {
+    display: inline;
+  }
+
+  #gtoc > ul > li.gtoc-picker-header {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  #content {
+    overflow: visible;
+  }
+  #column1.interior {
+    margin-left: 0;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    width: auto;
+    overflow-y: visible;
+  }
+  #column2 {
+    display: none;
+  }
+
+  #gtoc > ul > li.gtoc-picker-header {
+    display: inline;
+  }
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.dark-icon {
+  display: block;
+}
+
+.light-icon {
+  fill: var(--white);
+  display: none;
+}
+
+.dark-mode {
+  color-scheme: dark;
+}
+
+.dark-mode .dark-icon {
+  display: none;
+}
+
+.dark-mode .light-icon {
+  fill: var(--white);
+  display: block;
+}
+
+.js-flavor-toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  float: right;
+  background-image: url("data:,");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 142px;
+  height: 20px;
+  display: block;
+  cursor: pointer;
+  margin: 0;
+}
+.js-flavor-toggle:checked {
+  background-image: url("data:,");
+}
+.js-flavor-toggle:not(:checked) ~ .mjs,
+.js-flavor-toggle:checked ~ .cjs {
+  display: none;
+}
+.dark-mode .js-flavor-toggle {
+  filter: invert(1);
+}
+
+.copy-button {
+  float: right;
+  
+  outline: none;
+  font-size: 10px;
+  color: #fff;
+  background-color: var(--green1);
+  line-height: 1;
+  border-radius: 500px;
+  border: 1px solid transparent;
+  letter-spacing: 2px;
+  min-width: 7.5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0 .5rem;
+  margin-right: .2rem;
+  height: 1.5rem;
+  transition-property: background-color,border-color,color,box-shadow,filter;
+  transition-duration: .3s;
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  background-color: var(--green2);
+}
+
+@supports (aspect-ratio: 1 / 1) {
+  .js-flavor-toggle {
+    height: 1.5em;
+    width: auto;
+    aspect-ratio: 2719 / 384;
+  }
+}
+
+@media print {
+  html {
+    height: auto;
+    font-size: .75em;
+  }
+  #column2.interior {
+    display: none;
+  }
+  #column1.interior {
+    margin-left: 0;
+    padding: 0;
+    overflow-y: auto;
+  }
+  .api_metadata,
+  #toc,
+  .srclink,
+  #gtoc,
+  .mark {
+    display: none;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.75rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 1.3rem;
+  }
+  h5 {
+    font-size: 1.2rem;
+  }
+  h6 {
+    font-size: 1.1rem;
+  }
+  .api_stability {
+    display: inline-block;
+  }
+  .api_stability a {
+    text-decoration: none;
+  }
+  a {
+    color: inherit;
+  }
+  #apicontent {
+    overflow: hidden;
+  }
+  .js-flavor-toggle {
+    display: none;
+  }
+  .js-flavor-toggle + * {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-text-primary);
+  }
+  .js-flavor-toggle ~ * {
+    display: block !important;
+    background-position: top right;
+    background-size: 142px 20px;
+    background-repeat: no-repeat;
+  }
+  .js-flavor-toggle ~ .cjs {
+    background-image: url("data:,");
+  }
+  .js-flavor-toggle ~ .mjs {
+    background-image: url("data:,");
+  }
+}
+</style>
+  <style data-noteit-inlined="https://nodejs.org/docs/latest-v24.x/api/assets/hljs.css">:not(.dark-mode) {
+  pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+  }
+  code.hljs {
+    padding: 3px 5px;
+  }
+  /*
+  
+  Visual Studio-like style based on original C# coloring by Jason Diamond <jason@diamond.name>
+  
+  */
+  .hljs {
+    background: white;
+    color: black;
+  }
+  .hljs-comment,
+  .hljs-quote,
+  .hljs-variable {
+    color: #008000;
+  }
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-built_in,
+  .hljs-name,
+  .hljs-tag {
+    color: #00f;
+  }
+  .hljs-string,
+  .hljs-title,
+  .hljs-section,
+  .hljs-attribute,
+  .hljs-literal,
+  .hljs-template-tag,
+  .hljs-template-variable,
+  .hljs-type,
+  .hljs-addition {
+    color: #a31515;
+  }
+  .hljs-deletion,
+  .hljs-selector-attr,
+  .hljs-selector-pseudo,
+  .hljs-meta {
+    color: #2b91af;
+  }
+  .hljs-doctag {
+    color: #808080;
+  }
+  .hljs-attr {
+    color: #d00;
+  }
+  .hljs-symbol,
+  .hljs-bullet,
+  .hljs-link {
+    color: #00b0e8;
+  }
+  .hljs-emphasis {
+    font-style: italic;
+  }
+  .hljs-strong {
+    font-weight: bold;
+  }
+}
+
+.dark-mode {
+
+  pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+  }
+
+  code.hljs {
+    padding: 3px 5px;
+  }
+
+  /*
+   * Visual Studio 2015 dark style
+   * Author: Nicolas LLOBERA <nllobera@gmail.com>
+   */
+  .hljs {
+    background: #1E1E1E;
+    color: #DCDCDC;
+  }
+
+  .hljs-keyword,
+  .hljs-literal,
+  .hljs-symbol,
+  .hljs-name {
+    color: #569CD6;
+  }
+
+  .hljs-link {
+    color: #569CD6;
+    text-decoration: underline;
+  }
+
+  .hljs-built_in,
+  .hljs-type {
+    color: #4EC9B0;
+  }
+
+  .hljs-number,
+  .hljs-class {
+    color: #B8D7A3;
+  }
+
+  .hljs-string,
+  .hljs-meta .hljs-string {
+    color: #D69D85;
+  }
+
+  .hljs-regexp,
+  .hljs-template-tag {
+    color: #9A5334;
+  }
+
+  .hljs-subst,
+  .hljs-function,
+  .hljs-title,
+  .hljs-params,
+  .hljs-formula {
+    color: #DCDCDC;
+  }
+
+  .hljs-comment,
+  .hljs-quote {
+    color: #57A64A;
+    font-style: italic;
+  }
+
+  .hljs-doctag {
+    color: #608B4E;
+  }
+
+  .hljs-meta,
+  .hljs-meta .hljs-keyword,
+  .hljs-tag {
+    color: #9B9B9B;
+  }
+
+  .hljs-variable,
+  .hljs-template-variable {
+    color: #BD63C5;
+  }
+
+  .hljs-attr,
+  .hljs-attribute {
+    color: #9CDCFE;
+  }
+
+  .hljs-section {
+    color: gold;
+  }
+
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
+
+  /*.hljs-code {
+    font-family:'Monospace';
+  }*/
+  .hljs-bullet,
+  .hljs-selector-tag,
+  .hljs-selector-id,
+  .hljs-selector-class,
+  .hljs-selector-attr,
+  .hljs-selector-pseudo {
+    color: #D7BA7D;
+  }
+
+  .hljs-addition {
+    background-color: #144212;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .hljs-deletion {
+    background-color: #600;
+    display: inline-block;
+    width: 100%;
+  }
+}
+</style>
+  
+  
+  <script>
+      const storedTheme = localStorage.getItem('theme');
+
+      // Follow operating system theme preference
+      if (storedTheme === null && window.matchMedia) {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        if (mq.matches) {
+          document.documentElement.classList.add('dark-mode');
+        }
+      } else if (storedTheme === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+      }
+  </script>
+  <style>@media(max-width:462px){.with-30-chars>.js-flavor-toggle{float:none;margin:0 0 1em auto;}}</style>
+</head>
+<body class="alt apidoc" id="api-section-os">
+  <a href="#apicontent" class="skip-to-content">Skip to content</a>
+  <div id="content" class="clearfix">
+    <div role="navigation" id="column2" class="interior">
+      <div id="intro" class="interior">
+        <a href="/" title="Go back to the home page">
+          Node.js
+        </a>
+      </div>
+      <ul>
+<li><a href="documentation.html" class="nav-documentation">About this documentation</a></li>
+<li><a href="synopsis.html" class="nav-synopsis">Usage and example</a></li>
+</ul>
+<hr class="line">
+<ul>
+<li><a href="assert.html" class="nav-assert">Assertion testing</a></li>
+<li><a href="async_context.html" class="nav-async_context">Asynchronous context tracking</a></li>
+<li><a href="async_hooks.html" class="nav-async_hooks">Async hooks</a></li>
+<li><a href="buffer.html" class="nav-buffer">Buffer</a></li>
+<li><a href="addons.html" class="nav-addons">C++ addons</a></li>
+<li><a href="n-api.html" class="nav-n-api">C/C++ addons with Node-API</a></li>
+<li><a href="embedding.html" class="nav-embedding">C++ embedder API</a></li>
+<li><a href="child_process.html" class="nav-child_process">Child processes</a></li>
+<li><a href="cluster.html" class="nav-cluster">Cluster</a></li>
+<li><a href="cli.html" class="nav-cli">Command-line options</a></li>
+<li><a href="console.html" class="nav-console">Console</a></li>
+<li><a href="crypto.html" class="nav-crypto">Crypto</a></li>
+<li><a href="debugger.html" class="nav-debugger">Debugger</a></li>
+<li><a href="deprecations.html" class="nav-deprecations">Deprecated APIs</a></li>
+<li><a href="diagnostics_channel.html" class="nav-diagnostics_channel">Diagnostics Channel</a></li>
+<li><a href="dns.html" class="nav-dns">DNS</a></li>
+<li><a href="domain.html" class="nav-domain">Domain</a></li>
+<li><a href="environment_variables.html" class="nav-environment_variables">Environment Variables</a></li>
+<li><a href="errors.html" class="nav-errors">Errors</a></li>
+<li><a href="events.html" class="nav-events">Events</a></li>
+<li><a href="fs.html" class="nav-fs">File system</a></li>
+<li><a href="globals.html" class="nav-globals">Globals</a></li>
+<li><a href="http.html" class="nav-http">HTTP</a></li>
+<li><a href="http2.html" class="nav-http2">HTTP/2</a></li>
+<li><a href="https.html" class="nav-https">HTTPS</a></li>
+<li><a href="inspector.html" class="nav-inspector">Inspector</a></li>
+<li><a href="intl.html" class="nav-intl">Internationalization</a></li>
+<li><a href="stream_iter.html" class="nav-stream_iter">Iterable Streams API</a></li>
+<li><a href="modules.html" class="nav-modules">Modules: CommonJS modules</a></li>
+<li><a href="esm.html" class="nav-esm">Modules: ECMAScript modules</a></li>
+<li><a href="module.html" class="nav-module">Modules: <code>node:module</code> API</a></li>
+<li><a href="packages.html" class="nav-packages">Modules: Packages</a></li>
+<li><a href="typescript.html" class="nav-typescript">Modules: TypeScript</a></li>
+<li><a href="net.html" class="nav-net">Net</a></li>
+<li><a href="os.html" class="nav-os active">OS</a></li>
+<li><a href="path.html" class="nav-path">Path</a></li>
+<li><a href="perf_hooks.html" class="nav-perf_hooks">Performance hooks</a></li>
+<li><a href="permissions.html" class="nav-permissions">Permissions</a></li>
+<li><a href="process.html" class="nav-process">Process</a></li>
+<li><a href="punycode.html" class="nav-punycode">Punycode</a></li>
+<li><a href="querystring.html" class="nav-querystring">Query strings</a></li>
+<li><a href="readline.html" class="nav-readline">Readline</a></li>
+<li><a href="repl.html" class="nav-repl">REPL</a></li>
+<li><a href="report.html" class="nav-report">Report</a></li>
+<li><a href="single-executable-applications.html" class="nav-single-executable-applications">Single executable applications</a></li>
+<li><a href="sqlite.html" class="nav-sqlite">SQLite</a></li>
+<li><a href="stream.html" class="nav-stream">Stream</a></li>
+<li><a href="string_decoder.html" class="nav-string_decoder">String decoder</a></li>
+<li><a href="test.html" class="nav-test">Test runner</a></li>
+<li><a href="timers.html" class="nav-timers">Timers</a></li>
+<li><a href="tls.html" class="nav-tls">TLS/SSL</a></li>
+<li><a href="tracing.html" class="nav-tracing">Trace events</a></li>
+<li><a href="tty.html" class="nav-tty">TTY</a></li>
+<li><a href="dgram.html" class="nav-dgram">UDP/datagram</a></li>
+<li><a href="url.html" class="nav-url">URL</a></li>
+<li><a href="util.html" class="nav-util">Utilities</a></li>
+<li><a href="v8.html" class="nav-v8">V8</a></li>
+<li><a href="vm.html" class="nav-vm">VM</a></li>
+<li><a href="wasi.html" class="nav-wasi">WASI</a></li>
+<li><a href="webcrypto.html" class="nav-webcrypto">Web Crypto API</a></li>
+<li><a href="webstreams.html" class="nav-webstreams">Web Streams API</a></li>
+<li><a href="worker_threads.html" class="nav-worker_threads">Worker threads</a></li>
+<li><a href="zlib.html" class="nav-zlib">Zlib</a></li>
+</ul>
+<hr class="line">
+<ul>
+<li><a href="https://github.com/nodejs/node" class="nav-https-github-com-nodejs-node">Code repository and issue tracker</a></li>
+</ul>
+    </div>
+
+    <div id="column1" data-id="os" class="interior">
+      <header class="header">
+        <div class="header-container">
+          <h1>Node.js v24.22.0 documentation</h1>
+          <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark mode/light mode" aria-label="Toggle dark mode/light mode" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon dark-icon" height="24" width="24">
+              <path fill="none" d="M0 0h24v24H0z" />
+              <path d="M11.1 12.08c-2.33-4.51-.5-8.48.53-10.07C6.27 2.2 1.98 6.59 1.98 12c0 .14.02.28.02.42.62-.27 1.29-.42 2-.42 1.66 0 3.18.83 4.1 2.15A4.01 4.01 0 0111 18c0 1.52-.87 2.83-2.12 3.51.98.32 2.03.5 3.11.5 3.5 0 6.58-1.8 8.37-4.52-2.36.23-6.98-.97-9.26-5.41z" />
+              <path d="M7 16h-.18C6.4 14.84 5.3 14 4 14c-1.66 0-3 1.34-3 3s1.34 3 3 3h3c1.1 0 2-.9 2-2s-.9-2-2-2z" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon light-icon" height="24" width="24">
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z" />
+            </svg>
+          </button>
+        </div>
+        <div id="gtoc">
+          <ul>
+            <li class="pinned-header">Node.js v24.22.0</li>
+            
+    <li class="picker-header">
+      <a href="#toc-picker" aria-controls="toc-picker">
+        <span class="picker-arrow"></span>
+        Table of contents
+      </a>
+
+      <div class="picker" tabindex="-1"><div class="toc"><ul id="toc-picker">
+<li><span class="stability_2"><a href="#os">OS</a></span>
+<ul>
+<li><a href="#oseol"><code>os.EOL</code></a></li>
+<li><a href="#osavailableparallelism"><code>os.availableParallelism()</code></a></li>
+<li><a href="#osarch"><code>os.arch()</code></a></li>
+<li><a href="#osconstants"><code>os.constants</code></a></li>
+<li><a href="#oscpus"><code>os.cpus()</code></a></li>
+<li><a href="#osdevnull"><code>os.devNull</code></a></li>
+<li><a href="#osendianness"><code>os.endianness()</code></a></li>
+<li><a href="#osfreemem"><code>os.freemem()</code></a></li>
+<li><a href="#osgetprioritypid"><code>os.getPriority([pid])</code></a></li>
+<li><a href="#oshomedir"><code>os.homedir()</code></a></li>
+<li><a href="#oshostname"><code>os.hostname()</code></a></li>
+<li><a href="#osloadavg"><code>os.loadavg()</code></a></li>
+<li><a href="#osmachine"><code>os.machine()</code></a></li>
+<li><a href="#osnetworkinterfaces"><code>os.networkInterfaces()</code></a></li>
+<li><a href="#osplatform"><code>os.platform()</code></a></li>
+<li><a href="#osrelease"><code>os.release()</code></a></li>
+<li><a href="#ossetprioritypid-priority"><code>os.setPriority([pid, ]priority)</code></a></li>
+<li><a href="#ostmpdir"><code>os.tmpdir()</code></a></li>
+<li><a href="#ostotalmem"><code>os.totalmem()</code></a></li>
+<li><a href="#ostype"><code>os.type()</code></a></li>
+<li><a href="#osuptime"><code>os.uptime()</code></a></li>
+<li><a href="#osuserinfooptions"><code>os.userInfo([options])</code></a></li>
+<li><a href="#osversion"><code>os.version()</code></a></li>
+<li><a href="#os-constants">OS constants</a>
+<ul>
+<li><a href="#signal-constants">Signal constants</a></li>
+<li><a href="#error-constants">Error constants</a>
+<ul>
+<li><a href="#posix-error-constants">POSIX error constants</a></li>
+<li><a href="#windows-specific-error-constants">Windows-specific error constants</a></li>
+</ul>
+</li>
+<li><a href="#dlopen-constants">dlopen constants</a></li>
+<li><a href="#priority-constants">Priority constants</a></li>
+<li><a href="#libuv-constants">libuv constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></div></div>
+    </li>
+  
+            
+    <li class="picker-header">
+      <a href="#gtoc-picker" aria-controls="gtoc-picker">
+        <span class="picker-arrow"></span>
+        Index
+      </a>
+
+      <div class="picker" tabindex="-1" id="gtoc-picker"><ul>
+<li><a href="documentation.html" class="nav-documentation">About this documentation</a></li>
+<li><a href="synopsis.html" class="nav-synopsis">Usage and example</a></li>
+
+      <li>
+        <a href="index.html">Index</a>
+      </li>
+    </ul>
+  
+<hr class="line">
+<ul>
+<li><a href="assert.html" class="nav-assert">Assertion testing</a></li>
+<li><a href="async_context.html" class="nav-async_context">Asynchronous context tracking</a></li>
+<li><a href="async_hooks.html" class="nav-async_hooks">Async hooks</a></li>
+<li><a href="buffer.html" class="nav-buffer">Buffer</a></li>
+<li><a href="addons.html" class="nav-addons">C++ addons</a></li>
+<li><a href="n-api.html" class="nav-n-api">C/C++ addons with Node-API</a></li>
+<li><a href="embedding.html" class="nav-embedding">C++ embedder API</a></li>
+<li><a href="child_process.html" class="nav-child_process">Child processes</a></li>
+<li><a href="cluster.html" class="nav-cluster">Cluster</a></li>
+<li><a href="cli.html" class="nav-cli">Command-line options</a></li>
+<li><a href="console.html" class="nav-console">Console</a></li>
+<li><a href="crypto.html" class="nav-crypto">Crypto</a></li>
+<li><a href="debugger.html" class="nav-debugger">Debugger</a></li>
+<li><a href="deprecations.html" class="nav-deprecations">Deprecated APIs</a></li>
+<li><a href="diagnostics_channel.html" class="nav-diagnostics_channel">Diagnostics Channel</a></li>
+<li><a href="dns.html" class="nav-dns">DNS</a></li>
+<li><a href="domain.html" class="nav-domain">Domain</a></li>
+<li><a href="environment_variables.html" class="nav-environment_variables">Environment Variables</a></li>
+<li><a href="errors.html" class="nav-errors">Errors</a></li>
+<li><a href="events.html" class="nav-events">Events</a></li>
+<li><a href="fs.html" class="nav-fs">File system</a></li>
+<li><a href="globals.html" class="nav-globals">Globals</a></li>
+<li><a href="http.html" class="nav-http">HTTP</a></li>
+<li><a href="http2.html" class="nav-http2">HTTP/2</a></li>
+<li><a href="https.html" class="nav-https">HTTPS</a></li>
+<li><a href="inspector.html" class="nav-inspector">Inspector</a></li>
+<li><a href="intl.html" class="nav-intl">Internationalization</a></li>
+<li><a href="stream_iter.html" class="nav-stream_iter">Iterable Streams API</a></li>
+<li><a href="modules.html" class="nav-modules">Modules: CommonJS modules</a></li>
+<li><a href="esm.html" class="nav-esm">Modules: ECMAScript modules</a></li>
+<li><a href="module.html" class="nav-module">Modules: <code>node:module</code> API</a></li>
+<li><a href="packages.html" class="nav-packages">Modules: Packages</a></li>
+<li><a href="typescript.html" class="nav-typescript">Modules: TypeScript</a></li>
+<li><a href="net.html" class="nav-net">Net</a></li>
+<li><a href="os.html" class="nav-os active">OS</a></li>
+<li><a href="path.html" class="nav-path">Path</a></li>
+<li><a href="perf_hooks.html" class="nav-perf_hooks">Performance hooks</a></li>
+<li><a href="permissions.html" class="nav-permissions">Permissions</a></li>
+<li><a href="process.html" class="nav-process">Process</a></li>
+<li><a href="punycode.html" class="nav-punycode">Punycode</a></li>
+<li><a href="querystring.html" class="nav-querystring">Query strings</a></li>
+<li><a href="readline.html" class="nav-readline">Readline</a></li>
+<li><a href="repl.html" class="nav-repl">REPL</a></li>
+<li><a href="report.html" class="nav-report">Report</a></li>
+<li><a href="single-executable-applications.html" class="nav-single-executable-applications">Single executable applications</a></li>
+<li><a href="sqlite.html" class="nav-sqlite">SQLite</a></li>
+<li><a href="stream.html" class="nav-stream">Stream</a></li>
+<li><a href="string_decoder.html" class="nav-string_decoder">String decoder</a></li>
+<li><a href="test.html" class="nav-test">Test runner</a></li>
+<li><a href="timers.html" class="nav-timers">Timers</a></li>
+<li><a href="tls.html" class="nav-tls">TLS/SSL</a></li>
+<li><a href="tracing.html" class="nav-tracing">Trace events</a></li>
+<li><a href="tty.html" class="nav-tty">TTY</a></li>
+<li><a href="dgram.html" class="nav-dgram">UDP/datagram</a></li>
+<li><a href="url.html" class="nav-url">URL</a></li>
+<li><a href="util.html" class="nav-util">Utilities</a></li>
+<li><a href="v8.html" class="nav-v8">V8</a></li>
+<li><a href="vm.html" class="nav-vm">VM</a></li>
+<li><a href="wasi.html" class="nav-wasi">WASI</a></li>
+<li><a href="webcrypto.html" class="nav-webcrypto">Web Crypto API</a></li>
+<li><a href="webstreams.html" class="nav-webstreams">Web Streams API</a></li>
+<li><a href="worker_threads.html" class="nav-worker_threads">Worker threads</a></li>
+<li><a href="zlib.html" class="nav-zlib">Zlib</a></li>
+</ul>
+<hr class="line">
+<ul>
+<li><a href="https://github.com/nodejs/node" class="nav-https-github-com-nodejs-node">Code repository and issue tracker</a></li>
+</ul></div>
+    </li>
+  
+            
+    <li class="picker-header">
+      <a href="#alt-docs" aria-controls="alt-docs">
+        <span class="picker-arrow"></span>
+        Other versions
+      </a>
+      <div class="picker" tabindex="-1"><ol id="alt-docs"><li><a href="https://nodejs.org/docs/latest-v26.x/api/os.html">26.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v25.x/api/os.html">25.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v24.x/api/os.html">24.x <b>LTS</b></a></li>
+<li><a href="https://nodejs.org/docs/latest-v23.x/api/os.html">23.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v22.x/api/os.html">22.x <b>LTS</b></a></li>
+<li><a href="https://nodejs.org/docs/latest-v21.x/api/os.html">21.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v20.x/api/os.html">20.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v19.x/api/os.html">19.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v18.x/api/os.html">18.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v17.x/api/os.html">17.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v16.x/api/os.html">16.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v15.x/api/os.html">15.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v14.x/api/os.html">14.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v13.x/api/os.html">13.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v12.x/api/os.html">12.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v11.x/api/os.html">11.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v10.x/api/os.html">10.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v9.x/api/os.html">9.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v8.x/api/os.html">8.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v7.x/api/os.html">7.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v6.x/api/os.html">6.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v5.x/api/os.html">5.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v4.x/api/os.html">4.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v0.12.x/api/os.html">0.12.x</a></li>
+<li><a href="https://nodejs.org/docs/latest-v0.10.x/api/os.html">0.10.x</a></li></ol></div>
+    </li>
+  
+            <li class="picker-header">
+              <a href="#options-picker" aria-controls="options-picker">
+                <span class="picker-arrow"></span>
+                Options
+              </a>
+        
+              <div class="picker" tabindex="-1">
+                <ul id="options-picker">
+                  <li>
+                    <a href="all.html">View on single page</a>
+                  </li>
+                  <li>
+                    <a href="os.json">View as JSON</a>
+                  </li>
+                  <li class="edit_on_github"><a href="https://github.com/nodejs/node/edit/main/doc/api/os.md">Edit on GitHub</a></li>    
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <hr>
+      </header>
+
+      <details role="navigation" id="toc" open><summary>Table of contents</summary><ul>
+<li><span class="stability_2"><a href="#os">OS</a></span>
+<ul>
+<li><a href="#oseol"><code>os.EOL</code></a></li>
+<li><a href="#osavailableparallelism"><code>os.availableParallelism()</code></a></li>
+<li><a href="#osarch"><code>os.arch()</code></a></li>
+<li><a href="#osconstants"><code>os.constants</code></a></li>
+<li><a href="#oscpus"><code>os.cpus()</code></a></li>
+<li><a href="#osdevnull"><code>os.devNull</code></a></li>
+<li><a href="#osendianness"><code>os.endianness()</code></a></li>
+<li><a href="#osfreemem"><code>os.freemem()</code></a></li>
+<li><a href="#osgetprioritypid"><code>os.getPriority([pid])</code></a></li>
+<li><a href="#oshomedir"><code>os.homedir()</code></a></li>
+<li><a href="#oshostname"><code>os.hostname()</code></a></li>
+<li><a href="#osloadavg"><code>os.loadavg()</code></a></li>
+<li><a href="#osmachine"><code>os.machine()</code></a></li>
+<li><a href="#osnetworkinterfaces"><code>os.networkInterfaces()</code></a></li>
+<li><a href="#osplatform"><code>os.platform()</code></a></li>
+<li><a href="#osrelease"><code>os.release()</code></a></li>
+<li><a href="#ossetprioritypid-priority"><code>os.setPriority([pid, ]priority)</code></a></li>
+<li><a href="#ostmpdir"><code>os.tmpdir()</code></a></li>
+<li><a href="#ostotalmem"><code>os.totalmem()</code></a></li>
+<li><a href="#ostype"><code>os.type()</code></a></li>
+<li><a href="#osuptime"><code>os.uptime()</code></a></li>
+<li><a href="#osuserinfooptions"><code>os.userInfo([options])</code></a></li>
+<li><a href="#osversion"><code>os.version()</code></a></li>
+<li><a href="#os-constants">OS constants</a>
+<ul>
+<li><a href="#signal-constants">Signal constants</a></li>
+<li><a href="#error-constants">Error constants</a>
+<ul>
+<li><a href="#posix-error-constants">POSIX error constants</a></li>
+<li><a href="#windows-specific-error-constants">Windows-specific error constants</a></li>
+</ul>
+</li>
+<li><a href="#dlopen-constants">dlopen constants</a></li>
+<li><a href="#priority-constants">Priority constants</a></li>
+<li><a href="#libuv-constants">libuv constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></details>
+
+      <div role="main" id="apicontent">
+        <h2>OS<span><a class="mark" href="#os" id="os">#</a></span><a aria-hidden="true" class="legacy" id="os_os"></a></h2>
+
+<p></p><div class="api_stability api_stability_2"><a href="documentation.html#stability-index">Stability: 2</a> - Stable</div><p></p>
+<p><strong>Source Code:</strong> <a href="https://github.com/nodejs/node/blob/v24.22.0/lib/os.js">lib/os.js</a></p>
+<p>The <code>node:os</code> module provides operating system-related utility methods and
+properties. It can be accessed using:</p>
+
+<pre class="with-30-chars"><input class="js-flavor-toggle" type="checkbox" checked aria-label="Show modern ES modules syntax"><code class="language-js mjs"><span class="hljs-keyword">import</span> os <span class="hljs-keyword">from</span> <span class="hljs-string">'node:os'</span>;</code><code class="language-js cjs"><span class="hljs-keyword">const</span> os = <span class="hljs-built_in">require</span>(<span class="hljs-string">'node:os'</span>);</code><button class="copy-button">copy</button></pre>
+<section><h3><code>os.EOL</code><span><a class="mark" href="#oseol" id="oseol">#</a></span><a aria-hidden="true" class="legacy" id="os_os_eol"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.7.8</span>
+</div>
+<ul>
+<li>Type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>The operating system-specific end-of-line marker.</p>
+<ul>
+<li><code>\n</code> on POSIX</li>
+<li><code>\r\n</code> on Windows</li>
+</ul>
+</section><section><h3><code>os.availableParallelism()</code><span><a class="mark" href="#osavailableparallelism" id="osavailableparallelism">#</a></span><a aria-hidden="true" class="legacy" id="os_os_availableparallelism"></a></h3>
+<div class="api_metadata">
+<span>Added in: v19.4.0, v18.14.0</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a></li>
+</ul>
+<p>Returns an estimate of the default amount of parallelism a program should use.
+Always returns a value greater than zero.</p>
+<p>This function is a small wrapper about libuv's <a href="https://docs.libuv.org/en/v1.x/misc.html#c.uv_available_parallelism"><code>uv_available_parallelism()</code></a>.</p>
+</section><section><h3><code>os.arch()</code><span><a class="mark" href="#osarch" id="osarch">#</a></span><a aria-hidden="true" class="legacy" id="os_os_arch"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.5.0</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the operating system CPU architecture for which the Node.js binary was
+compiled. Possible values are <code>'arm'</code>, <code>'arm64'</code>, <code>'ia32'</code>, <code>'loong64'</code>,
+<code>'mips'</code>, <code>'mipsel'</code>, <code>'ppc64'</code>, <code>'riscv64'</code>, <code>'s390x'</code>, and <code>'x64'</code>.</p>
+<p>The return value is equivalent to <a href="process.html#processarch"><code>process.arch</code></a>.</p>
+</section><section><h3><code>os.constants</code><span><a class="mark" href="#osconstants" id="osconstants">#</a></span><a aria-hidden="true" class="legacy" id="os_os_constants"></a></h3>
+<div class="api_metadata">
+<span>Added in: v6.3.0</span>
+</div>
+<ul>
+<li>Type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="type">&#x3C;Object></a></li>
+</ul>
+<p>Contains commonly used operating system-specific constants for error codes,
+process signals, and so on. The specific constants defined are described in
+<a href="#os-constants">OS constants</a>.</p>
+</section><section><h3><code>os.cpus()</code><span><a class="mark" href="#oscpus" id="oscpus">#</a></span><a aria-hidden="true" class="legacy" id="os_os_cpus"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="type">&#x3C;Object[]></a></li>
+</ul>
+<p>Returns an array of objects containing information about each logical CPU core.
+The array will be empty if no CPU information is available, such as if the
+<code>/proc</code> file system is unavailable.</p>
+<p>The properties included on each object include:</p>
+<ul>
+<li><code>model</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+<li><code>speed</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> (in MHz)</li>
+<li><code>times</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="type">&#x3C;Object></a>
+<ul>
+<li><code>user</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> The number of milliseconds the CPU has spent in user mode.</li>
+<li><code>nice</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> The number of milliseconds the CPU has spent in nice mode.</li>
+<li><code>sys</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> The number of milliseconds the CPU has spent in sys mode.</li>
+<li><code>idle</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> The number of milliseconds the CPU has spent in idle mode.</li>
+<li><code>irq</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> The number of milliseconds the CPU has spent in irq mode.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-js">[
+  {
+    <span class="hljs-attr">model</span>: <span class="hljs-string">'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'</span>,
+    <span class="hljs-attr">speed</span>: <span class="hljs-number">2926</span>,
+    <span class="hljs-attr">times</span>: {
+      <span class="hljs-attr">user</span>: <span class="hljs-number">252020</span>,
+      <span class="hljs-attr">nice</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-attr">sys</span>: <span class="hljs-number">30340</span>,
+      <span class="hljs-attr">idle</span>: <span class="hljs-number">1070356870</span>,
+      <span class="hljs-attr">irq</span>: <span class="hljs-number">0</span>,
+    },
+  },
+  {
+    <span class="hljs-attr">model</span>: <span class="hljs-string">'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'</span>,
+    <span class="hljs-attr">speed</span>: <span class="hljs-number">2926</span>,
+    <span class="hljs-attr">times</span>: {
+      <span class="hljs-attr">user</span>: <span class="hljs-number">306960</span>,
+      <span class="hljs-attr">nice</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-attr">sys</span>: <span class="hljs-number">26980</span>,
+      <span class="hljs-attr">idle</span>: <span class="hljs-number">1071569080</span>,
+      <span class="hljs-attr">irq</span>: <span class="hljs-number">0</span>,
+    },
+  },
+  {
+    <span class="hljs-attr">model</span>: <span class="hljs-string">'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'</span>,
+    <span class="hljs-attr">speed</span>: <span class="hljs-number">2926</span>,
+    <span class="hljs-attr">times</span>: {
+      <span class="hljs-attr">user</span>: <span class="hljs-number">248450</span>,
+      <span class="hljs-attr">nice</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-attr">sys</span>: <span class="hljs-number">21750</span>,
+      <span class="hljs-attr">idle</span>: <span class="hljs-number">1070919370</span>,
+      <span class="hljs-attr">irq</span>: <span class="hljs-number">0</span>,
+    },
+  },
+  {
+    <span class="hljs-attr">model</span>: <span class="hljs-string">'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'</span>,
+    <span class="hljs-attr">speed</span>: <span class="hljs-number">2926</span>,
+    <span class="hljs-attr">times</span>: {
+      <span class="hljs-attr">user</span>: <span class="hljs-number">256880</span>,
+      <span class="hljs-attr">nice</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-attr">sys</span>: <span class="hljs-number">19430</span>,
+      <span class="hljs-attr">idle</span>: <span class="hljs-number">1070905480</span>,
+      <span class="hljs-attr">irq</span>: <span class="hljs-number">20</span>,
+    },
+  },
+];</code> <button class="copy-button">copy</button></pre>
+<p><code>nice</code> values are POSIX-only. On Windows, the <code>nice</code> values of all processors
+are always 0.</p>
+<p><code>os.cpus().length</code> should not be used to calculate the amount of parallelism
+available to an application. Use
+<a href="#osavailableparallelism"><code>os.availableParallelism()</code></a> for this purpose.</p>
+</section><section><h3><code>os.devNull</code><span><a class="mark" href="#osdevnull" id="osdevnull">#</a></span><a aria-hidden="true" class="legacy" id="os_os_devnull"></a></h3>
+<div class="api_metadata">
+<span>Added in: v16.3.0, v14.18.0</span>
+</div>
+<ul>
+<li>Type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>The platform-specific file path of the null device.</p>
+<ul>
+<li><code>\\.\nul</code> on Windows</li>
+<li><code>/dev/null</code> on POSIX</li>
+</ul>
+</section><section><h3><code>os.endianness()</code><span><a class="mark" href="#osendianness" id="osendianness">#</a></span><a aria-hidden="true" class="legacy" id="os_os_endianness"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.9.4</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns a string identifying the endianness of the CPU for which the Node.js
+binary was compiled.</p>
+<p>Possible values are <code>'BE'</code> for big endian and <code>'LE'</code> for little endian.</p>
+</section><section><h3><code>os.freemem()</code><span><a class="mark" href="#osfreemem" id="osfreemem">#</a></span><a aria-hidden="true" class="legacy" id="os_os_freemem"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a></li>
+</ul>
+<p>Returns the amount of free system memory in bytes as an integer.</p>
+</section><section><h3><code>os.getPriority([pid])</code><span><a class="mark" href="#osgetprioritypid" id="osgetprioritypid">#</a></span><a aria-hidden="true" class="legacy" id="os_os_getpriority_pid"></a></h3>
+<div class="api_metadata">
+<span>Added in: v10.10.0</span>
+</div>
+<ul>
+<li><code>pid</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a> The process ID to retrieve scheduling priority for.
+<strong>Default:</strong> <code>0</code>.</li>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a></li>
+</ul>
+<p>Returns the scheduling priority for the process specified by <code>pid</code>. If <code>pid</code> is
+not provided or is <code>0</code>, the priority of the current process is returned.</p>
+</section><section><h3><code>os.homedir()</code><span><a class="mark" href="#oshomedir" id="oshomedir">#</a></span><a aria-hidden="true" class="legacy" id="os_os_homedir"></a></h3>
+<div class="api_metadata">
+<span>Added in: v2.3.0</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the string path of the current user's home directory.</p>
+<p>On POSIX, it uses the <code>$HOME</code> environment variable if defined. Otherwise it
+uses the <a href="https://en.wikipedia.org/wiki/User_identifier#Effective_user_ID">effective UID</a> to look up the user's home directory.</p>
+<p>On Windows, it uses the <code>USERPROFILE</code> environment variable if defined.
+Otherwise it uses the path to the profile directory of the current user.</p>
+</section><section><h3><code>os.hostname()</code><span><a class="mark" href="#oshostname" id="oshostname">#</a></span><a aria-hidden="true" class="legacy" id="os_os_hostname"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the host name of the operating system as a string.</p>
+</section><section><h3><code>os.loadavg()</code><span><a class="mark" href="#osloadavg" id="osloadavg">#</a></span><a aria-hidden="true" class="legacy" id="os_os_loadavg"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number[]></a></li>
+</ul>
+<p>Returns an array containing the 1, 5, and 15 minute load averages.</p>
+<p>The load average is a measure of system activity calculated by the operating
+system and expressed as a fractional number.</p>
+<p>The load average is a Unix-specific concept. On Windows, the return value is
+always <code>[0, 0, 0]</code>.</p>
+</section><section><h3><code>os.machine()</code><span><a class="mark" href="#osmachine" id="osmachine">#</a></span><a aria-hidden="true" class="legacy" id="os_os_machine"></a></h3>
+<div class="api_metadata">
+<span>Added in: v18.9.0, v16.18.0</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the machine type as a string, such as <code>arm</code>, <code>arm64</code>, <code>aarch64</code>,
+<code>mips</code>, <code>mips64</code>, <code>ppc64</code>, <code>ppc64le</code>, <code>s390x</code>, <code>i386</code>, <code>i686</code>, <code>x86_64</code>.</p>
+<p>On POSIX systems, the machine type is determined by calling
+<a href="https://linux.die.net/man/3/uname"><code>uname(3)</code></a>. On Windows, <code>RtlGetVersion()</code> is used, and if it is not
+available, <code>GetVersionExW()</code> will be used. See
+<a href="https://en.wikipedia.org/wiki/Uname#Examples">https://en.wikipedia.org/wiki/Uname#Examples</a> for more information.</p>
+</section><section><h3><code>os.networkInterfaces()</code><span><a class="mark" href="#osnetworkinterfaces" id="osnetworkinterfaces">#</a></span><a aria-hidden="true" class="legacy" id="os_os_networkinterfaces"></a></h3>
+<div class="api_metadata">
+<details class="changelog"><summary>History</summary>
+<table>
+<tbody><tr><th>Version</th><th>Changes</th></tr>
+<tr><td>v18.4.0</td>
+<td><p>The <code>family</code> property now returns a string instead of a number.</p></td></tr>
+<tr><td>v18.0.0</td>
+<td><p>The <code>family</code> property now returns a number instead of a string.</p></td></tr>
+<tr><td>v0.6.0</td>
+<td><p><span>Added in: v0.6.0</span></p></td></tr>
+</tbody></table>
+</details>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="type">&#x3C;Object></a></li>
+</ul>
+<p>Returns an object containing network interfaces that have been assigned a
+network address.</p>
+<p>Each key on the returned object identifies a network interface. The associated
+value is an array of objects that each describe an assigned network address.</p>
+<p>The properties available on the assigned network address object include:</p>
+<ul>
+<li><code>address</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a> The assigned IPv4 or IPv6 address</li>
+<li><code>netmask</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a> The IPv4 or IPv6 network mask</li>
+<li><code>family</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a> Either <code>IPv4</code> or <code>IPv6</code></li>
+<li><code>mac</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a> The MAC address of the network interface</li>
+<li><code>internal</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#boolean_type" class="type">&#x3C;boolean></a> <code>true</code> if the network interface is a loopback or
+similar interface that is not remotely accessible; otherwise <code>false</code></li>
+<li><code>scopeid</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;number></a> The numeric IPv6 scope ID (only specified when <code>family</code>
+is <code>IPv6</code>)</li>
+<li><code>cidr</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a> The assigned IPv4 or IPv6 address with the routing prefix
+in CIDR notation. If the <code>netmask</code> is invalid, this property is set
+to <code>null</code>.</li>
+</ul>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">"lo"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"address"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"127.0.0.1"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"netmask"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"255.0.0.0"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"family"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"IPv4"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"mac"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"00:00:00:00:00:00"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"internal"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"cidr"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"127.0.0.1/8"</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"address"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"::1"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"netmask"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"family"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"IPv6"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"mac"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"00:00:00:00:00:00"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"scopeid"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"internal"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"cidr"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"::1/128"</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">"eth0"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"address"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"192.168.1.108"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"netmask"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"255.255.255.0"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"family"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"IPv4"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"mac"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"01:02:03:0a:0b:0c"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"internal"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"cidr"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"192.168.1.108/24"</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">"address"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"fe80::a00:27ff:fe4e:66a1"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"netmask"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"ffff:ffff:ffff:ffff::"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"family"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"IPv6"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"mac"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"01:02:03:0a:0b:0c"</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"scopeid"</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"internal"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">"cidr"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"fe80::a00:27ff:fe4e:66a1/64"</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code> <button class="copy-button">copy</button></pre>
+</section><section><h3><code>os.platform()</code><span><a class="mark" href="#osplatform" id="osplatform">#</a></span><a aria-hidden="true" class="legacy" id="os_os_platform"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.5.0</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns a string identifying the operating system platform for which
+the Node.js binary was compiled. The value is set at compile time.
+Possible values are <code>'aix'</code>, <code>'darwin'</code>, <code>'freebsd'</code>,<code>'linux'</code>,
+<code>'openbsd'</code>, <code>'sunos'</code>, and <code>'win32'</code>.</p>
+<p>The return value is equivalent to <a href="process.html#processplatform"><code>process.platform</code></a>.</p>
+<p>The value <code>'android'</code> may also be returned if Node.js is built on the Android
+operating system. <a href="https://github.com/nodejs/node/blob/HEAD/BUILDING.md#android">Android support is experimental</a>.</p>
+</section><section><h3><code>os.release()</code><span><a class="mark" href="#osrelease" id="osrelease">#</a></span><a aria-hidden="true" class="legacy" id="os_os_release"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the operating system as a string.</p>
+<p>On POSIX systems, the operating system release is determined by calling
+<a href="https://linux.die.net/man/3/uname"><code>uname(3)</code></a>. On Windows, <code>GetVersionExW()</code> is used. See
+<a href="https://en.wikipedia.org/wiki/Uname#Examples">https://en.wikipedia.org/wiki/Uname#Examples</a> for more information.</p>
+</section><section><h3><code>os.setPriority([pid, ]priority)</code><span><a class="mark" href="#ossetprioritypid-priority" id="ossetprioritypid-priority">#</a></span><a aria-hidden="true" class="legacy" id="os_os_setpriority_pid_priority"></a></h3>
+<div class="api_metadata">
+<span>Added in: v10.10.0</span>
+</div>
+<ul>
+<li><code>pid</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a> The process ID to set scheduling priority for.
+<strong>Default:</strong> <code>0</code>.</li>
+<li><code>priority</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a> The scheduling priority to assign to the process.</li>
+</ul>
+<p>Attempts to set the scheduling priority for the process specified by <code>pid</code>. If
+<code>pid</code> is not provided or is <code>0</code>, the process ID of the current process is used.</p>
+<p>The <code>priority</code> input must be an integer between <code>-20</code> (high priority) and <code>19</code>
+(low priority). Due to differences between Unix priority levels and Windows
+priority classes, <code>priority</code> is mapped to one of six priority constants in
+<code>os.constants.priority</code>. When retrieving a process priority level, this range
+mapping may cause the return value to be slightly different on Windows. To avoid
+confusion, set <code>priority</code> to one of the priority constants.</p>
+<p>On Windows, setting priority to <code>PRIORITY_HIGHEST</code> requires elevated user
+privileges. Otherwise the set priority will be silently reduced to
+<code>PRIORITY_HIGH</code>.</p>
+</section><section><h3><code>os.tmpdir()</code><span><a class="mark" href="#ostmpdir" id="ostmpdir">#</a></span><a aria-hidden="true" class="legacy" id="os_os_tmpdir"></a></h3>
+<div class="api_metadata">
+<details class="changelog"><summary>History</summary>
+<table>
+<tbody><tr><th>Version</th><th>Changes</th></tr>
+<tr><td>v2.0.0</td>
+<td><p>This function is now cross-platform consistent and no longer returns a path with a trailing slash on any platform.</p></td></tr>
+<tr><td>v0.9.9</td>
+<td><p><span>Added in: v0.9.9</span></p></td></tr>
+</tbody></table>
+</details>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the operating system's default directory for temporary files as a
+string.</p>
+<p>On Windows, the result can be overridden by <code>TEMP</code> and <code>TMP</code> environment variables, and
+<code>TEMP</code> takes precedence over <code>TMP</code>. If neither is set, it defaults to <code>%SystemRoot%\temp</code>
+or <code>%windir%\temp</code>.</p>
+<p>On non-Windows platforms, <code>TMPDIR</code>, <code>TMP</code> and <code>TEMP</code> environment variables will be checked
+to override the result of this method, in the described order. If none of them is set, it
+defaults to <code>/tmp</code>.</p>
+<p>Some operating system distributions would either configure <code>TMPDIR</code> (non-Windows) or
+<code>TEMP</code> and <code>TMP</code> (Windows) by default without additional configurations by the system
+administrators. The result of <code>os.tmpdir()</code> typically reflects the system preference
+unless it's explicitly overridden by the users.</p>
+</section><section><h3><code>os.totalmem()</code><span><a class="mark" href="#ostotalmem" id="ostotalmem">#</a></span><a aria-hidden="true" class="legacy" id="os_os_totalmem"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a></li>
+</ul>
+<p>Returns the total amount of system memory in bytes as an integer.</p>
+</section><section><h3><code>os.type()</code><span><a class="mark" href="#ostype" id="ostype">#</a></span><a aria-hidden="true" class="legacy" id="os_os_type"></a></h3>
+<div class="api_metadata">
+<span>Added in: v0.3.3</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns the operating system name as returned by <a href="https://linux.die.net/man/3/uname"><code>uname(3)</code></a>. For example, it
+returns <code>'Linux'</code> on Linux, <code>'Darwin'</code> on macOS, and <code>'Windows_NT'</code> on Windows.</p>
+<p>See <a href="https://en.wikipedia.org/wiki/Uname#Examples">https://en.wikipedia.org/wiki/Uname#Examples</a> for additional information
+about the output of running <a href="https://linux.die.net/man/3/uname"><code>uname(3)</code></a> on various operating systems.</p>
+</section><section><h3><code>os.uptime()</code><span><a class="mark" href="#osuptime" id="osuptime">#</a></span><a aria-hidden="true" class="legacy" id="os_os_uptime"></a></h3>
+<div class="api_metadata">
+<details class="changelog"><summary>History</summary>
+<table>
+<tbody><tr><th>Version</th><th>Changes</th></tr>
+<tr><td>v10.0.0</td>
+<td><p>The result of this function no longer contains a fraction component on Windows.</p></td></tr>
+<tr><td>v0.3.3</td>
+<td><p><span>Added in: v0.3.3</span></p></td></tr>
+</tbody></table>
+</details>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#number_type" class="type">&#x3C;integer></a></li>
+</ul>
+<p>Returns the system uptime in number of seconds.</p>
+</section><section><h3><code>os.userInfo([options])</code><span><a class="mark" href="#osuserinfooptions" id="osuserinfooptions">#</a></span><a aria-hidden="true" class="legacy" id="os_os_userinfo_options"></a></h3>
+<div class="api_metadata">
+<span>Added in: v6.0.0</span>
+</div>
+<ul>
+<li><code>options</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="type">&#x3C;Object></a>
+<ul>
+<li><code>encoding</code> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a> Character encoding used to interpret resulting strings.
+If <code>encoding</code> is set to <code>'buffer'</code>, the <code>username</code>, <code>shell</code>, and <code>homedir</code>
+values will be <code>Buffer</code> instances. <strong>Default:</strong> <code>'utf8'</code>.</li>
+</ul>
+</li>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="type">&#x3C;Object></a></li>
+</ul>
+<p>Returns information about the currently effective user. On POSIX platforms,
+this is typically a subset of the password file. The returned object includes
+the <code>username</code>, <code>uid</code>, <code>gid</code>, <code>shell</code>, and <code>homedir</code>. On Windows, the <code>uid</code> and
+<code>gid</code> fields are <code>-1</code>, and <code>shell</code> is <code>null</code>.</p>
+<p>The value of <code>homedir</code> returned by <code>os.userInfo()</code> is provided by the operating
+system. This differs from the result of <code>os.homedir()</code>, which queries
+environment variables for the home directory before falling back to the
+operating system response.</p>
+<p>Throws a <a href="errors.html#class-systemerror"><code>SystemError</code></a> if a user has no <code>username</code> or <code>homedir</code>.</p>
+</section><section><h3><code>os.version()</code><span><a class="mark" href="#osversion" id="osversion">#</a></span><a aria-hidden="true" class="legacy" id="os_os_version"></a></h3>
+<div class="api_metadata">
+<span>Added in: v13.11.0, v12.17.0</span>
+</div>
+<ul>
+<li>Returns: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#string_type" class="type">&#x3C;string></a></li>
+</ul>
+<p>Returns a string identifying the kernel version.</p>
+<p>On POSIX systems, the operating system release is determined by calling
+<a href="https://linux.die.net/man/3/uname"><code>uname(3)</code></a>. On Windows, <code>RtlGetVersion()</code> is used, and if it is not
+available, <code>GetVersionExW()</code> will be used. See
+<a href="https://en.wikipedia.org/wiki/Uname#Examples">https://en.wikipedia.org/wiki/Uname#Examples</a> for more information.</p>
+</section><section><h3>OS constants<span><a class="mark" href="#os-constants" id="os-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_os_constants_1"></a></h3>
+<p>The following constants are exported by <code>os.constants</code>.</p>
+<p>Not all constants will be available on every operating system.</p>
+<div>
+<h4>Signal constants<span><a class="mark" href="#signal-constants" id="signal-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_signal_constants"></a></h4>
+<div class="api_metadata">
+<details class="changelog"><summary>History</summary>
+<table>
+<tbody><tr><th>Version</th><th>Changes</th></tr>
+<tr><td>v5.11.0</td>
+<td><p>Added support for <code>SIGINFO</code>.</p></td></tr>
+</tbody></table>
+</details>
+</div>
+<p>The following signal constants are exported by <code>os.constants.signals</code>.</p>
+<table>
+  <tbody><tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>SIGHUP</code></td>
+    <td>Sent to indicate when a controlling terminal is closed or a parent
+    process exits.</td>
+  </tr>
+  <tr>
+    <td><code>SIGINT</code></td>
+    <td>Sent to indicate when a user wishes to interrupt a process
+    (<kbd>Ctrl</kbd>+<kbd>C</kbd>).</td>
+  </tr>
+  <tr>
+    <td><code>SIGQUIT</code></td>
+    <td>Sent to indicate when a user wishes to terminate a process and perform a
+    core dump.</td>
+  </tr>
+  <tr>
+    <td><code>SIGILL</code></td>
+    <td>Sent to a process to notify that it has attempted to perform an illegal,
+    malformed, unknown, or privileged instruction.</td>
+  </tr>
+  <tr>
+    <td><code>SIGTRAP</code></td>
+    <td>Sent to a process when an exception has occurred.</td>
+  </tr>
+  <tr>
+    <td><code>SIGABRT</code></td>
+    <td>Sent to a process to request that it abort.</td>
+  </tr>
+  <tr>
+    <td><code>SIGIOT</code></td>
+    <td>Synonym for <code>SIGABRT</code></td>
+  </tr>
+  <tr>
+    <td><code>SIGBUS</code></td>
+    <td>Sent to a process to notify that it has caused a bus error.</td>
+  </tr>
+  <tr>
+    <td><code>SIGFPE</code></td>
+    <td>Sent to a process to notify that it has performed an illegal arithmetic
+    operation.</td>
+  </tr>
+  <tr>
+    <td><code>SIGKILL</code></td>
+    <td>Sent to a process to terminate it immediately.</td>
+  </tr>
+  <tr>
+    <td><code>SIGUSR1</code> <code>SIGUSR2</code></td>
+    <td>Sent to a process to identify user-defined conditions.</td>
+  </tr>
+  <tr>
+    <td><code>SIGSEGV</code></td>
+    <td>Sent to a process to notify of a segmentation fault.</td>
+  </tr>
+  <tr>
+    <td><code>SIGPIPE</code></td>
+    <td>Sent to a process when it has attempted to write to a disconnected
+    pipe.</td>
+  </tr>
+  <tr>
+    <td><code>SIGALRM</code></td>
+    <td>Sent to a process when a system timer elapses.</td>
+  </tr>
+  <tr>
+    <td><code>SIGTERM</code></td>
+    <td>Sent to a process to request termination.</td>
+  </tr>
+  <tr>
+    <td><code>SIGCHLD</code></td>
+    <td>Sent to a process when a child process terminates.</td>
+  </tr>
+  <tr>
+    <td><code>SIGSTKFLT</code></td>
+    <td>Sent to a process to indicate a stack fault on a coprocessor.</td>
+  </tr>
+  <tr>
+    <td><code>SIGCONT</code></td>
+    <td>Sent to instruct the operating system to continue a paused process.</td>
+  </tr>
+  <tr>
+    <td><code>SIGSTOP</code></td>
+    <td>Sent to instruct the operating system to halt a process.</td>
+  </tr>
+  <tr>
+    <td><code>SIGTSTP</code></td>
+    <td>Sent to a process to request it to stop.</td>
+  </tr>
+  <tr>
+    <td><code>SIGBREAK</code></td>
+    <td>Sent to indicate when a user wishes to interrupt a process.</td>
+  </tr>
+  <tr>
+    <td><code>SIGTTIN</code></td>
+    <td>Sent to a process when it reads from the TTY while in the
+    background.</td>
+  </tr>
+  <tr>
+    <td><code>SIGTTOU</code></td>
+    <td>Sent to a process when it writes to the TTY while in the
+    background.</td>
+  </tr>
+  <tr>
+    <td><code>SIGURG</code></td>
+    <td>Sent to a process when a socket has urgent data to read.</td>
+  </tr>
+  <tr>
+    <td><code>SIGXCPU</code></td>
+    <td>Sent to a process when it has exceeded its limit on CPU usage.</td>
+  </tr>
+  <tr>
+    <td><code>SIGXFSZ</code></td>
+    <td>Sent to a process when it grows a file larger than the maximum
+    allowed.</td>
+  </tr>
+  <tr>
+    <td><code>SIGVTALRM</code></td>
+    <td>Sent to a process when a virtual timer has elapsed.</td>
+  </tr>
+  <tr>
+    <td><code>SIGPROF</code></td>
+    <td>Sent to a process when a system timer has elapsed.</td>
+  </tr>
+  <tr>
+    <td><code>SIGWINCH</code></td>
+    <td>Sent to a process when the controlling terminal has changed its
+    size.</td>
+  </tr>
+  <tr>
+    <td><code>SIGIO</code></td>
+    <td>Sent to a process when I/O is available.</td>
+  </tr>
+  <tr>
+    <td><code>SIGPOLL</code></td>
+    <td>Synonym for <code>SIGIO</code></td>
+  </tr>
+  <tr>
+    <td><code>SIGLOST</code></td>
+    <td>Sent to a process when a file lock has been lost.</td>
+  </tr>
+  <tr>
+    <td><code>SIGPWR</code></td>
+    <td>Sent to a process to notify of a power failure.</td>
+  </tr>
+  <tr>
+    <td><code>SIGINFO</code></td>
+    <td>Synonym for <code>SIGPWR</code></td>
+  </tr>
+  <tr>
+    <td><code>SIGSYS</code></td>
+    <td>Sent to a process to notify of a bad argument.</td>
+  </tr>
+  <tr>
+    <td><code>SIGUNUSED</code></td>
+    <td>Synonym for <code>SIGSYS</code></td>
+  </tr>
+</tbody></table>
+</div><div>
+<h4>Error constants<span><a class="mark" href="#error-constants" id="error-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_error_constants"></a></h4>
+<p>The following error constants are exported by <code>os.constants.errno</code>.</p>
+<div>
+<h5>POSIX error constants<span><a class="mark" href="#posix-error-constants" id="posix-error-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_posix_error_constants"></a></h5>
+<table>
+  <tbody><tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>E2BIG</code></td>
+    <td>Indicates that the list of arguments is longer than expected.</td>
+  </tr>
+  <tr>
+    <td><code>EACCES</code></td>
+    <td>Indicates that the operation did not have sufficient permissions.</td>
+  </tr>
+  <tr>
+    <td><code>EADDRINUSE</code></td>
+    <td>Indicates that the network address is already in use.</td>
+  </tr>
+  <tr>
+    <td><code>EADDRNOTAVAIL</code></td>
+    <td>Indicates that the network address is currently unavailable for
+    use.</td>
+  </tr>
+  <tr>
+    <td><code>EAFNOSUPPORT</code></td>
+    <td>Indicates that the network address family is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>EAGAIN</code></td>
+    <td>Indicates that there is no data available and to try the
+    operation again later.</td>
+  </tr>
+  <tr>
+    <td><code>EALREADY</code></td>
+    <td>Indicates that the socket already has a pending connection in
+    progress.</td>
+  </tr>
+  <tr>
+    <td><code>EBADF</code></td>
+    <td>Indicates that a file descriptor is not valid.</td>
+  </tr>
+  <tr>
+    <td><code>EBADMSG</code></td>
+    <td>Indicates an invalid data message.</td>
+  </tr>
+  <tr>
+    <td><code>EBUSY</code></td>
+    <td>Indicates that a device or resource is busy.</td>
+  </tr>
+  <tr>
+    <td><code>ECANCELED</code></td>
+    <td>Indicates that an operation was canceled.</td>
+  </tr>
+  <tr>
+    <td><code>ECHILD</code></td>
+    <td>Indicates that there are no child processes.</td>
+  </tr>
+  <tr>
+    <td><code>ECONNABORTED</code></td>
+    <td>Indicates that the network connection has been aborted.</td>
+  </tr>
+  <tr>
+    <td><code>ECONNREFUSED</code></td>
+    <td>Indicates that the network connection has been refused.</td>
+  </tr>
+  <tr>
+    <td><code>ECONNRESET</code></td>
+    <td>Indicates that the network connection has been reset.</td>
+  </tr>
+  <tr>
+    <td><code>EDEADLK</code></td>
+    <td>Indicates that a resource deadlock has been avoided.</td>
+  </tr>
+  <tr>
+    <td><code>EDESTADDRREQ</code></td>
+    <td>Indicates that a destination address is required.</td>
+  </tr>
+  <tr>
+    <td><code>EDOM</code></td>
+    <td>Indicates that an argument is out of the domain of the function.</td>
+  </tr>
+  <tr>
+    <td><code>EDQUOT</code></td>
+    <td>Indicates that the disk quota has been exceeded.</td>
+  </tr>
+  <tr>
+    <td><code>EEXIST</code></td>
+    <td>Indicates that the file already exists.</td>
+  </tr>
+  <tr>
+    <td><code>EFAULT</code></td>
+    <td>Indicates an invalid pointer address.</td>
+  </tr>
+  <tr>
+    <td><code>EFBIG</code></td>
+    <td>Indicates that the file is too large.</td>
+  </tr>
+  <tr>
+    <td><code>EHOSTUNREACH</code></td>
+    <td>Indicates that the host is unreachable.</td>
+  </tr>
+  <tr>
+    <td><code>EIDRM</code></td>
+    <td>Indicates that the identifier has been removed.</td>
+  </tr>
+  <tr>
+    <td><code>EILSEQ</code></td>
+    <td>Indicates an illegal byte sequence.</td>
+  </tr>
+  <tr>
+    <td><code>EINPROGRESS</code></td>
+    <td>Indicates that an operation is already in progress.</td>
+  </tr>
+  <tr>
+    <td><code>EINTR</code></td>
+    <td>Indicates that a function call was interrupted.</td>
+  </tr>
+  <tr>
+    <td><code>EINVAL</code></td>
+    <td>Indicates that an invalid argument was provided.</td>
+  </tr>
+  <tr>
+    <td><code>EIO</code></td>
+    <td>Indicates an otherwise unspecified I/O error.</td>
+  </tr>
+  <tr>
+    <td><code>EISCONN</code></td>
+    <td>Indicates that the socket is connected.</td>
+  </tr>
+  <tr>
+    <td><code>EISDIR</code></td>
+    <td>Indicates that the path is a directory.</td>
+  </tr>
+  <tr>
+    <td><code>ELOOP</code></td>
+    <td>Indicates too many levels of symbolic links in a path.</td>
+  </tr>
+  <tr>
+    <td><code>EMFILE</code></td>
+    <td>Indicates that there are too many open files.</td>
+  </tr>
+  <tr>
+    <td><code>EMLINK</code></td>
+    <td>Indicates that there are too many hard links to a file.</td>
+  </tr>
+  <tr>
+    <td><code>EMSGSIZE</code></td>
+    <td>Indicates that the provided message is too long.</td>
+  </tr>
+  <tr>
+    <td><code>EMULTIHOP</code></td>
+    <td>Indicates that a multihop was attempted.</td>
+  </tr>
+  <tr>
+    <td><code>ENAMETOOLONG</code></td>
+    <td>Indicates that the filename is too long.</td>
+  </tr>
+  <tr>
+    <td><code>ENETDOWN</code></td>
+    <td>Indicates that the network is down.</td>
+  </tr>
+  <tr>
+    <td><code>ENETRESET</code></td>
+    <td>Indicates that the connection has been aborted by the network.</td>
+  </tr>
+  <tr>
+    <td><code>ENETUNREACH</code></td>
+    <td>Indicates that the network is unreachable.</td>
+  </tr>
+  <tr>
+    <td><code>ENFILE</code></td>
+    <td>Indicates too many open files in the system.</td>
+  </tr>
+  <tr>
+    <td><code>ENOBUFS</code></td>
+    <td>Indicates that no buffer space is available.</td>
+  </tr>
+  <tr>
+    <td><code>ENODATA</code></td>
+    <td>Indicates that no message is available on the stream head read
+    queue.</td>
+  </tr>
+  <tr>
+    <td><code>ENODEV</code></td>
+    <td>Indicates that there is no such device.</td>
+  </tr>
+  <tr>
+    <td><code>ENOENT</code></td>
+    <td>Indicates that there is no such file or directory.</td>
+  </tr>
+  <tr>
+    <td><code>ENOEXEC</code></td>
+    <td>Indicates an exec format error.</td>
+  </tr>
+  <tr>
+    <td><code>ENOLCK</code></td>
+    <td>Indicates that there are no locks available.</td>
+  </tr>
+  <tr>
+    <td><code>ENOLINK</code></td>
+    <td>Indications that a link has been severed.</td>
+  </tr>
+  <tr>
+    <td><code>ENOMEM</code></td>
+    <td>Indicates that there is not enough space.</td>
+  </tr>
+  <tr>
+    <td><code>ENOMSG</code></td>
+    <td>Indicates that there is no message of the desired type.</td>
+  </tr>
+  <tr>
+    <td><code>ENOPROTOOPT</code></td>
+    <td>Indicates that a given protocol is not available.</td>
+  </tr>
+  <tr>
+    <td><code>ENOSPC</code></td>
+    <td>Indicates that there is no space available on the device.</td>
+  </tr>
+  <tr>
+    <td><code>ENOSR</code></td>
+    <td>Indicates that there are no stream resources available.</td>
+  </tr>
+  <tr>
+    <td><code>ENOSTR</code></td>
+    <td>Indicates that a given resource is not a stream.</td>
+  </tr>
+  <tr>
+    <td><code>ENOSYS</code></td>
+    <td>Indicates that a function has not been implemented.</td>
+  </tr>
+  <tr>
+    <td><code>ENOTCONN</code></td>
+    <td>Indicates that the socket is not connected.</td>
+  </tr>
+  <tr>
+    <td><code>ENOTDIR</code></td>
+    <td>Indicates that the path is not a directory.</td>
+  </tr>
+  <tr>
+    <td><code>ENOTEMPTY</code></td>
+    <td>Indicates that the directory is not empty.</td>
+  </tr>
+  <tr>
+    <td><code>ENOTSOCK</code></td>
+    <td>Indicates that the given item is not a socket.</td>
+  </tr>
+  <tr>
+    <td><code>ENOTSUP</code></td>
+    <td>Indicates that a given operation is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>ENOTTY</code></td>
+    <td>Indicates an inappropriate I/O control operation.</td>
+  </tr>
+  <tr>
+    <td><code>ENXIO</code></td>
+    <td>Indicates no such device or address.</td>
+  </tr>
+  <tr>
+    <td><code>EOPNOTSUPP</code></td>
+    <td>Indicates that an operation is not supported on the socket. Although
+    <code>ENOTSUP</code> and <code>EOPNOTSUPP</code> have the same value
+    on Linux, according to POSIX.1 these error values should be distinct.)</td>
+  </tr>
+  <tr>
+    <td><code>EOVERFLOW</code></td>
+    <td>Indicates that a value is too large to be stored in a given data
+    type.</td>
+  </tr>
+  <tr>
+    <td><code>EPERM</code></td>
+    <td>Indicates that the operation is not permitted.</td>
+  </tr>
+  <tr>
+    <td><code>EPIPE</code></td>
+    <td>Indicates a broken pipe.</td>
+  </tr>
+  <tr>
+    <td><code>EPROTO</code></td>
+    <td>Indicates a protocol error.</td>
+  </tr>
+  <tr>
+    <td><code>EPROTONOSUPPORT</code></td>
+    <td>Indicates that a protocol is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>EPROTOTYPE</code></td>
+    <td>Indicates the wrong type of protocol for a socket.</td>
+  </tr>
+  <tr>
+    <td><code>ERANGE</code></td>
+    <td>Indicates that the results are too large.</td>
+  </tr>
+  <tr>
+    <td><code>EROFS</code></td>
+    <td>Indicates that the file system is read only.</td>
+  </tr>
+  <tr>
+    <td><code>ESPIPE</code></td>
+    <td>Indicates an invalid seek operation.</td>
+  </tr>
+  <tr>
+    <td><code>ESRCH</code></td>
+    <td>Indicates that there is no such process.</td>
+  </tr>
+  <tr>
+    <td><code>ESTALE</code></td>
+    <td>Indicates that the file handle is stale.</td>
+  </tr>
+  <tr>
+    <td><code>ETIME</code></td>
+    <td>Indicates an expired timer.</td>
+  </tr>
+  <tr>
+    <td><code>ETIMEDOUT</code></td>
+    <td>Indicates that the connection timed out.</td>
+  </tr>
+  <tr>
+    <td><code>ETXTBSY</code></td>
+    <td>Indicates that a text file is busy.</td>
+  </tr>
+  <tr>
+    <td><code>EWOULDBLOCK</code></td>
+    <td>Indicates that the operation would block.</td>
+  </tr>
+  <tr>
+    <td><code>EXDEV</code></td>
+    <td>Indicates an improper link.</td>
+  </tr>
+</tbody></table>
+</div><div>
+<h5>Windows-specific error constants<span><a class="mark" href="#windows-specific-error-constants" id="windows-specific-error-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_windows_specific_error_constants"></a></h5>
+<p>The following error codes are specific to the Windows operating system.</p>
+<table>
+  <tbody><tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>WSAEINTR</code></td>
+    <td>Indicates an interrupted function call.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEBADF</code></td>
+    <td>Indicates an invalid file handle.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEACCES</code></td>
+    <td>Indicates insufficient permissions to complete the operation.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEFAULT</code></td>
+    <td>Indicates an invalid pointer address.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEINVAL</code></td>
+    <td>Indicates that an invalid argument was passed.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEMFILE</code></td>
+    <td>Indicates that there are too many open files.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEWOULDBLOCK</code></td>
+    <td>Indicates that a resource is temporarily unavailable.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEINPROGRESS</code></td>
+    <td>Indicates that an operation is currently in progress.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEALREADY</code></td>
+    <td>Indicates that an operation is already in progress.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENOTSOCK</code></td>
+    <td>Indicates that the resource is not a socket.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEDESTADDRREQ</code></td>
+    <td>Indicates that a destination address is required.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEMSGSIZE</code></td>
+    <td>Indicates that the message size is too long.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEPROTOTYPE</code></td>
+    <td>Indicates the wrong protocol type for the socket.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENOPROTOOPT</code></td>
+    <td>Indicates a bad protocol option.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEPROTONOSUPPORT</code></td>
+    <td>Indicates that the protocol is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>WSAESOCKTNOSUPPORT</code></td>
+    <td>Indicates that the socket type is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEOPNOTSUPP</code></td>
+    <td>Indicates that the operation is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEPFNOSUPPORT</code></td>
+    <td>Indicates that the protocol family is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEAFNOSUPPORT</code></td>
+    <td>Indicates that the address family is not supported.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEADDRINUSE</code></td>
+    <td>Indicates that the network address is already in use.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEADDRNOTAVAIL</code></td>
+    <td>Indicates that the network address is not available.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENETDOWN</code></td>
+    <td>Indicates that the network is down.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENETUNREACH</code></td>
+    <td>Indicates that the network is unreachable.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENETRESET</code></td>
+    <td>Indicates that the network connection has been reset.</td>
+  </tr>
+  <tr>
+    <td><code>WSAECONNABORTED</code></td>
+    <td>Indicates that the connection has been aborted.</td>
+  </tr>
+  <tr>
+    <td><code>WSAECONNRESET</code></td>
+    <td>Indicates that the connection has been reset by the peer.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENOBUFS</code></td>
+    <td>Indicates that there is no buffer space available.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEISCONN</code></td>
+    <td>Indicates that the socket is already connected.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENOTCONN</code></td>
+    <td>Indicates that the socket is not connected.</td>
+  </tr>
+  <tr>
+    <td><code>WSAESHUTDOWN</code></td>
+    <td>Indicates that data cannot be sent after the socket has been
+    shutdown.</td>
+  </tr>
+  <tr>
+    <td><code>WSAETOOMANYREFS</code></td>
+    <td>Indicates that there are too many references.</td>
+  </tr>
+  <tr>
+    <td><code>WSAETIMEDOUT</code></td>
+    <td>Indicates that the connection has timed out.</td>
+  </tr>
+  <tr>
+    <td><code>WSAECONNREFUSED</code></td>
+    <td>Indicates that the connection has been refused.</td>
+  </tr>
+  <tr>
+    <td><code>WSAELOOP</code></td>
+    <td>Indicates that a name cannot be translated.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENAMETOOLONG</code></td>
+    <td>Indicates that a name was too long.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEHOSTDOWN</code></td>
+    <td>Indicates that a network host is down.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEHOSTUNREACH</code></td>
+    <td>Indicates that there is no route to a network host.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENOTEMPTY</code></td>
+    <td>Indicates that the directory is not empty.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEPROCLIM</code></td>
+    <td>Indicates that there are too many processes.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEUSERS</code></td>
+    <td>Indicates that the user quota has been exceeded.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEDQUOT</code></td>
+    <td>Indicates that the disk quota has been exceeded.</td>
+  </tr>
+  <tr>
+    <td><code>WSAESTALE</code></td>
+    <td>Indicates a stale file handle reference.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEREMOTE</code></td>
+    <td>Indicates that the item is remote.</td>
+  </tr>
+  <tr>
+    <td><code>WSASYSNOTREADY</code></td>
+    <td>Indicates that the network subsystem is not ready.</td>
+  </tr>
+  <tr>
+    <td><code>WSAVERNOTSUPPORTED</code></td>
+    <td>Indicates that the <code>winsock.dll</code> version is out of
+    range.</td>
+  </tr>
+  <tr>
+    <td><code>WSANOTINITIALISED</code></td>
+    <td>Indicates that successful WSAStartup has not yet been performed.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEDISCON</code></td>
+    <td>Indicates that a graceful shutdown is in progress.</td>
+  </tr>
+  <tr>
+    <td><code>WSAENOMORE</code></td>
+    <td>Indicates that there are no more results.</td>
+  </tr>
+  <tr>
+    <td><code>WSAECANCELLED</code></td>
+    <td>Indicates that an operation has been canceled.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEINVALIDPROCTABLE</code></td>
+    <td>Indicates that the procedure call table is invalid.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEINVALIDPROVIDER</code></td>
+    <td>Indicates an invalid service provider.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEPROVIDERFAILEDINIT</code></td>
+    <td>Indicates that the service provider failed to initialized.</td>
+  </tr>
+  <tr>
+    <td><code>WSASYSCALLFAILURE</code></td>
+    <td>Indicates a system call failure.</td>
+  </tr>
+  <tr>
+    <td><code>WSASERVICE_NOT_FOUND</code></td>
+    <td>Indicates that a service was not found.</td>
+  </tr>
+  <tr>
+    <td><code>WSATYPE_NOT_FOUND</code></td>
+    <td>Indicates that a class type was not found.</td>
+  </tr>
+  <tr>
+    <td><code>WSA_E_NO_MORE</code></td>
+    <td>Indicates that there are no more results.</td>
+  </tr>
+  <tr>
+    <td><code>WSA_E_CANCELLED</code></td>
+    <td>Indicates that the call was canceled.</td>
+  </tr>
+  <tr>
+    <td><code>WSAEREFUSED</code></td>
+    <td>Indicates that a database query was refused.</td>
+  </tr>
+</tbody></table>
+</div></div><div>
+<h4>dlopen constants<span><a class="mark" href="#dlopen-constants" id="dlopen-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_dlopen_constants"></a></h4>
+<p>If available on the operating system, the following constants
+are exported in <code>os.constants.dlopen</code>. See <a href="http://man7.org/linux/man-pages/man3/dlopen.3.html"><code>dlopen(3)</code></a> for detailed
+information.</p>
+<table>
+  <tbody><tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>RTLD_LAZY</code></td>
+    <td>Perform lazy binding. Node.js sets this flag by default.</td>
+  </tr>
+  <tr>
+    <td><code>RTLD_NOW</code></td>
+    <td>Resolve all undefined symbols in the library before dlopen(3)
+    returns.</td>
+  </tr>
+  <tr>
+    <td><code>RTLD_GLOBAL</code></td>
+    <td>Symbols defined by the library will be made available for symbol
+    resolution of subsequently loaded libraries.</td>
+  </tr>
+  <tr>
+    <td><code>RTLD_LOCAL</code></td>
+    <td>The converse of <code>RTLD_GLOBAL</code>. This is the default behavior
+    if neither flag is specified.</td>
+  </tr>
+  <tr>
+    <td><code>RTLD_DEEPBIND</code></td>
+    <td>Make a self-contained library use its own symbols in preference to
+    symbols from previously loaded libraries.</td>
+  </tr>
+</tbody></table>
+</div><div>
+<h4>Priority constants<span><a class="mark" href="#priority-constants" id="priority-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_priority_constants"></a></h4>
+<div class="api_metadata">
+<span>Added in: v10.10.0</span>
+</div>
+<p>The following process scheduling constants are exported by
+<code>os.constants.priority</code>.</p>
+<table>
+  <tbody><tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>PRIORITY_LOW</code></td>
+    <td>The lowest process scheduling priority. This corresponds to
+    <code>IDLE_PRIORITY_CLASS</code> on Windows, and a nice value of
+    <code>19</code> on all other platforms.</td>
+  </tr>
+  <tr>
+    <td><code>PRIORITY_BELOW_NORMAL</code></td>
+    <td>The process scheduling priority above <code>PRIORITY_LOW</code> and
+    below <code>PRIORITY_NORMAL</code>. This corresponds to
+    <code>BELOW_NORMAL_PRIORITY_CLASS</code> on Windows, and a nice value of
+    <code>10</code> on all other platforms.</td>
+  </tr>
+  <tr>
+    <td><code>PRIORITY_NORMAL</code></td>
+    <td>The default process scheduling priority. This corresponds to
+    <code>NORMAL_PRIORITY_CLASS</code> on Windows, and a nice value of
+    <code>0</code> on all other platforms.</td>
+  </tr>
+  <tr>
+    <td><code>PRIORITY_ABOVE_NORMAL</code></td>
+    <td>The process scheduling priority above <code>PRIORITY_NORMAL</code> and
+    below <code>PRIORITY_HIGH</code>. This corresponds to
+    <code>ABOVE_NORMAL_PRIORITY_CLASS</code> on Windows, and a nice value of
+    <code>-7</code> on all other platforms.</td>
+  </tr>
+  <tr>
+    <td><code>PRIORITY_HIGH</code></td>
+    <td>The process scheduling priority above <code>PRIORITY_ABOVE_NORMAL</code>
+    and below <code>PRIORITY_HIGHEST</code>. This corresponds to
+    <code>HIGH_PRIORITY_CLASS</code> on Windows, and a nice value of
+    <code>-14</code> on all other platforms.</td>
+  </tr>
+  <tr>
+    <td><code>PRIORITY_HIGHEST</code></td>
+    <td>The highest process scheduling priority. This corresponds to
+    <code>REALTIME_PRIORITY_CLASS</code> on Windows, and a nice value of
+    <code>-20</code> on all other platforms.</td>
+  </tr>
+</tbody></table>
+</div><div>
+<h4>libuv constants<span><a class="mark" href="#libuv-constants" id="libuv-constants">#</a></span><a aria-hidden="true" class="legacy" id="os_libuv_constants"></a></h4>
+<table>
+  <tbody><tr>
+    <th>Constant</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>UV_UDP_REUSEADDR</code></td>
+    <td></td>
+  </tr>
+</tbody></table></div></section>
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>

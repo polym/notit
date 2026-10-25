@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Typewriter - ad-dense news layout (corpus snapshot)</title>
+<!-- Article text: Wikipedia "Typewriter" (CC BY-SA 4.0). Layout and ad slots model a public ad-funded news page;
+     the original ad network scripts are replaced by this local, deterministic simulation. -->
+<style>
+  body { font-family: Georgia, serif; margin: 0; background: #f4f4f4; color: #222; }
+  header, footer { background: #222; color: #eee; padding: 12px 24px; }
+  .layout { display: flex; gap: 24px; max-width: 1100px; margin: 0 auto; padding: 16px; }
+  article { flex: 1; background: #fff; padding: 24px; line-height: 1.6; }
+  aside { width: 300px; }
+  .ad { background: #fffbe6; border: 1px dashed #c9a400; padding: 12px; margin: 16px 0; font: 14px/1.4 sans-serif; }
+  .ad .label { font-size: 11px; text-transform: uppercase; color: #8a7400; }
+  .sticky { position: sticky; top: 0; z-index: 2; }
+</style>
+<script>
+  // Simulated ad server: each visit gets the next creative, so text before the article shifts between visits.
+  (function () {
+    var KEY = 'corpus-ad-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var CREATIVES = [
+      'Upgrade your office today. Ergonomic keyboards for every desk, delivered tomorrow.',
+      'Limited offer: three months of cloud storage free.',
+      'Learn touch typing in ten days with our award-winning online course. Thousands of students already type faster than ever before, and so can you.',
+    ]
+    function creative(slot) { return CREATIVES[(visit + slot) % CREATIVES.length] }
+    function fill(slot) {
+      var el = document.querySelector('[data-ad-slot="' + slot + '"]')
+      if (!el) return
+      var label = document.createElement('div')
+      label.className = 'label'
+      label.textContent = 'Advertisement'
+      var body = document.createElement('p')
+      body.textContent = creative(slot)
+      el.replaceChildren(label, body)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      fill(0)
+      fill(1)
+      fill(2)
+      // Lazy slot below the fold, filled late like a real ad auction.
+      setTimeout(function () { fill(3) }, 1200)
+    })
+  })()
+</script>
+</head>
+<body>
+<header>
+  <div class="sticky ad" data-ad-slot="0"></div>
+  <nav>Home · World · Technology · Business · Culture</nav>
+</header>
+<div class="layout">
+  <article id="story">
+    <h1>Typewriter</h1>
+    <p id="p1">A typewriter is a mechanical or electromechanical machine for typing characters. Typically, a typewriter has an array of keys, and each one causes a different single character to be produced on paper by striking an inked ribbon selectively against the paper with a type element. Thereby, the machine produces a legible written document composed of ink and paper. By the end of the 19th century, a person who used such a device was also referred to as a typist or a typewriter.</p>
+    <div class="ad" data-ad-slot="1"></div>
+    <p id="p2">The first commercial typewriters were introduced in 1874, but did not become common in offices in the United States until after the mid-1880s. The typewriter quickly became an indispensable tool for practically all writing other than personal handwritten correspondence. It was widely used by professional writers, in offices, in business correspondence in private homes, and by students preparing written assignments.</p>
+    <p id="p3">Typewriters were a standard fixture in most offices up to the 1980s. After that, they began to be largely supplanted by personal computers running word processing software. Nevertheless, typewriters remain common in some parts of the world. For example, typewriters are still used in many Indian cities and towns, especially in roadside and legal offices, due to a lack of continuous, reliable electricity.</p>
+    <div class="ad" data-ad-slot="2"></div>
+    <p id="p4">QWERTY, developed for typewriters in the 1870s, remains the de facto standard keyboard layout for English-language computer keyboards. The original design intentions remain unclear. Similar typewriter keyboards, with layouts optimised for other languages and orthographies, emerged soon afterward and set respective standards.</p>
+    <p id="p5">Although many modern typewriters have one of several similar designs, their invention was incremental, developed by numerous inventors working independently or in competition with each other over a series of decades. As with the automobile, the telephone, and telegraph, several people contributed insights and inventions that eventually resulted in ever more commercially successful instruments. Historians have estimated that some form of the typewriter was invented 52 times as thinkers and tinkerers tried to come up with a workable design.</p>
+    <div class="ad" data-ad-slot="3"></div>
+    <p id="p6">By the mid-19th century, the increasing pace of business communication had created a need to mechanize the writing process. Stenographers and telegraphers could take down information at rates up to 130 words per minute, whereas a writer with a pen was limited to a maximum of 30 words per minute (the 1853 speed record).</p>
+    <p id="p7">In 1865, Rev. Rasmus Malling-Hansen of Denmark invented the Hansen Writing Ball, which went into commercial production in 1870 and was the first commercially sold typewriter. It was a success in Europe and was reported as being used in offices on the European continent as late as 1909.</p>
+  </article>
+  <aside>
+    <div class="ad"><div class="label">Sponsored</div><p>Vintage typewriters, restored and serviced. Free shipping on orders over 200.</p></div>
+    <div class="ad"><div class="label">Sponsored</div><p>Typewriter ribbons in every color. Order a typewriter ribbon sampler today.</p></div>
+  </aside>
+</div>
+<footer>Text from Wikipedia, available under CC BY-SA 4.0.</footer>
+</body>
+</html>

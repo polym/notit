@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NoteIt aggressive global styles</title>
+    <link rel="icon" href="data:," />
+    <!-- Hostile page styles (Story 3.12): the in-page Shadow host must neither be affected by nor affect them. -->
+    <style>
+      * { all: unset; }
+      div { color: red !important; }
+      body > *:last-child { margin-top: 40px !important; }
+      p { display: block; margin: 8px 0; }
+    </style>
+  </head>
+  <body>
+    <div id="box-a">First box with aggressive red text.</div>
+    <p id="para">A paragraph between the boxes.</p>
+    <div id="box-b">Second box, the last child of body.</div>
+  </body>
+</html>

@@ -1,0 +1,2 @@
+// Fixture: a new-format secret API key (fake value, not a real key).
+const key = "sb_secret_FAKEfixtureValue0123456789abcdef";

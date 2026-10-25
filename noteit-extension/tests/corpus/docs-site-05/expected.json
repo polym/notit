@@ -1,0 +1,42 @@
+{
+  "name": "docs-site-05",
+  "category": "docs-site",
+  "source": {
+    "url": "https://nodejs.org/docs/latest-v24.x/api/os.html",
+    "license": "MIT (Node.js documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external api.js and web fonts removed."
+  },
+  "highlights": [
+    {
+      "id": "ds05-1",
+      "text": "provides operating system-related utility methods and\nproperties",
+      "scope": "#apicontent"
+    },
+    {
+      "id": "ds05-2",
+      "text": "Returns an estimate of the default amount of parallelism a program should use.",
+      "scope": "#apicontent"
+    },
+    {
+      "id": "ds05-3",
+      "text": "Returns the operating system CPU architecture for which the Node.js binary was\ncompiled.",
+      "scope": "#apicontent"
+    },
+    {
+      "id": "ds05-4",
+      "text": "The number of milliseconds the CPU has spent in",
+      "scope": "#apicontent",
+      "occurrence": 3,
+      "note": "phrase repeated in a property list"
+    },
+    {
+      "id": "ds05-gone",
+      "text": "os.tmpDir() is an alias of os.tmpdir() kept for compatibility.",
+      "scope": "#apicontent",
+      "sourceGone": true,
+      "seedBefore": "#apicontent h2",
+      "note": "deprecated alias note removed after the highlight was made"
+    }
+  ]
+}

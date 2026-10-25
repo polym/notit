@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home - x.com style timeline (corpus snapshot)</title>
+<!-- Post text: Wikipedia "Fountain pen" (CC BY-SA 4.0), split into posts. Layout authored locally to model the x.com home timeline: cellInnerDiv rows positioned with translateY, only the visible window in the DOM, a 400 ms simulated fetch, and two new posts prepended on even visits. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; background: #fff; color: #0f1419; }
+  header { position: sticky; top: 0; z-index: 3; background: rgba(255,255,255,.9); border-bottom: 1px solid #eff3f4; padding: 12px 16px; font-weight: 700; }
+  main { max-width: 600px; margin: 0 auto; border-left: 1px solid #eff3f4; border-right: 1px solid #eff3f4; }
+  #new-posts { text-align: center; color: #1d9bf0; padding: 12px; border-bottom: 1px solid #eff3f4; }
+  [data-testid="cellInnerDiv"] { position: absolute; left: 0; right: 0; height: 120px; box-sizing: border-box; overflow: hidden; border-bottom: 1px solid #eff3f4; }
+  article[data-testid="tweet"] { padding: 12px 16px; }
+  [data-testid="User-Name"] { font-size: 14px; color: #536471; }
+  [data-testid="User-Name"] b { color: #0f1419; }
+  [data-testid="tweetText"] { font-size: 15px; line-height: 20px; margin-top: 4px; }
+  .tombstone { color: #536471; font-style: italic; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-xhome-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var MODE = "timeline"
+    var POSTS = [["Ink Daily","It is distinguished from earlier dip pens by using an internal reservoir to hold ink, eliminating the need to repeatedly dip the pen in an inkwell during use."],["Paper Trails","The pen draws ink from the reservoir through a feed to the nib and deposits the ink on paper via a combination of gravity and capillary action."],["Marginal Notes","Some pens employ removable reservoirs in the form of pre-filled ink cartridges or ink converters."],["Stationery Club","There is compelling evidence that a working fountain pen was constructed and used during the Renaissance by artist and inventor Leonardo da Vinci."],["Archive Room","Leonardo's journals contain drawings with cross-sections of what appears to be a reservoir pen that works by both gravity and capillary action."],["Desk Studio","Historians also took note of the fact that the handwriting in the inventor's surviving journals is of a consistent contrast throughout, rather than exhibiting the characteristic fading pattern typical of a quill pen caused by expending and re-dipping."],["Ink Daily","While no physical item survives, several working models were reconstructed in 2011 by artist Amerigo Bombara that have since been put on display in museums dedicated to Leonardo."],["Paper Trails","The fountain pen was available in Europe in the 17th century and is shown by contemporary references."],["Marginal Notes","In Deliciæ Physico-Mathematicæ (a 1636 magazine), German inventor Daniel Schwenter described a pen made from two quills."],["Stationery Club","One quill served as a reservoir for ink inside the other quill."],["Archive Room","In 1663, the diarist Samuel Pepys wrote to have been given a silver pen \"to carry inke in\"."],["Desk Studio","Noted Maryland historian Hester Dorsey Richardson (1862–1933) documented a reference to \"three silver fountain pens, worth 15 shillings\" in England during the reign of Charles II, c. 1649–1685."],["Ink Daily","By the early 18th century such pens were already commonly known as \"fountain pens\"."],["Paper Trails","Hester Dorsey Richardson also found a 1734 notation made by Robert Morris the elder in the ledger of the expenses of Robert Morris the younger, who was at the time in Philadelphia, for \"one fountain pen\"."],["Marginal Notes","The earliest datable pen of the form described by Bion is inscribed 1702, while other examples bear French hallmarks as late as the early 19th century."],["Stationery Club","Progress in developing a reliable pen was slow until the mid-19th century because of an imperfect understanding of the role that air pressure plays in the operation of pens."],["Archive Room","Furthermore, most inks were highly corrosive and full of sedimentary inclusions."],["Desk Studio","The first English patent for a fountain pen was issued in May 1809 to Frederick Fölsch, with a patent covering (among other things) an improved fountain pen feed issued to Joseph Bramah in September 1809."],["Ink Daily","John Scheffer's patent of 1819 was the first design to see commercial success, with a number of surviving examples of his \"Penographic\" known."],["Paper Trails","Another noteworthy pioneer design was John Jacob Parker's, patented in 1832 – a self-filler with a screw-operated piston."],["Marginal Notes","The Romanian inventor Petrache Poenaru received a French patent on 25 May 1827, for the invention of a fountain pen with a barrel made from a large swan quill."],["Stationery Club","In 1828, Josiah Mason improved a cheap and efficient slip-in nib in Birmingham, England, which could be added to a fountain pen."],["Archive Room","In 1830, with the invention of a new machine, William Joseph Gillott, William Mitchell, and James Stephen Perry devised a way to mass manufacture robust, cheap steel pen nibs (Perry & Co.)."],["Desk Studio","This boosted the Birmingham pen trade and by the 1850s, more than half the steel-nib pens manufactured in the world were made in Birmingham."],["Ink Daily","Thousands of skilled craftsmen were employed in the industry."],["Paper Trails","Many new manufacturing techniques were perfected, enabling the city's factories to mass-produce their pens cheaply and efficiently."],["Marginal Notes","These were sold worldwide to many who previously could not afford to write, thus encouraging the development of education and literacy."],["Stationery Club","In 1848, American inventor Azel Storrs Lyman patented a pen with \"a combined holder and nib\"."],["Archive Room","In 1849 Scottish inventor Robert William Thomson invented the refillable fountain pen."],["Desk Studio","From the 1850s, there was a steadily accelerating stream of fountain pen patents and pens in production."],["Ink Daily","However, it was only after three key inventions were in place that the fountain pen became a widely popular writing instrument."],["Paper Trails","Those were the iridium-tipped gold nib, hard rubber, and free-flowing ink."],["Marginal Notes","The first fountain pens making use of all these key ingredients appeared in the 1850s."],["Stationery Club","In the 1870s Duncan MacKinnon, a Canadian living in New York City, and Alonzo T."],["Archive Room","Cross of Providence, Rhode Island, created stylographic pens with a hollow, tubular nib and a wire acting as a valve."],["Desk Studio","Stylographic pens are now used mostly for drafting and technical drawing but were very popular in the decade beginning in 1875."],["Ink Daily","In the 1880s the era of the mass-produced fountain pen finally began."],["Paper Trails","The dominant American producers in this pioneer era were Waterman, of New York City, and Wirt, based in Bloomsburg, Pennsylvania."],["Marginal Notes","Waterman soon outstripped Wirt, along with many companies that sprang up to fill the new and growing fountain pen market."],["Stationery Club","At this time, fountain pens were almost all filled by unscrewing a portion of the hollow barrel or holder and inserting the ink by means of a dropper – a slow and messy procedure."]]
+    var ROW = 120
+    var OVERSCAN = 2
+    var items = POSTS.map(function (p, i) { return { id: 'p' + i, user: p[0], text: p[1] } })
+    if (MODE === 'timeline' && visit % 2 === 0) {
+      // "Show new posts": two posts arrived since the last visit and are prepended.
+      items.unshift({ id: 'n1', user: 'Paper Trails', text: 'New: a short thread on how readers marked their place before bookmarks existed.' },
+                    { id: 'n0', user: 'Ink Daily', text: 'Fresh ink reviews are up. Which nib do you write with?' })
+    }
+    if (MODE === 'thread' && visit % 2 === 0) {
+      // Replies are ranked differently on each visit; the root post stays first.
+      var replies = items.slice(1).reverse()
+      items = [items[0]].concat(replies)
+    }
+    if (MODE === 'search' && visit % 2 === 0) {
+      // One post was deleted by its author since the last visit; x.com shows a tombstone in its place.
+      items = items.map(function (it, i) { return i === 3 ? { id: it.id, user: '', text: '', gone: true } : it })
+    }
+
+    function cell(it, index) {
+      var c = document.createElement('div')
+      c.setAttribute('data-testid', 'cellInnerDiv')
+      c.style.transform = 'translateY(' + index * ROW + 'px)'
+      var a = document.createElement('article')
+      a.setAttribute('data-testid', 'tweet')
+      a.dataset.postId = it.id
+      if (it.gone) {
+        a.className = 'tombstone'
+        a.textContent = 'This post was deleted by the post author.'
+      } else {
+        var u = document.createElement('div')
+        u.setAttribute('data-testid', 'User-Name')
+        var b = document.createElement('b')
+        b.textContent = it.user
+        u.append(b, ' @' + it.user.toLowerCase().replace(/[^a-z]/g, '') + ' \u00b7 ' + (index + 1) + 'h')
+        var t = document.createElement('div')
+        t.setAttribute('data-testid', 'tweetText')
+        t.lang = 'en'
+        t.textContent = it.text
+        a.append(u, t)
+      }
+      c.append(a)
+      return c
+    }
+    function render(list) {
+      var top = list.getBoundingClientRect().top + window.scrollY
+      var first = Math.max(0, Math.floor((window.scrollY - top) / ROW) - OVERSCAN)
+      var last = Math.min(items.length, Math.ceil((window.scrollY - top + window.innerHeight) / ROW) + OVERSCAN)
+      var cells = []
+      for (var i = first; i < last; i++) cells.push(cell(items[i], i))
+      list.replaceChildren.apply(list, cells)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var list = document.getElementById('timeline-list')
+      if (MODE === 'timeline' && visit % 2 === 0) document.getElementById('new-posts').textContent = 'Show 2 posts'
+      // Simulated GraphQL fetch before the first render.
+      setTimeout(function () {
+        list.style.height = items.length * ROW + 'px'
+        render(list)
+        window.addEventListener('scroll', function () { render(list) })
+      }, 400)
+    })
+  })()
+</script>
+</head>
+<body>
+<header>Home</header>
+<main>
+  <div id="new-posts"></div>
+  <section aria-label="Timeline" id="timeline"><div id="timeline-list" style="position: relative"></div></section>
+</main>
+</body>
+</html>

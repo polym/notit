@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Annotation - in-text ads layout (corpus snapshot)</title>
+<!-- Article text: Wikipedia "Annotation" (CC BY-SA 4.0). Layout authored locally to model in-text advertising:
+     on even visits keywords are wrapped in sponsored links (text unchanged, DOM split), and a sidebar ad
+     column is filled with rotating copy. -->
+<style>
+  body { font-family: Georgia, serif; margin: 0; color: #222; }
+  .layout { display: flex; gap: 24px; max-width: 1080px; margin: 0 auto; padding: 16px; }
+  article { flex: 1; line-height: 1.6; }
+  aside { width: 260px; font: 14px/1.4 sans-serif; }
+  aside .ad { border: 1px dashed #94a3b8; padding: 10px; margin-bottom: 12px; }
+  a.kw { color: #0a58ca; border-bottom: 1px double #0a58ca; text-decoration: none; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-intext-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var KEYWORDS = /\b(highlighting|bibliographies|metadata|comments)\b/
+    function wrapKeywords(root) {
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+      var hits = []
+      for (var n = walker.nextNode(); n; n = walker.nextNode()) if (KEYWORDS.test(n.data)) hits.push(n)
+      hits.forEach(function (node) {
+        var m = KEYWORDS.exec(node.data)
+        var word = node.splitText(m.index)
+        word.splitText(m[0].length)
+        var a = document.createElement('a')
+        a.className = 'kw'
+        a.href = '#sponsored'
+        a.textContent = word.data
+        word.replaceWith(a)
+      })
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var ads = document.querySelectorAll('aside .ad')
+      var COPY = ['Annotate PDFs in your browser. Try it free.', 'Highlighting pens, 24 colors.', 'Research notebooks for teams.']
+      for (var i = 0; i < ads.length; i++) ads[i].textContent = COPY[(i + visit) % COPY.length]
+      if (visit % 2 === 0) setTimeout(function () { wrapKeywords(document.getElementById('story')) }, 400)
+    })
+  })()
+</script>
+</head>
+<body>
+<div class="layout">
+  <article id="story">
+    <h1>Annotation</h1>
+    <p id="a1">An annotation is extra information associated with a particular point in a document or other piece of information. It can be a note that includes a comment or explanation. Annotations are sometimes presented in the margin of book pages. For annotations of different digital media, see web annotation and text annotation.</p>
+    <p id="a2">Annotation Practices are highlighting a phrase or sentence and including a comment, circling a word that needs defining, posing a question when something is not fully understood and writing a short summary of a key section. It also invites students to "(re)construct a history through material engagement and exciting DIY (Do-It-Yourself) annotation practices."</p>
+    <p id="a3">Text and film annotation is a technique that involves embedding comments or textual notes within a film. Analyzing videos is an undertaking that is never entirely free of preconceived notions, and the first step for researchers is to find their bearings within the field of possible research approaches and thus reflect on their own basic assumptions. Annotations can take part within the video, and can be used when the data video is recorded. It is being used as a tool in text and film to write one's thoughts and emotion into the markings. In any number of steps of analysis, it can also be supplemented with more annotations. Anthropologists Clifford Geertz calls it a "thick description." This can give a sense of how useful annotation is, especially by adding a description of how it can be implemented in film.</p>
+    <p id="a4">Marginalia are notes or drawings in the margins of manuscripts. Readers commonly wrote notes in the margins of books to enhance the understanding of later readers.</p>
+    <p id="a5">Textual scholarship is a discipline that often uses the technique of annotation to describe or add additional historical context to texts and physical documents to make it easier to understand.</p>
+    <p id="a6">Students often highlight passages in books in order to actively engage with the text. Students can use annotations to refer back to key phrases easily, or add marginalia to aid studying and finding connections between the text and prior knowledge or running themes. Annotation work is often assigned to high school level students as a means of ensuring engagement with the text.</p>
+    <p id="a7">Annotated bibliographies add commentary on the relevance or quality of each source, in addition to the usual bibliographic information that merely identifies the source.</p>
+    <p id="a8">Students use annotation not only for academic purposes, but interpreting their own thoughts, feelings, and emotions. Some students may elect to use different color highlighters or pens to signify different thoughts, feelings and opinions.</p>
+    <p id="a9">Mathematical expressions (symbols and formulae) can be annotated with their natural language meaning. This is essential for disambiguation, since symbols may have different meanings (e.g., "E" can be "energy" or "expectation value", etc.). The annotation process can be facilitated and accelerated through recommendation, e.g., using the "AnnoMathTeX" system that is hosted by Wikimedia.</p>
+    <p id="a10">From a cognitive perspective, annotation has an important role in learning and instruction.  As part of guided noticing it involves highlighting, naming or labeling and commenting aspects of visual representations to help focus learners' attention on specific visual aspects. In other words, it means the assignment of typological representations (culturally meaningful categories), to topological representations (e.g. images). This is especially important when experts, such as medical doctors, interpret visualizations in detail and explain their interpretations to others, for example by means of digital technology. Here, annotation can be a way to establish common ground between interactants with different levels of knowledge. The value of annotation has been empirically confirmed, for example, in a study which shows that in computer-based teleconsultations the integration of image annotation and speech leads to significantly improved knowledge exchange compared with the use of images and speech without annotation.</p>
+    <p id="a11">Annotations were removed on January 15, 2019, from YouTube after around a decade of service. They had allowed users to provide information that popped up during videos, but YouTube indicated they did not work well on small mobile screens, and were being abused.</p>
+  </article>
+  <aside><div class="ad"></div><div class="ad"></div><div class="ad"></div></aside>
+</div>
+<footer>Text from Wikipedia, available under CC BY-SA 4.0.</footer>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "virtual-list-01",
+  "category": "virtual-list",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Marginalia",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Post text from the source; virtual feed authored locally. Rows render after a simulated 300 ms fetch; a promoted row appears on alternate visits."
+  },
+  "highlights": [
+    { "id": "vl01-1", "text": "typically provided by the scribe who created the handwritten manuscript copy. (#1)", "scope": "#spacer" },
+    { "id": "vl01-2", "text": "copied by hand, originally onto vellum and later onto paper. (#2)", "scope": "#spacer" },
+    { "id": "vl01-3", "text": "A single book cost as much as a house. (#3)", "scope": "#spacer" },
+    { "id": "vl01-4", "text": "Readers commonly wrote notes in the margins of books", "scope": "#spacer" }
+  ]
+}

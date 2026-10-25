@@ -1,0 +1,34 @@
+{
+  "name": "inline-script-06",
+  "category": "inline-script",
+  "source": {
+    "url": "https://docs.python.org/3/howto/sorting.html",
+    "license": "PSF-2.0 (Python documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; body inline scripts kept (one precedes the content, issue #5); analytics.python.org removed."
+  },
+  "highlights": [
+    {
+      "id": "is06-1",
+      "text": "Python lists have a built-in list.sort() method that modifies the list\nin-place.",
+      "scope": "div.body"
+    },
+    {
+      "id": "is06-2",
+      "text": "This\ntechnique is fast because the key function is called exactly once for each\ninput record.",
+      "scope": "div.body"
+    },
+    {
+      "id": "is06-3",
+      "text": "A simple ascending sort is very easy",
+      "scope": "div.body"
+    },
+    {
+      "id": "is06-4",
+      "text": "key function",
+      "scope": "div.body",
+      "occurrence": 2,
+      "note": "repeated phrase"
+    }
+  ]
+}

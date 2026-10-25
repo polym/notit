@@ -1,0 +1,37 @@
+{
+  "kind": "noteit/local-ids",
+  "version": 1,
+  "exportedAt": 5000,
+  "entries": [
+    {
+      "id": "a1",
+      "editedAt": 4300,
+      "deletedAt": null
+    },
+    {
+      "id": "c1",
+      "editedAt": 1000,
+      "deletedAt": null
+    },
+    {
+      "id": "c2",
+      "editedAt": 2000,
+      "deletedAt": null
+    },
+    {
+      "id": "c3",
+      "editedAt": 3000,
+      "deletedAt": 3500
+    },
+    {
+      "id": "c4",
+      "editedAt": 4000,
+      "deletedAt": null
+    },
+    {
+      "id": "c5",
+      "editedAt": 4100,
+      "deletedAt": 4200
+    }
+  ]
+}

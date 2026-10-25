@@ -1,0 +1,77 @@
+{
+  "description": "Shared LWW cases (architecture.md D1). 'winner' is which version is kept when 'incoming' meets 'stored': core/sync/merge.ts#wins(incoming, stored) must be true exactly when winner is 'incoming'; sync_push must keep the same version.",
+  "cases": [
+    {
+      "name": "newer edit wins",
+      "stored": { "editedAt": 1000, "deviceId": "device-a", "deletedAt": null },
+      "incoming": { "editedAt": 2000, "deviceId": "device-a", "deletedAt": null },
+      "winner": "incoming"
+    },
+    {
+      "name": "older edit loses",
+      "stored": { "editedAt": 2000, "deviceId": "device-a", "deletedAt": null },
+      "incoming": { "editedAt": 1000, "deviceId": "device-b", "deletedAt": null },
+      "winner": "stored"
+    },
+    {
+      "name": "same time and device is a tie and keeps the stored version",
+      "stored": { "editedAt": 1500, "deviceId": "device-a", "deletedAt": null },
+      "incoming": { "editedAt": 1500, "deviceId": "device-a", "deletedAt": null },
+      "winner": "stored"
+    },
+    {
+      "name": "same time, larger device id wins",
+      "stored": { "editedAt": 1500, "deviceId": "device-a", "deletedAt": null },
+      "incoming": { "editedAt": 1500, "deviceId": "device-b", "deletedAt": null },
+      "winner": "incoming"
+    },
+    {
+      "name": "same time, smaller device id loses",
+      "stored": { "editedAt": 1500, "deviceId": "device-b", "deletedAt": null },
+      "incoming": { "editedAt": 1500, "deviceId": "device-a", "deletedAt": null },
+      "winner": "stored"
+    },
+    {
+      "name": "device id compares by code unit, upper case sorts before lower case",
+      "stored": { "editedAt": 1500, "deviceId": "Device-z", "deletedAt": null },
+      "incoming": { "editedAt": 1500, "deviceId": "device-a", "deletedAt": null },
+      "winner": "incoming"
+    },
+    {
+      "name": "device id is not compared numerically",
+      "stored": { "editedAt": 1500, "deviceId": "device-9", "deletedAt": null },
+      "incoming": { "editedAt": 1500, "deviceId": "device-10", "deletedAt": null },
+      "winner": "stored"
+    },
+    {
+      "name": "edit time dominates device id",
+      "stored": { "editedAt": 1500, "deviceId": "zzz", "deletedAt": null },
+      "incoming": { "editedAt": 1501, "deviceId": "aaa", "deletedAt": null },
+      "winner": "incoming"
+    },
+    {
+      "name": "newer delete overrides older live version",
+      "stored": { "editedAt": 1000, "deviceId": "device-a", "deletedAt": null },
+      "incoming": { "editedAt": 2000, "deviceId": "device-b", "deletedAt": 2000 },
+      "winner": "incoming"
+    },
+    {
+      "name": "older live version cannot resurrect a newer delete",
+      "stored": { "editedAt": 2000, "deviceId": "device-b", "deletedAt": 2000 },
+      "incoming": { "editedAt": 1000, "deviceId": "device-a", "deletedAt": null },
+      "winner": "stored"
+    },
+    {
+      "name": "newer undo (cleared delete) overrides an older delete",
+      "stored": { "editedAt": 2000, "deviceId": "device-a", "deletedAt": 2000 },
+      "incoming": { "editedAt": 3000, "deviceId": "device-a", "deletedAt": null },
+      "winner": "incoming"
+    },
+    {
+      "name": "delete with the same stamp as the stored live version is a tie",
+      "stored": { "editedAt": 2000, "deviceId": "device-a", "deletedAt": null },
+      "incoming": { "editedAt": 2000, "deviceId": "device-a", "deletedAt": 2000 },
+      "winner": "stored"
+    }
+  ]
+}

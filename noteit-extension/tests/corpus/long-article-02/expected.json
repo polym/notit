@@ -1,0 +1,25 @@
+{
+  "name": "long-article-02",
+  "category": "long-article",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Bookmark",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; head and footer inline scripts kept."
+  },
+  "highlights": [
+    { "id": "la02-1", "text": "used to keep track of a reader's progress in a book", "scope": "#mw-content-text" },
+    { "id": "la02-2", "text": "The earliest existing bookmark dates from the 6th century AD", "scope": "#mw-content-text" },
+    { "id": "la02-3", "text": "the centre of the silk-ribbon industry", "scope": "#mw-content-text" },
+    { "id": "la02-4", "text": "are called Stevengraphs", "scope": "#mw-content-text" },
+    { "id": "la02-5", "text": "bookmarks", "scope": "#mw-content-text", "occurrence": 4, "note": "repeated word; only the 5th instance is correct" },
+    {
+      "id": "la02-gone",
+      "text": "Bookmarks were once required reading equipment in every library.",
+      "scope": "#mw-content-text",
+      "sourceGone": true,
+      "seedBefore": "#mw-content-text p:nth-of-type(4)",
+      "note": "sentence removed from the article after the highlight was made"
+    }
+  ]
+}

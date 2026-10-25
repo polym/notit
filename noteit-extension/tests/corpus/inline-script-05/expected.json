@@ -1,0 +1,42 @@
+{
+  "name": "inline-script-05",
+  "category": "inline-script",
+  "source": {
+    "url": "https://docs.python.org/3/library/operator.html",
+    "license": "PSF-2.0 (Python documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; body inline scripts kept (one precedes the content, issue #5); analytics.python.org removed."
+  },
+  "highlights": [
+    {
+      "id": "is05-1",
+      "text": "exports a set of efficient functions corresponding to\nthe intrinsic operators of Python",
+      "scope": "div.body"
+    },
+    {
+      "id": "is05-2",
+      "text": "The variants\nwithout the double underscores are preferred for clarity.",
+      "scope": "div.body"
+    },
+    {
+      "id": "is05-3",
+      "text": "Note that these functions can return any value, which may\nor may not be interpretable as a Boolean value.",
+      "scope": "div.body"
+    },
+    {
+      "id": "is05-4",
+      "text": "double underscores",
+      "scope": "div.body",
+      "occurrence": 2,
+      "note": "repeated phrase"
+    },
+    {
+      "id": "is05-gone",
+      "text": "The operator.isCallable() function was removed in Python 3.0.",
+      "scope": "div.body",
+      "sourceGone": true,
+      "seedBefore": "div.body section section",
+      "note": "historical note dropped from the page after the highlight was made"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "docs-site-01",
+  "category": "docs-site",
+  "source": {
+    "url": "https://nodejs.org/docs/latest-v24.x/api/path.html",
+    "license": "MIT (Node.js documentation)",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external api.js and web fonts removed."
+  },
+  "highlights": [
+    { "id": "ds01-1", "text": "provides utilities for working with file and directory", "scope": "#apicontent" },
+    { "id": "ds01-2", "text": "returns the last portion of a path", "scope": "#apicontent" },
+    { "id": "ds01-3", "text": "per-drive working directory", "scope": "#apicontent" },
+    { "id": "ds01-4", "text": "Trailing directory separators are", "scope": "#apicontent", "occurrence": 1, "note": "phrase appears 3 times" },
+    { "id": "ds01-5", "text": "path.basename()", "scope": "#apicontent", "occurrence": 2 }
+  ]
+}
