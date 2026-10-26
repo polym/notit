@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="operator — Standard operators as functions" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://docs.python.org/3/library/operator.html" />
+<meta property="og:site_name" content="Python documentation" />
+<meta property="og:description" content="Source code: Lib/operator.py The operator module exports a set of efficient functions corresponding to the intrinsic operators of Python. For example, operator.add(x, y) is equivalent to the expres..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="https://docs.python.org/3.15/_images/social_previews/summary_library_operator_f0d11638.png" />
+<meta property="og:image:alt" content="Source code: Lib/operator.py The operator module exports a set of efficient functions corresponding to the intrinsic operators of Python. For example, operator.add(x, y) is equivalent to the expres..." />
+<meta name="description" content="Source code: Lib/operator.py The operator module exports a set of efficient functions corresponding to the intrinsic operators of Python. For example, operator.add(x, y) is equivalent to the expres..." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#3776ab">
+
+    <title>operator — Standard operators as functions &#8212; Python 3.15.0 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style data-noteit-inlined="https://docs.python.org/3/_static/pygments.css?v=b86133f3">pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */</style>
+    <style data-noteit-inlined="https://docs.python.org/3/_static/classic.css?v=234b1a7c">/*
+ * Sphinx stylesheet -- classic theme.
+ */
+
+
+
+/* -- page layout ----------------------------------------------------------- */
+
+html {
+    /* CSS hack for macOS's scrollbar (see #1125) */
+    background-color: #FFFFFF;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+    font-size: 100%;
+    background-color: white;
+    color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+div.document {
+    display: flex;
+    background-color: white;
+}
+
+div.documentwrapper {
+    float: left;
+    width: 100%;
+}
+
+div.bodywrapper {
+    margin: 0 0 0 230px;
+}
+
+div.body {
+    background-color: white;
+    color: #222222;
+    padding: 0 20px 30px 20px;
+}
+
+div.footer {
+    color: #555555;
+    width: 100%;
+    padding: 9px 0 9px 0;
+    text-align: center;
+    font-size: 75%;
+}
+
+div.footer a {
+    color: #555555;
+    text-decoration: underline;
+}
+
+div.related {
+    background-color: white;
+    line-height: 30px;
+    color: #666666;
+}
+
+div.related a {
+    color: #444444;
+}
+
+div.sphinxsidebar {
+}
+
+div.sphinxsidebar h3 {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+    color: #444444;
+    font-size: 1.4em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+div.sphinxsidebar h3 a {
+    color: #444444;
+}
+
+div.sphinxsidebar h4 {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+    color: #444444;
+    font-size: 1.3em;
+    font-weight: normal;
+    margin: 5px 0 0 0;
+    padding: 0;
+}
+
+div.sphinxsidebar p {
+    color: #444444;
+}
+
+div.sphinxsidebar p.topless {
+    margin: 5px 10px 10px 10px;
+}
+
+div.sphinxsidebar ul {
+    margin: 10px;
+    padding: 0;
+    color: #444444;
+}
+
+div.sphinxsidebar a {
+    color: #444444;
+}
+
+div.sphinxsidebar input {
+    border: 1px solid #444444;
+    font-family: sans-serif;
+    font-size: 1em;
+}
+
+
+
+    
+    
+
+/* for collapsible sidebar */
+#sidebarbutton {
+    height: 100%;
+    background-color: #cccccc;
+    margin-left: 0;
+    color: #FFFFFF;
+    border-left: 1px solid white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding-top: 1px;
+    float: right;
+    display: table; /* for vertically centering the <span> */
+}
+
+#sidebarbutton:hover {
+    background-color: white;
+}
+
+#sidebarbutton span {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+div.sphinxsidebarwrapper {
+    float: left;
+    margin-right: 0;
+}
+
+
+/* -- hyperlink styles ------------------------------------------------------ */
+
+a {
+    color: #0090c0;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #00608f;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+
+/* -- body styles ----------------------------------------------------------- */
+
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+    background-color: white;
+    font-weight: normal;
+    color: #1a1a1a;
+    border-bottom: 1px solid #ccc;
+    margin: 20px -20px 10px -20px;
+    padding: 3px 0 3px 10px;
+}
+
+div.body h1 { margin-top: 0; font-size: 200%; }
+div.body h2 { font-size: 160%; }
+div.body h3 { font-size: 140%; }
+div.body h4 { font-size: 120%; }
+div.body h5 { font-size: 110%; }
+div.body h6 { font-size: 100%; }
+
+a.headerlink {
+    color: #aaaaaa;
+    font-size: 0.8em;
+    padding: 0 4px 0 4px;
+    text-decoration: none;
+}
+
+a.headerlink:hover {
+    background-color: #aaaaaa;
+    color: white;
+}
+
+div.body p, div.body dd, div.body li, div.body blockquote {
+    text-align: justify;
+    line-height: 130%;
+}
+
+div.admonition p.admonition-title + p {
+    display: inline;
+}
+
+div.admonition p {
+    margin-bottom: 5px;
+}
+
+div.admonition pre {
+    margin-bottom: 5px;
+}
+
+div.admonition ul, div.admonition ol {
+    margin-bottom: 5px;
+}
+
+div.note {
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+
+div.seealso {
+    background-color: #ffc;
+    border: 1px solid #ff6;
+}
+
+nav.contents,
+aside.topic,
+div.topic {
+    background-color: #eee;
+}
+
+div.warning {
+    background-color: #ffe4e4;
+    border: 1px solid #f66;
+}
+
+p.admonition-title {
+    display: inline;
+}
+
+p.admonition-title:after {
+    content: ":";
+}
+
+pre {
+    padding: 5px;
+    background-color: #eeffcc;
+    color: #333333;
+    line-height: 120%;
+    border: 1px solid #ac9;
+    border-left: none;
+    border-right: none;
+}
+
+code {
+    background-color: #ecf0f3;
+    padding: 0 1px 0 1px;
+    font-size: 0.95em;
+}
+
+th, dl.field-list > dt {
+    background-color: #ede;
+}
+
+.warning code {
+    background: #efc2c2;
+}
+
+.note code {
+    background: #d6d6d6;
+}
+
+.viewcode-back {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+}
+
+div.viewcode-block:target {
+    background-color: #f4debf;
+    border-top: 1px solid #ac9;
+    border-bottom: 1px solid #ac9;
+}
+
+div.code-block-caption {
+    color: #efefef;
+    background-color: #1c4e63;
+}</style>
+    <style data-noteit-inlined="https://docs.python.org/3/_static/pydoctheme.css?v=48df1187">/* Common colours */
+:root {
+    --good-color: rgb(41 100 51);
+    --good-border: rgb(79 196 100);
+    --middle-color: rgb(133 72 38);
+    --middle-border: rgb(244, 227, 76);
+    --bad-color: rgb(159 49 51);
+    --bad-border: rgb(244, 76, 78);
+    --sans-serif-font-stack: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+}
+
+/* unset some styles from the classic stylesheet */
+div.document,
+div.body,
+div.related,
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6,
+div.sphinxsidebar a,
+div.sphinxsidebar p,
+div.sphinxsidebar ul,
+div.sphinxsidebar h3,
+div.sphinxsidebar h3 a,
+div.sphinxsidebar h4,
+.menu a,
+.menu p,
+.menu ul,
+.menu h3,
+.menu h3 a,
+.menu h4,
+table.docutils td,
+table.indextable tr.cap,
+pre {
+    background-color: inherit;
+    color: inherit;
+}
+
+/* Add underlines to links */
+a[href] {
+    text-decoration: underline 1px;
+}
+
+/* Increase the underline offset for code to avoid obscuring underscores */
+a[href]:has(> code) {
+    text-underline-offset: 0.25em;
+}
+
+/* No underline for navigation */
+a.headerlink,
+div.genindex-jumpbox a,
+div.modindex-jumpbox a,
+div#search-results a,
+div.sphinxsidebar a,
+div.toctree-wrapper a,
+div[role=navigation] a,
+table.contentstable a,
+table.indextable a {
+    text-decoration: none;
+}
+
+/* Except when hovered */
+div.genindex-jumpbox a:hover,
+div.modindex-jumpbox a:hover,
+div#search-results a:hover,
+div.sphinxsidebar a:hover,
+div.toctree-wrapper a:hover,
+div[role=navigation] a:hover,
+table.contentstable a:hover,
+table.indextable a:hover {
+    text-decoration: underline;
+    text-underline-offset: auto;
+}
+
+body {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.mobile-nav,
+.menu-wrapper {
+    display: none;
+}
+
+div.related {
+    margin-top: 0.5em;
+    margin-bottom: 1.2em;
+    padding: 0.5em 0;
+    border-width: 1px;
+    border-color: #ccc;
+}
+
+.mobile-nav + div.related {
+    border-bottom-style: solid;
+}
+
+.document + div.related {
+    border-top-style: solid;
+}
+
+div.related a:hover {
+    color: #0095c4;
+}
+
+.related .switchers {
+    display: inline-flex;
+}
+
+.switchers > div {
+    margin-inline-end: 5px;
+}
+
+div.related ul::after {
+    content: '';
+    clear: both;
+    display: block;
+}
+
+div.related ul {
+    padding: 0;
+    padding-inline-start: 10px;
+}
+
+body[dir='rtl'] div.related ul li.right {
+    float: left;
+    margin-right: 0;
+    margin-left: 5px;
+}
+
+.inline-search,
+form.inline-search input {
+    display: inline;
+}
+
+form.inline-search input[type='submit'] {
+    /* In some languages, more than 40px is required */
+    width: auto;
+    min-width: 40px;
+}
+
+div.document {
+    display: flex;
+    /* Don't let long code literals extend beyond the right side of the screen */
+    overflow-wrap: break-word;
+}
+
+/* Don't let long code literals extend beyond the right side of the screen */
+span.pre {
+    white-space: unset;
+}
+
+div.sphinxsidebar {
+    display: flex;
+    width: min(25vw, 350px);
+    flex-shrink: 0;
+    margin: 0;
+    order: 0;
+    float: none;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    color: #444;
+    background-color: #eee;
+    border-radius: 5px;
+    line-height: 130%;
+    font-size: smaller;
+}
+
+div.sphinxsidebar h3,
+div.sphinxsidebar h4 {
+    margin-top: 1.5em;
+}
+
+div.document div.bodywrapper {
+    margin: 0;
+}
+
+div.documentwrapper {
+    flex: 1;
+    min-width: 0;
+    order: 1;
+}
+
+div.sphinxsidebarwrapper {
+    box-sizing: border-box;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    float: none;
+    flex-grow: 1;
+}
+
+div.sphinxsidebarwrapper > h3:first-child {
+    margin-top: 0.2em;
+}
+
+div.sphinxsidebarwrapper > ul > li > ul > li {
+    margin-bottom: 0.4em;
+}
+
+div.sphinxsidebar ul ul {
+    margin-left: 0;
+    margin-inline-start: 20px;
+}
+
+div.sphinxsidebar a:hover {
+    color: #0095c4;
+}
+
+form.inline-search input,
+div.sphinxsidebar input,
+div.related input {
+    font-family: var(--sans-serif-font-stack);
+    border: 1px solid #999999;
+    font-size: smaller;
+    border-radius: 3px;
+}
+
+div.sphinxsidebar input[type='text'] {
+    max-width: 150px;
+}
+
+#sidebarbutton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 12px;
+    min-width: 12px;
+    border-radius: 0 5px 5px 0;
+    border-left: none;
+}
+
+body[dir='rtl'] #sidebarbutton {
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+    border-left: none;
+}
+
+#sidebarbutton:hover {
+    background-color: #AAAAAA;
+}
+
+div.body {
+    padding: 0;
+    padding-inline-start: 1.2em;
+}
+
+div.body p, div.body dd, div.body li, div.body blockquote {
+    text-align: start;
+    line-height: 1.6;
+}
+div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6 {
+    margin: 0;
+    border: 0;
+    padding: 0.3em 0;
+}
+div.body dl.field-list > dt {
+    line-height: 1.6;
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline-start: 0.5em;
+    padding-inline-end: 5px;
+}
+
+div.body hr {
+    border: 0;
+    background-color: #ccc;
+    height: 1px;
+}
+
+/* Persian (fa) uses Vazirmatn, since the default system font stack renders
+   Arabic-script text poorly on many platforms. */
+@font-face {
+    font-family: "Vazirmatn NL";
+    src: url("data:,") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:lang(fa) {
+    :is(div.body, div.sphinxsidebar, .menu-wrapper, div.footer),
+    :is(div.body, div.sphinxsidebar, .menu-wrapper) :is(h1, h2, h3, h4, h5, h6),
+    a,
+    input,
+    select,
+    textarea,
+    button:not(.copybutton),
+    label {
+        font-family: "Vazirmatn NL", var(--sans-serif-font-stack);
+    }
+}
+
+body[dir='rtl'] {
+    & pre,
+    & code,
+    & div.highlight,
+    & dl > dt span ~ em,
+    & .sig,
+    & .sig-param {
+        direction: ltr;
+        unicode-bidi: isolate;
+    }
+}
+
+body[dir='rtl'] .sig {
+    text-align: right;
+}
+
+div.body pre {
+    border-radius: 3px;
+    border: 1px solid #ac9;
+}
+
+div.body {
+    .good pre {
+        border-left: 3px solid var(--good-border);
+    }
+    .bad pre {
+        border-left: 3px solid var(--bad-border);
+    }
+    .maybe pre {
+        border-left: 3px solid var(--middle-border);
+    }
+}
+
+div.code-block-caption {
+    background-color: #eee;
+    border: 1px solid #ac9;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    padding: 0.3em 0.6em;
+    font-size: 90%;
+    color: #333;
+
+    & + div pre {
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+    }
+
+    & + div .copybutton {
+        border-top-right-radius: 0 !important;
+    }
+}
+
+/* Admonitions */
+:root {
+    --admonition-background: #eee;
+    --admonition-border: #ccc;
+    --admonition-color: black;
+    --attention-background: #bbddff5c;
+    --attention-border: #0000ff36;
+    --caution-background: #ffc;
+    --caution-border: #dd6;
+    --danger-background: #ffe4e4;
+    --danger-border: red;
+    --error-background: #ffe4e4;
+    --error-border: red;
+    --hint-background: #dfd;
+    --hint-border: green;
+    --seealso-background: #ffc;
+    --seealso-border: #dd6;
+    --tip-background: #dfd;
+    --tip-border: green;
+    --warning-background: #ffe4e4;
+    --warning-border: red;
+}
+
+div.body div.admonition {
+    background-color: var(--admonition-background);
+    border: 1px solid var(--admonition-border);
+    border-radius: 3px;
+    color: var(--admonition-color);
+}
+
+div.body div.admonition.attention {
+    background-color: var(--attention-background);
+    border-color: var(--attention-border);
+}
+
+div.body div.admonition.caution {
+    background-color: var(--caution-background);
+    border-color: var(--caution-border);
+}
+
+div.body div.admonition.danger {
+    background-color: var(--danger-background);
+    border-color: var(--danger-border);
+}
+
+div.body div.admonition.error {
+    background-color: var(--error-background);
+    border-color: var(--error-border);
+}
+
+div.body div.admonition.hint {
+    background-color: var(--hint-background);
+    border-color: var(--hint-border);
+}
+
+div.body div.admonition.seealso {
+    background-color: var(--seealso-background);
+    border-color: var(--seealso-border);
+}
+
+div.body div.admonition.tip {
+    background-color: var(--tip-background);
+    border-color: var(--tip-border);
+}
+
+div.body div.admonition.warning {
+    background-color: var(--warning-background);
+    border-color: var(--warning-border);
+}
+
+div.body div.impl-detail {
+    border-radius: 3px;
+}
+
+div.body div.impl-detail > p {
+    margin: 0;
+}
+
+div.body a {
+    color: #0072aa;
+}
+
+div.body a:visited {
+    color: #6363bb;
+}
+
+div.body a:hover {
+    color: #00b0e4;
+}
+
+tt, code, pre {
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+    font-size: 96.5%;
+}
+
+div.body pre {
+    line-height: 120%;
+}
+
+div.body tt,
+div.body code {
+    border-radius: 3px;
+}
+
+div.body tt.descname,
+div.body code.descname {
+    font-size: 120%;
+}
+
+div.body tt.xref,
+div.body a tt,
+div.body code.xref,
+div.body a code {
+    font-weight: normal;
+}
+
+table.docutils {
+    border: 1px solid #ddd;
+    min-width: 20%;
+    border-radius: 3px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+table.docutils td,
+table.docutils th {
+    border: 1px solid #ddd !important;
+    border-radius: 3px;
+    padding: 0.3em 0.5em;
+}
+
+table p,
+table li {
+    text-align: start !important;
+}
+
+table.docutils th {
+    background-color: #eee;
+}
+
+table.footnote,
+table.footnote td {
+    border: 0 !important;
+}
+
+body[dir='rtl'] div#search-results,
+body[dir='rtl'] div#search-results ul.search li {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: isolate;
+}
+
+body[dir='rtl'] div#search-results ul.search li p {
+    text-align: right;
+}
+
+body[dir='rtl'] div.citation > span {
+    float: right;
+}
+
+body[dir='rtl'] aside.footnote > span {
+    float: right;
+    padding-right: 0;
+    padding-left: 0.5rem;
+}
+
+body[dir='rtl'] aside.footnote > p {
+    margin-left: 0;
+    margin-right: 2rem;
+}
+
+div.footer {
+    line-height: 150%;
+    text-align: end;
+    width: auto;
+    margin-inline-end: 10px;
+}
+
+div.footer a {
+    text-underline-offset: auto;
+}
+
+div.footer a:hover {
+    color: #0095c4;
+}
+
+/* C API return value annotations */
+:root {
+    --refcount: var(--good-color);
+    --refcount-return-borrowed-ref: var(--middle-color);
+}
+
+.refcount {
+    color: var(--refcount);
+}
+
+.refcount.return_borrowed_ref {
+    color: var(--refcount-return-borrowed-ref)
+}
+
+.stableabi {
+    color: #229;
+}
+
+/* C API thread safety annotations */
+:root {
+    --threadsafety-incompatible: var(--bad-color);
+    --threadsafety-compatible: var(--middle-color);
+    --threadsafety-distinct: var(--middle-color);
+    --threadsafety-shared: var(--good-color);
+    --threadsafety-atomic: var(--good-color);
+}
+
+.threadsafety.threadsafety-incompatible {
+    color: var(--threadsafety-incompatible);
+}
+
+.threadsafety.threadsafety-compatible {
+    color: var(--threadsafety-compatible);
+}
+
+.threadsafety.threadsafety-distinct {
+    color: var(--threadsafety-distinct);
+}
+
+.threadsafety.threadsafety-shared {
+    color: var(--threadsafety-shared);
+}
+
+.threadsafety.threadsafety-atomic {
+    color: var(--threadsafety-atomic);
+}
+
+dl > dt span ~ em,
+.sig {
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}
+
+.toctree-wrapper ul {
+    padding-inline-start: 20px;
+}
+
+.theme-selector {
+    margin-inline-start: .5em;
+}
+
+div.genindex-jumpbox,
+div.genindex-jumpbox > p {
+    display: inline-flex;
+    flex-wrap: wrap;
+}
+
+div.genindex-jumpbox a {
+    margin: 0 5px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.copybutton {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0; /* physical right; always, even in RTL, since code is LTR */
+    font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+    font-size: 80%;
+    padding-left: .5em;
+    padding-right: .5em;
+    height: 100%;
+    max-height: min(100%, 2.4em);
+    border-radius: 0 3px 0 0; /* physical — top-right corner, always */
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ac9;
+    display: none;
+}
+
+.copybutton:hover {
+    background-color: #eee;
+}
+
+.copybutton:active {
+    background-color: #ddd;
+}
+
+.highlight:active .copybutton {
+    display: block;
+}
+
+.highlight:hover .copybutton {
+    display: block;
+}
+
+@media (max-width: 1023px) {
+    /* Body layout */
+    div.body {
+        min-width: 100%;
+        padding: 0;
+        font-size: 0.875rem;
+    }
+    div.bodywrapper {
+        margin: 0;
+    }
+    /* Typography */
+    div.body h1 {
+        font-size: 1.625rem;
+    }
+    div.body h2 {
+        font-size: 1.25rem;
+    }
+    div.body h3, div.body h4, div.body h5 {
+        font-size: 1rem;
+    }
+    /* Override default styles to make more readable */
+    div.body ul {
+        padding-inline-start: 1rem;
+    }
+    div.body blockquote {
+        margin-inline-start: 1rem;
+        margin-inline-end: 0;
+    }
+    /* Remove sidebar and desktop-only related controls */
+    div.related li.right, div.related li.switchers, div.sphinxsidebar {
+        display: none;
+    }
+    div.related .root-icon, div.related .root-icon + li {
+        display: none;
+    }
+    div.related {
+        line-height: 1.3;
+    }
+    /* Anchorlinks are not hidden by fixed-positioned navbar when scrolled to */
+    html {
+        scroll-padding-top: 40px;
+    }
+    body {
+        margin-top: 40px;
+    }
+
+    /* Top navigation bar */
+    .mobile-nav {
+        display: block;
+        height: 40px;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        inset-inline-start: 0;
+        box-shadow: rgba(0, 0, 0, 0.25) 0 0 2px 0;
+        z-index: 1;
+    }
+    .mobile-nav * {
+        box-sizing: border-box;
+    }
+    .nav-content {
+        position: absolute;
+        z-index: 1;
+        height: 40px;
+        width: 100%;
+        display: flex;
+        background-color: white;
+    }
+    .nav-items-wrapper {
+        display: flex;
+        flex: auto;
+        padding: .25rem;
+        align-items: stretch;
+    }
+    .nav-logo {
+        margin-inline-end: 1rem;
+        flex-shrink: 0;
+        align-self: center;
+    }
+    .nav-content img {
+        display: block;
+        width: 20px;
+    }
+    .version_switcher_placeholder {
+        margin-inline-end: 1rem;
+    }
+    .version_switcher_placeholder > select {
+        height: 100%;
+    }
+    .nav-content .search {
+        display: flex;
+        flex: auto;
+        border: 1px solid #a9a9a9;
+        align-items: stretch;
+        position: relative;
+    }
+    .nav-content .search input[type=search] {
+        border: 0;
+        padding-inline-start: 24px;
+        width: 100%;
+        flex: 1;
+    }
+    .nav-content .search input[type=submit] {
+        height: 100%;
+        box-shadow: none;
+        border: 0;
+        border-inline-start: 1px solid #a9a9a9;
+        cursor: pointer;
+        margin-inline-end: 0;
+    }
+    .nav-content .search svg {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        inset-inline-start: 4px;
+    }
+    .toggler__input {
+        display: none;
+    }
+    .toggler__label {
+        width: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        flex-shrink: 0;
+    }
+    .toggler__label:hover, .toggler__label:focus {
+        background-color: rgba(127 127 127 / 50%);
+    }
+    .toggler__label > span {
+        position: relative;
+        flex: none;
+        height: 2px;
+        width: 100%;
+        background: currentColor;
+        transition: all 400ms ease;
+    }
+    .toggler__label > span::before,
+    .toggler__label > span::after {
+        content: '';
+        height: 2px;
+        width: 100%;
+        background: inherit;
+        position: absolute;
+        inset-inline-start: 0;
+        top: -8px;
+    }
+    .toggler__label > span::after {
+        top: 8px;
+    }
+    .toggler__input:checked ~ nav > .toggler__label span {
+        transform: rotate(135deg);
+    }
+    .toggler__input:checked ~ nav > .toggler__label span::before {
+        transform: rotate(90deg);
+    }
+    .toggler__input:checked ~ nav > .toggler__label span::before,
+    .toggler__input:checked ~ nav > .toggler__label span::after {
+        top: 0;
+    }
+    .toggler__input:checked:hover ~ nav > .toggler__label span {
+        transform: rotate(315deg);
+    }
+    .toggler__input:checked ~ .menu-wrapper {
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    /* Sliding side menu */
+    .menu-wrapper {
+        display: block;
+        position: fixed;
+        top: 0;
+        inset-inline-start: 0;
+        transition: transform 400ms ease;
+        transform: translateX(calc(-100% - 10px));
+        width: 300px;
+        height: 100%;
+        background-color: #eee;
+        color: #444444;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+    }
+    body[dir='rtl'] .menu-wrapper {
+        transform: translateX(100%);
+    }
+    .menu-wrapper.open {
+        visibility: visible;
+        transform: translateX(0);
+    }
+    .menu {
+        padding-block-start: 40px;
+        padding-inline-end: 10px;
+        padding-block-end: 30px;
+        padding-inline-start: 20px;
+    }
+    .menu-wrapper h3,
+    .menu-wrapper h4 {
+        margin-bottom: 0;
+        font-weight: normal;
+    }
+    .menu-wrapper h4 {
+        font-size: 1.3em;
+    }
+    .menu-wrapper h3 {
+        font-size: 1.4em;
+    }
+    .menu-wrapper h3 + p,
+    .menu-wrapper h4 + p {
+        margin-top: 0.5rem;
+    }
+    .menu a {
+        font-size: smaller;
+        text-decoration: none;
+    }
+    .menu ul {
+        list-style: none;
+        line-height: 1.4;
+        overflow-wrap: break-word;
+        padding-inline-start: 0;
+    }
+    .menu ul ul {
+        margin-inline-start: 20px;
+        list-style: square;
+    }
+    .menu ul li {
+        margin-bottom: 0.5rem;
+    }
+    .language_switcher_placeholder {
+        margin-top: 2rem;
+    }
+    .language_switcher_placeholder select {
+        width: 100%;
+    }
+    .document {
+        position: relative;
+        z-index: 0;
+    }
+    /*Responsive tables*/
+    .responsive-table__container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .menu .theme-selector-label {
+        margin-top: .5em;
+        display: flex;
+        width: 100%;
+    }
+
+    .menu .theme-selector {
+        flex: auto;
+    }
+}
+
+@media (min-width: 1024px) {
+    div.footer {
+        margin-top: -2em;
+    }
+}
+
+/* Version change directives */
+:root {
+    --versionadded: var(--good-color);
+    --versionchanged: var(--middle-color);
+    --deprecated: var(--bad-color);
+    --soft-deprecated: rgb(175, 0, 255);
+
+    --versionadded-border: var(--good-border);
+    --versionchanged-border: var(--middle-border);
+    --deprecated-border: var(--bad-border);
+    --soft-deprecated-border: rgb(175, 0, 255);
+}
+
+div.versionadded,
+div.versionchanged,
+div.deprecated,
+div.deprecated-removed {
+    border-inline-start: 3px solid;
+    padding: 0 1rem;
+}
+
+div.versionadded {
+    border-inline-start-color: var(--versionadded-border);
+}
+
+div.versionchanged {
+    border-inline-start-color: var(--versionchanged-border);
+}
+
+div.deprecated,
+div.deprecated-removed,
+div.versionremoved {
+    border-inline-start-color: var(--deprecated-border);
+}
+
+div.soft-deprecated {
+    border-inline-start-color: var(--soft-deprecated-border);
+}
+
+div.versionadded .versionmodified {
+    color: var(--versionadded);
+}
+
+div.versionchanged .versionmodified {
+    color: var(--versionchanged);
+}
+
+div.deprecated .versionmodified,
+div.deprecated-removed .versionmodified,
+div.versionremoved .versionmodified {
+    color: var(--deprecated);
+}
+
+div.soft-deprecated .versionmodified {
+    color: var(--soft-deprecated);
+}
+
+/* Hide header when printing */
+@media print {
+    div.mobile-nav {
+        display: none;
+    }
+}
+</style>
+    <style data-noteit-inlined="https://docs.python.org/3/_static/pygments_dark.css?v=0fc419ee" media="(prefers-color-scheme: dark)">pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #49483e }
+.highlight { background: #272822; color: #F8F8F2 }
+.highlight .c { color: #959077 } /* Comment */
+.highlight .err { color: #ED007E; background-color: #1E0010 } /* Error */
+.highlight .esc { color: #F8F8F2 } /* Escape */
+.highlight .g { color: #F8F8F2 } /* Generic */
+.highlight .k { color: #66D9EF } /* Keyword */
+.highlight .l { color: #AE81FF } /* Literal */
+.highlight .n { color: #F8F8F2 } /* Name */
+.highlight .o { color: #FF4689 } /* Operator */
+.highlight .x { color: #F8F8F2 } /* Other */
+.highlight .p { color: #F8F8F2 } /* Punctuation */
+.highlight .ch { color: #959077 } /* Comment.Hashbang */
+.highlight .cm { color: #959077 } /* Comment.Multiline */
+.highlight .cp { color: #959077 } /* Comment.Preproc */
+.highlight .cpf { color: #959077 } /* Comment.PreprocFile */
+.highlight .c1 { color: #959077 } /* Comment.Single */
+.highlight .cs { color: #959077 } /* Comment.Special */
+.highlight .gd { color: #FF4689 } /* Generic.Deleted */
+.highlight .ge { color: #F8F8F2; font-style: italic } /* Generic.Emph */
+.highlight .ges { color: #F8F8F2; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #FF4689 } /* Generic.Error */
+.highlight .gh { color: #F8F8F2 } /* Generic.Heading */
+.highlight .gi { color: #A6E22E } /* Generic.Inserted */
+.highlight .go { color: #66D9EF } /* Generic.Output */
+.highlight .gp { color: #FF4689; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { color: #F8F8F2; font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #959077 } /* Generic.Subheading */
+.highlight .gt { color: #66D9EF } /* Generic.Traceback */
+.highlight .kc { color: #66D9EF } /* Keyword.Constant */
+.highlight .kd { color: #66D9EF } /* Keyword.Declaration */
+.highlight .kn { color: #FF4689 } /* Keyword.Namespace */
+.highlight .kp { color: #66D9EF } /* Keyword.Pseudo */
+.highlight .kr { color: #66D9EF } /* Keyword.Reserved */
+.highlight .kt { color: #66D9EF } /* Keyword.Type */
+.highlight .ld { color: #E6DB74 } /* Literal.Date */
+.highlight .m { color: #AE81FF } /* Literal.Number */
+.highlight .s { color: #E6DB74 } /* Literal.String */
+.highlight .na { color: #A6E22E } /* Name.Attribute */
+.highlight .nb { color: #A6E22E } /* Name.Builtin */
+.highlight .nc { color: #A6E22E } /* Name.Class */
+.highlight .no { color: #66D9EF } /* Name.Constant */
+.highlight .nd { color: #A6E22E } /* Name.Decorator */
+.highlight .ni { color: #F8F8F2 } /* Name.Entity */
+.highlight .ne { color: #A6E22E } /* Name.Exception */
+.highlight .nf { color: #A6E22E } /* Name.Function */
+.highlight .nl { color: #F8F8F2 } /* Name.Label */
+.highlight .nn { color: #F8F8F2 } /* Name.Namespace */
+.highlight .nx { color: #A6E22E } /* Name.Other */
+.highlight .py { color: #F8F8F2 } /* Name.Property */
+.highlight .nt { color: #FF4689 } /* Name.Tag */
+.highlight .nv { color: #F8F8F2 } /* Name.Variable */
+.highlight .ow { color: #FF4689 } /* Operator.Word */
+.highlight .pm { color: #F8F8F2 } /* Punctuation.Marker */
+.highlight .w { color: #F8F8F2 } /* Text.Whitespace */
+.highlight .mb { color: #AE81FF } /* Literal.Number.Bin */
+.highlight .mf { color: #AE81FF } /* Literal.Number.Float */
+.highlight .mh { color: #AE81FF } /* Literal.Number.Hex */
+.highlight .mi { color: #AE81FF } /* Literal.Number.Integer */
+.highlight .mo { color: #AE81FF } /* Literal.Number.Oct */
+.highlight .sa { color: #E6DB74 } /* Literal.String.Affix */
+.highlight .sb { color: #E6DB74 } /* Literal.String.Backtick */
+.highlight .sc { color: #E6DB74 } /* Literal.String.Char */
+.highlight .dl { color: #E6DB74 } /* Literal.String.Delimiter */
+.highlight .sd { color: #E6DB74 } /* Literal.String.Doc */
+.highlight .s2 { color: #E6DB74 } /* Literal.String.Double */
+.highlight .se { color: #AE81FF } /* Literal.String.Escape */
+.highlight .sh { color: #E6DB74 } /* Literal.String.Heredoc */
+.highlight .si { color: #E6DB74 } /* Literal.String.Interpol */
+.highlight .sx { color: #E6DB74 } /* Literal.String.Other */
+.highlight .sr { color: #E6DB74 } /* Literal.String.Regex */
+.highlight .s1 { color: #E6DB74 } /* Literal.String.Single */
+.highlight .ss { color: #E6DB74 } /* Literal.String.Symbol */
+.highlight .bp { color: #A6E22E } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #A6E22E } /* Name.Function.Magic */
+.highlight .vc { color: #F8F8F2 } /* Name.Variable.Class */
+.highlight .vg { color: #F8F8F2 } /* Name.Variable.Global */
+.highlight .vi { color: #F8F8F2 } /* Name.Variable.Instance */
+.highlight .vm { color: #F8F8F2 } /* Name.Variable.Magic */
+.highlight .il { color: #AE81FF } /* Literal.Number.Integer.Long */</style>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+      
+      
+      
+    
+
+    
+    <style>
+      @media only screen {
+        table.full-width-table {
+            width: 100%;
+        }
+      }
+    </style>
+<style data-noteit-inlined="https://docs.python.org/3/_static/pydoctheme_dark.css" media="(prefers-color-scheme: dark)">/* Common colours */
+:root {
+    --good-color: rgb(79 196 100);
+    --good-border: var(--good-color);
+    --middle-color: rgb(244, 227, 76);
+    --middle-border: var(--middle-color);
+    --bad-color: rgb(244, 76, 78);
+    --bad-border: var(--bad-color);
+}
+
+
+/* Browser elements */
+:root {
+    scrollbar-color: #616161 transparent;
+    color-scheme: dark;
+}
+
+html,
+body {
+    background-color: #222;
+    color: rgba(255, 255, 255, 0.87);
+}
+
+div.related {
+    color: rgba(255, 255, 255, 0.7); /* classic overwrite */
+    border-color: #424242;
+}
+
+/* SIDEBAR */
+div.sphinxsidebar, .menu-wrapper {
+    background-color: #333;
+    color: inherit;
+}
+
+#sidebarbutton {
+    /* important to overwrite style attribute */
+    background-color: #555 !important;
+    color: inherit !important;
+}
+
+div.sidebar, aside.sidebar {
+    background-color: #424242;
+    border-color: #616161;
+}
+
+/* ANCHORS AND HIGHLIGHTS */
+div.body a {
+    color: #7af;
+}
+
+div.body a:visited {
+    color: #bf95f9;
+}
+
+a.headerlink:hover {
+    background-color: #424242;
+}
+
+div.related a {
+    color: currentColor;
+}
+
+div.footer,
+div.footer a {
+    color: currentColor; /* classic overwrites */
+}
+
+dt:target,
+span.highlighted {
+    background-color: #616161;
+}
+
+.footnote:target {
+    background-color: #2c3e50;
+}
+
+/* Below for most things in text */
+
+dl.field-list > dt {
+    background-color: #434;
+}
+
+table.docutils td,
+table.docutils th {
+    border-color: #616161 !important;
+}
+
+table.docutils th {
+    background-color: #424242;
+}
+
+.stableabi {
+    color: #bbf;
+}
+
+div.body pre {
+    border-color: #616161;
+}
+
+div.code-block-caption {
+    background-color: #333;
+    border-color: #616161;
+    color: white;
+}
+
+code {
+    background-color: #424242;
+}
+
+div.body div.seealso {
+    background-color: rgba(255, 255, 0, 0.1);
+}
+
+div.warning {
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+.warning code {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+/* Admonitions */
+:root {
+    --admonition-background: #ffffff1a;
+    --admonition-border: currentColor;
+    --admonition-color: #ffffffde;
+    --attention-background: #ffffff1a;
+    --attention-border: currentColor;
+    --caution-background: #ffff001a;
+    --caution-border: #dd6;
+    --danger-background: #f003;
+    --danger-border: #f66;
+    --error-background: #f003;
+    --error-border: #f66;
+    --hint-background: #0044117a;
+    --hint-border: green;
+    --seealso-background: #ffff001a;
+    --seealso-border: #dd6;
+    --tip-background: #0044117a;
+    --tip-border: green;
+    --warning-background: #ff000033;
+    --warning-border: #ff6666;
+}
+
+aside.topic,
+div.topic,
+div.note,
+nav.contents {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: currentColor;
+}
+
+.note code {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-nav {
+    box-shadow: rgba(255, 255, 255, 0.25) 0 0 2px 0;
+}
+
+.nav-content {
+    background-color: black;
+}
+
+img.invert-in-dark-mode {
+    filter: invert(1) hue-rotate(.5turn);
+}
+
+/* -- object description styles --------------------------------------------- */
+
+/* C++ specific styling */
+
+/* Override Sphinx's basic.css to fix colour contrast */
+.sig.c   .k, .sig.c   .kt,
+.sig.cpp .k, .sig.cpp .kt {
+    color: #5283ff;
+}
+
+/* Version change directives */
+:root {
+    --versionadded: var(--good-color);
+    --versionchanged: var(--middle-color);
+    --deprecated: var(--bad-color);
+    --soft-deprecated: rgb(206, 100, 255);
+    --soft-deprecated-border: rgb(206, 100, 255);
+}
+
+.copybutton {
+    color: #ac9; /* follows div.body pre */
+    background-color: #222222; /* follows body */
+}
+
+.copybutton:hover {
+    background-color: #434343;
+}
+
+.copybutton:active {
+    background-color: #656565;
+}
+</style>
+    
+            
+            
+            
+             
+            
+            <meta name="readthedocs-addons-api-version" content="1">
+
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation" aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu">
+    <nav class="nav-content" role="navigation">
+        <label for="menuToggler" class="toggler__label">
+            <span></span>
+        </label>
+        <span class="nav-items-wrapper">
+            <a href="https://www.python.org/" class="nav-logo">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Python logo">
+            </a>
+            <span class="version_switcher_placeholder"></span>
+            <form role="search" class="search" action="#" method="get">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                    <path fill-rule="nonzero" fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                </svg>
+                <input placeholder="Quick search" aria-label="Quick search" type="search" name="q">
+                <input type="submit" value="Go">
+            </form>
+        </span>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            
+<label class="theme-selector-label">
+    Theme
+    <select class="theme-selector" oninput="activateTheme(this.value)">
+        <option value="auto" selected>Auto</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+</label>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> — Standard operators as functions</a><ul>
+<li><a class="reference internal" href="#mapping-operators-to-functions">Mapping Operators to Functions</a></li>
+<li><a class="reference internal" href="#in-place-operators">In-place Operators</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="functools.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">functools</span></code> — Higher-order functions and operations on callable objects</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="filesys.html" title="next chapter">File and Directory Access</a></p>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const title = document.querySelector('meta[property="og:title"]').content;
+        const elements = document.querySelectorAll('.improvepage');
+        const pageurl = window.location.href.split('?')[0];
+        elements.forEach(element => {
+            const url = new URL(element.href.split('?')[0].replace("-nojs", ""));
+            url.searchParams.set('pagetitle', title);
+            url.searchParams.set('pageurl', pageurl);
+            url.searchParams.set('pagesource', "library/operator.rst");
+            element.href = url.toString();
+        });
+    });
+  </script>
+  <div role="note" aria-label="source link">
+    <h3>This page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../bugs.html">Report a bug</a></li>
+      <li><a class="improvepage" href="../improve-page-nojs.html">Improve this page</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.15/Doc/library/operator.rst?plain=1" rel="nofollow">Show source
+        </a>
+      </li>
+      
+    </ul>
+  </div>
+        </nav>
+    </div>
+</div>
+
+  
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right">
+          <a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+        <li class="right">
+          <a href="filesys.html" title="File and Directory Access" accesskey="N">next</a> |</li>
+        <li class="right">
+          <a href="functools.html" title="functools — Higher-order functions and operations on callable objects" accesskey="P">previous</a> |</li>
+
+          <li class="root-icon"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Python logo" style="vertical-align: middle; margin-top: -1px"></li>
+          <li><a href="https://www.python.org/">Python</a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+          </li>
+    <li id="cpython-language-and-version">
+      <a href="../index.html">3.15.0 Documentation</a> &#187;
+    </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html">The Python standard library</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="functional.html" accesskey="U">Functional Programming Modules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> — Standard operators as functions</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="#" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="search" name="q" id="search-box">
+          <input type="submit" value="Go">
+        </form>
+    </div>
+                     |
+                </li>
+            <li class="right">
+<label class="theme-selector-label">
+    Theme
+    <select class="theme-selector" oninput="activateTheme(this.value)">
+        <option value="auto" selected>Auto</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+</label> |</li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-operator">
+<span id="operator-standard-operators-as-functions"></span><h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> — Standard operators as functions<a class="headerlink" href="#module-operator" title="Link to this heading">¶</a></h1>
+<p><strong>Source code:</strong> <a class="extlink-source reference external" href="https://github.com/python/cpython/tree/3.15/Lib/operator.py">Lib/operator.py</a></p>
+<hr class="docutils" />
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> module exports a set of efficient functions corresponding to
+the intrinsic operators of Python.  For example, <code class="docutils literal notranslate"><span class="pre">operator.add(x,</span> <span class="pre">y)</span></code> is
+equivalent to the expression <code class="docutils literal notranslate"><span class="pre">x+y</span></code>. Many function names are those used for
+special methods, without the double underscores.  For backward compatibility,
+many of these have a variant with the double underscores kept. The variants
+without the double underscores are preferred for clarity.</p>
+<p>The functions fall into categories that perform object comparisons, logical
+operations, mathematical operations and sequence operations.</p>
+<p>The object comparison functions are useful for all objects, and are named after
+the rich comparison operators they support:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.lt">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">lt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.lt" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.le">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">le</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.le" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.eq">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.eq" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.ne">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ne" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.ge">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ge" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.gt">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">gt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.gt" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__lt__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__lt__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__lt__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__le__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__le__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__le__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__eq__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__eq__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ne__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ne__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ne__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ge__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ge__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ge__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__gt__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__gt__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__gt__" title="Link to this definition">¶</a></dt>
+<dd><p>Perform “rich comparisons” between <em>a</em> and <em>b</em>. Specifically, <code class="docutils literal notranslate"><span class="pre">lt(a,</span> <span class="pre">b)</span></code> is
+equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">le(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">eq(a,</span>
+<span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">ne(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">!=</span> <span class="pre">b</span></code>,
+<code class="docutils literal notranslate"><span class="pre">gt(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">ge(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span>
+<span class="pre">&gt;=</span> <span class="pre">b</span></code>.  Note that these functions can return any value, which may
+or may not be interpretable as a Boolean value.  See
+<a class="reference internal" href="../reference/expressions.html#comparisons"><span class="std std-ref">Comparisons</span></a> for more information about rich comparisons.</p>
+</dd></dl>
+
+<p>The logical operations are also generally applicable to all objects, and support
+truth tests, identity tests, and boolean operations:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.not_">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">not_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.not_" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__not__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__not__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__not__" title="Link to this definition">¶</a></dt>
+<dd><p>Return the outcome of <a class="reference internal" href="../reference/expressions.html#not"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">not</span></code></a> <em>obj</em>.  (Note that there is no
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">__not__()</span></code> method for object instances; only the interpreter core defines
+this operation.  The result is affected by the <a class="reference internal" href="../reference/datamodel.html#object.__bool__" title="object.__bool__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__bool__()</span></code></a> and
+<a class="reference internal" href="../reference/datamodel.html#object.__len__" title="object.__len__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__len__()</span></code></a> methods.)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.truth">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">truth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.truth" title="Link to this definition">¶</a></dt>
+<dd><p>Return <a class="reference internal" href="../builtins/constants.html#True" title="True"><code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code></a> if <em>obj</em> is true, and <a class="reference internal" href="../builtins/constants.html#False" title="False"><code class="xref py py-const docutils literal notranslate"><span class="pre">False</span></code></a> otherwise.  This is
+equivalent to using the <a class="reference internal" href="../builtins/functions.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> constructor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.is_">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">is_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.is_" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">b</span></code>.  Tests object identity.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.is_not">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">is_not</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.is_not" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">b</span></code>.  Tests object identity.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.is_none">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">is_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.is_none" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">None</span></code>.  Tests object identity.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.14.</span></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.is_not_none">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">is_not_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.is_not_none" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None</span></code>.  Tests object identity.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.14.</span></p>
+</div>
+</dd></dl>
+
+<p>The mathematical and bitwise operations are the most numerous:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.abs">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">abs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.abs" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__abs__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__abs__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__abs__" title="Link to this definition">¶</a></dt>
+<dd><p>Return the absolute value of <em>obj</em>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.add">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.add" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__add__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__add__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></code>, for <em>a</em> and <em>b</em> numbers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.and_">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">and_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.and_" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__and__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__and__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__and__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&amp;</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.floordiv">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">floordiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.floordiv" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__floordiv__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__floordiv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__floordiv__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">//</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.index">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.index" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__index__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__index__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__index__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <em>a</em> converted to an integer.  Equivalent to <code class="docutils literal notranslate"><span class="pre">a.__index__()</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 3.10: </span>The result always has exact type <a class="reference internal" href="../builtins/functions.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.  Previously, the result
+could have been an instance of a subclass of <code class="docutils literal notranslate"><span class="pre">int</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.inv">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.inv" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.invert">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">invert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.invert" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__inv__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__inv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__inv__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__invert__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__invert__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__invert__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">~obj</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.lshift">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">lshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.lshift" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__lshift__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__lshift__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__lshift__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;&lt;</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.mod">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">mod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.mod" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__mod__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__mod__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__mod__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">%</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.mul">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.mul" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__mul__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__mul__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.matmul">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">matmul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.matmul" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__matmul__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__matmul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__matmul__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&#64;</span> <span class="pre">b</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.5.</span></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.neg">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">neg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.neg" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__neg__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__neg__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__neg__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <em>obj</em> negated (<code class="docutils literal notranslate"><span class="pre">-obj</span></code>).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.or_">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">or_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.or_" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__or__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__or__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__or__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">|</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.pos">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.pos" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__pos__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__pos__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__pos__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">+obj</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.pow">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">pow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.pow" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__pow__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__pow__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__pow__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">**</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.rshift">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">rshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.rshift" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__rshift__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__rshift__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__rshift__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;&gt;</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.sub">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.sub" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__sub__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__sub__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.truediv">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">truediv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.truediv" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__truediv__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__truediv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__truediv__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">/</span> <span class="pre">b</span></code> where 2/3 is .66 rather than 0.  This is also known as
+“true” division.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.xor">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.xor" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__xor__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__xor__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__xor__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">^</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<p>Operations which work with sequences (some of them with mappings too) include:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.concat">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.concat" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__concat__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__concat__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__concat__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></code> for <em>a</em> and <em>b</em> sequences.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.contains">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.contains" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__contains__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__contains__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__contains__" title="Link to this definition">¶</a></dt>
+<dd><p>Return the outcome of the test <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">in</span> <span class="pre">a</span></code>. Note the reversed operands.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.countOf">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">countOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.countOf" title="Link to this definition">¶</a></dt>
+<dd><p>Return the number of occurrences of <em>b</em> in <em>a</em>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.delitem">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">delitem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.delitem" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__delitem__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__delitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__delitem__" title="Link to this definition">¶</a></dt>
+<dd><p>Remove the value of <em>a</em> at index <em>b</em>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.getitem">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">getitem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.getitem" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__getitem__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__getitem__" title="Link to this definition">¶</a></dt>
+<dd><p>Return the value of <em>a</em> at index <em>b</em>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.indexOf">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">indexOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.indexOf" title="Link to this definition">¶</a></dt>
+<dd><p>Return the index of the first of occurrence of <em>b</em> in <em>a</em>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.setitem">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">setitem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.setitem" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__setitem__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__setitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__setitem__" title="Link to this definition">¶</a></dt>
+<dd><p>Set the value of <em>a</em> at index <em>b</em> to <em>c</em>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.length_hint">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">length_hint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.length_hint" title="Link to this definition">¶</a></dt>
+<dd><p>Return an estimated length for the object <em>obj</em>. First try to return its
+actual length, then an estimate using <a class="reference internal" href="../reference/datamodel.html#object.__length_hint__" title="object.__length_hint__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">object.__length_hint__()</span></code></a>, and
+finally return the default value.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.4.</span></p>
+</div>
+</dd></dl>
+
+<p>The following operation works with callables:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.call">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.call" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__call__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__call__" title="Link to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">obj(*args,</span> <span class="pre">**kwargs)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.11.</span></p>
+</div>
+</dd></dl>
+
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> module also defines tools for generalized attribute and item
+lookups.  These are useful for making fast field extractors as arguments for
+<a class="reference internal" href="../builtins/functions.html#map" title="map"><code class="xref py py-func docutils literal notranslate"><span class="pre">map()</span></code></a>, <a class="reference internal" href="../builtins/functions.html#sorted" title="sorted"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted()</span></code></a>, <a class="reference internal" href="itertools.html#itertools.groupby" title="itertools.groupby"><code class="xref py py-meth docutils literal notranslate"><span class="pre">itertools.groupby()</span></code></a>, or other functions that
+expect a function argument.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.attrgetter">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">attrgetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.attrgetter" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">attrgetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">attrs</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Return a callable object that fetches <em>attr</em> from its operand.
+If more than one attribute is requested, returns a tuple of attributes.
+The attribute names can also contain dots. For example:</p>
+<ul class="simple">
+<li><p>After <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">attrgetter('name')</span></code>, the call <code class="docutils literal notranslate"><span class="pre">f(b)</span></code> returns <code class="docutils literal notranslate"><span class="pre">b.name</span></code>.</p></li>
+<li><p>After <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">attrgetter('name',</span> <span class="pre">'date')</span></code>, the call <code class="docutils literal notranslate"><span class="pre">f(b)</span></code> returns
+<code class="docutils literal notranslate"><span class="pre">(b.name,</span> <span class="pre">b.date)</span></code>.</p></li>
+<li><p>After <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">attrgetter('name.first',</span> <span class="pre">'name.last')</span></code>, the call <code class="docutils literal notranslate"><span class="pre">f(b)</span></code>
+returns <code class="docutils literal notranslate"><span class="pre">(b.name.first,</span> <span class="pre">b.name.last)</span></code>.</p></li>
+</ul>
+<p>Equivalent to:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">attrgetter</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'attribute name must be a string'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">resolve_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">resolve_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">g</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.itemgetter">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">itemgetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.itemgetter" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">itemgetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Return a callable object that fetches <em>item</em> from its operand using the
+operand’s <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code></a> method.  If multiple items are specified,
+returns a tuple of lookup values.  For example:</p>
+<ul class="simple">
+<li><p>After <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">itemgetter(2)</span></code>, the call <code class="docutils literal notranslate"><span class="pre">f(r)</span></code> returns <code class="docutils literal notranslate"><span class="pre">r[2]</span></code>.</p></li>
+<li><p>After <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">itemgetter(2,</span> <span class="pre">5,</span> <span class="pre">3)</span></code>, the call <code class="docutils literal notranslate"><span class="pre">g(r)</span></code> returns
+<code class="docutils literal notranslate"><span class="pre">(r[2],</span> <span class="pre">r[5],</span> <span class="pre">r[3])</span></code>.</p></li>
+</ul>
+<p>Equivalent to:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="n">items</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">g</span>
+</pre></div>
+</div>
+<p>The items can be any type accepted by the operand’s <a class="reference internal" href="../reference/datamodel.html#object.__getitem__" title="object.__getitem__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code></a>
+method.  Dictionaries accept any <a class="reference internal" href="../glossary.html#term-hashable"><span class="xref std std-term">hashable</span></a> value.  Lists, tuples, and
+strings accept an index or a slice:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="s1">'ABCDEFG'</span><span class="p">)</span>
+<span class="go">'B'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)(</span><span class="s1">'ABCDEFG'</span><span class="p">)</span>
+<span class="go">('B', 'D', 'F')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">itemgetter</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">None</span><span class="p">))(</span><span class="s1">'ABCDEFG'</span><span class="p">)</span>
+<span class="go">'CDEFG'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">soldier</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">rank</span><span class="o">=</span><span class="s1">'captain'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'dotterbart'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">itemgetter</span><span class="p">(</span><span class="s1">'rank'</span><span class="p">)(</span><span class="n">soldier</span><span class="p">)</span>
+<span class="go">'captain'</span>
+</pre></div>
+</div>
+<p>Example of using <code class="xref py py-func docutils literal notranslate"><span class="pre">itemgetter()</span></code> to retrieve specific fields from a
+tuple record:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inventory</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'apple'</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s1">'banana'</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">'pear'</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="s1">'orange'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getcount</span> <span class="o">=</span> <span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">getcount</span><span class="p">,</span> <span class="n">inventory</span><span class="p">))</span>
+<span class="go">[3, 2, 5, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">inventory</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">getcount</span><span class="p">)</span>
+<span class="go">[('orange', 1), ('banana', 2), ('apple', 3), ('pear', 5)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.methodcaller">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">methodcaller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.methodcaller" title="Link to this definition">¶</a></dt>
+<dd><p>Return a callable object that calls the method <em>name</em> on its operand.  If
+additional arguments and/or keyword arguments are given, they will be given
+to the method as well.  For example:</p>
+<ul class="simple">
+<li><p>After <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">methodcaller('name')</span></code>, the call <code class="docutils literal notranslate"><span class="pre">f(b)</span></code> returns <code class="docutils literal notranslate"><span class="pre">b.name()</span></code>.</p></li>
+<li><p>After <code class="docutils literal notranslate"><span class="pre">f</span> <span class="pre">=</span> <span class="pre">methodcaller('name',</span> <span class="pre">'foo',</span> <span class="pre">bar=1)</span></code>, the call <code class="docutils literal notranslate"><span class="pre">f(b)</span></code>
+returns <code class="docutils literal notranslate"><span class="pre">b.name('foo',</span> <span class="pre">bar=1)</span></code>.</p></li>
+</ul>
+<p>Equivalent to:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">methodcaller</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">caller</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">caller</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="mapping-operators-to-functions">
+<span id="operator-map"></span><h2>Mapping Operators to Functions<a class="headerlink" href="#mapping-operators-to-functions" title="Link to this heading">¶</a></h2>
+<p>This table shows how abstract operations correspond to operator symbols in the
+Python syntax and the functions in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> module.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operation</p></th>
+<th class="head"><p>Syntax</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Addition</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">add(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Concatenation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">seq1</span> <span class="pre">+</span> <span class="pre">seq2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">concat(seq1,</span> <span class="pre">seq2)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Containment Test</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">obj</span> <span class="pre">in</span> <span class="pre">seq</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">contains(seq,</span> <span class="pre">obj)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Division</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">/</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">truediv(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Division</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">//</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">floordiv(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Bitwise And, or
+Intersection</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&amp;</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">and_(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Bitwise Exclusive Or,
+or Symmetric
+Difference</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">^</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">xor(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Bitwise Inversion, or
+Complement</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">~</span> <span class="pre">a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">invert(a)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Bitwise Or, or
+Union</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">|</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">or_(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Exponentiation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">**</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pow(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Identity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Identity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_not(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Identity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_none(a)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Identity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_not_none(a)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Indexed Assignment</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">obj[k]</span> <span class="pre">=</span> <span class="pre">v</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setitem(obj,</span> <span class="pre">k,</span> <span class="pre">v)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Indexed Deletion</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">del</span> <span class="pre">obj[k]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">delitem(obj,</span> <span class="pre">k)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Indexing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">obj[k]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">getitem(obj,</span> <span class="pre">k)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Left Shift</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;&lt;</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">lshift(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Modulo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">%</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mod(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Multiplication</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mul(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Matrix Multiplication</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&#64;</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">matmul(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Negation (Arithmetic)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-</span> <span class="pre">a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">neg(a)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Negation (Logical)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">not_(a)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Positive</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pos(a)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Right Shift</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;&gt;</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rshift(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Slice Assignment</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">seq[i:j]</span> <span class="pre">=</span> <span class="pre">values</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">setitem(seq,</span> <span class="pre">slice(i,</span> <span class="pre">j),</span> <span class="pre">values)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Slice Deletion</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">del</span> <span class="pre">seq[i:j]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">delitem(seq,</span> <span class="pre">slice(i,</span> <span class="pre">j))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Slicing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">seq[i:j]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">getitem(seq,</span> <span class="pre">slice(i,</span> <span class="pre">j))</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>String Formatting</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">%</span> <span class="pre">obj</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mod(s,</span> <span class="pre">obj)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Subtraction</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">-</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sub(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Truth Test</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">obj</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">truth(obj)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Ordering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">lt(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Ordering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">le(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Equality</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">eq(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Difference</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">!=</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ne(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Ordering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;=</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ge(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Ordering</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gt(a,</span> <span class="pre">b)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="in-place-operators">
+<h2>In-place Operators<a class="headerlink" href="#in-place-operators" title="Link to this heading">¶</a></h2>
+<p>Many operations have an “in-place” version.  Listed below are functions
+providing a more primitive access to in-place operators than the usual syntax
+does; for example, the <a class="reference internal" href="../glossary.html#term-statement"><span class="xref std std-term">statement</span></a> <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+=</span> <span class="pre">y</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">operator.iadd(x,</span> <span class="pre">y)</span></code>.  Another way to put it is to say that
+<code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">operator.iadd(x,</span> <span class="pre">y)</span></code> is equivalent to the compound statement
+<code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">=</span> <span class="pre">x;</span> <span class="pre">z</span> <span class="pre">+=</span> <span class="pre">y</span></code>.</p>
+<p>In those examples, note that when an in-place method is called, the computation
+and assignment are performed in two separate steps.  The in-place functions
+listed below only do the first step, calling the in-place method.  The second
+step, assignment, is not handled.</p>
+<p>For immutable targets such as strings, numbers, and tuples, the updated
+value is computed, but not assigned back to the input variable:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="s1">'hello'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iadd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s1">' world'</span><span class="p">)</span>
+<span class="go">'hello world'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">'hello'</span>
+</pre></div>
+</div>
+<p>For mutable targets such as lists and dictionaries, the in-place method
+will perform the update, so no subsequent assignment is necessary:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'h'</span><span class="p">,</span> <span class="s1">'e'</span><span class="p">,</span> <span class="s1">'l'</span><span class="p">,</span> <span class="s1">'l'</span><span class="p">,</span> <span class="s1">'o'</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iadd</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="s1">' '</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'o'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">,</span> <span class="s1">'l'</span><span class="p">,</span> <span class="s1">'d'</span><span class="p">])</span>
+<span class="go">['h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span>
+<span class="go">['h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd']</span>
+</pre></div>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.iadd">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">iadd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.iadd" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__iadd__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__iadd__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__iadd__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">iadd(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.iand">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">iand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.iand" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__iand__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__iand__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__iand__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">iand(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&amp;=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.iconcat">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">iconcat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.iconcat" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__iconcat__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__iconcat__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__iconcat__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">iconcat(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+=</span> <span class="pre">b</span></code> for <em>a</em> and <em>b</em> sequences.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.ifloordiv">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ifloordiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ifloordiv" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ifloordiv__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ifloordiv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ifloordiv__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">ifloordiv(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">//=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.ilshift">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ilshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ilshift" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ilshift__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ilshift__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ilshift__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">ilshift(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&lt;&lt;=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.imod">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">imod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.imod" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__imod__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__imod__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__imod__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">imod(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">%=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.imul">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">imul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.imul" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__imul__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__imul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__imul__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">imul(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.imatmul">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">imatmul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.imatmul" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__imatmul__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__imatmul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__imatmul__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">imatmul(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&#64;=</span> <span class="pre">b</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.5.</span></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.ior">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ior" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ior__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ior__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ior__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">ior(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">|=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.ipow">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ipow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ipow" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ipow__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ipow__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ipow__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">ipow(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">**=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.irshift">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">irshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.irshift" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__irshift__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__irshift__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__irshift__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">irshift(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&gt;&gt;=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.isub">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">isub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.isub" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__isub__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__isub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__isub__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">isub(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">-=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.itruediv">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">itruediv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.itruediv" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__itruediv__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__itruediv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__itruediv__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">itruediv(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">/=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="operator.ixor">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">ixor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.ixor" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="operator.__ixor__">
+<span class="sig-prename descclassname"><span class="pre">operator.</span></span><span class="sig-name descname"><span class="pre">__ixor__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#operator.__ixor__" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">ixor(a,</span> <span class="pre">b)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">^=</span> <span class="pre">b</span></code>.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> — Standard operators as functions</a><ul>
+<li><a class="reference internal" href="#mapping-operators-to-functions">Mapping Operators to Functions</a></li>
+<li><a class="reference internal" href="#in-place-operators">In-place Operators</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="functools.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">functools</span></code> — Higher-order functions and operations on callable objects</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="filesys.html" title="next chapter">File and Directory Access</a></p>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const title = document.querySelector('meta[property="og:title"]').content;
+        const elements = document.querySelectorAll('.improvepage');
+        const pageurl = window.location.href.split('?')[0];
+        elements.forEach(element => {
+            const url = new URL(element.href.split('?')[0].replace("-nojs", ""));
+            url.searchParams.set('pagetitle', title);
+            url.searchParams.set('pageurl', pageurl);
+            url.searchParams.set('pagesource', "library/operator.rst");
+            element.href = url.toString();
+        });
+    });
+  </script>
+  <div role="note" aria-label="source link">
+    <h3>This page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../bugs.html">Report a bug</a></li>
+      <li><a class="improvepage" href="../improve-page-nojs.html">Improve this page</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.15/Doc/library/operator.rst?plain=1" rel="nofollow">Show source
+        </a>
+      </li>
+      
+    </ul>
+  </div>
+        </div>
+<div id="sidebarbutton" title="Collapse sidebar">
+<span>«</span>
+</div>
+
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index">index</a></li>
+        <li class="right">
+          <a href="../py-modindex.html" title="Python Module Index">modules</a> |</li>
+        <li class="right">
+          <a href="filesys.html" title="File and Directory Access">next</a> |</li>
+        <li class="right">
+          <a href="functools.html" title="functools — Higher-order functions and operations on callable objects">previous</a> |</li>
+
+          <li class="root-icon"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Python logo" style="vertical-align: middle; margin-top: -1px"></li>
+          <li><a href="https://www.python.org/">Python</a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+          </li>
+    <li id="cpython-language-and-version">
+      <a href="../index.html">3.15.0 Documentation</a> &#187;
+    </li>
+
+          <li class="nav-item nav-item-1"><a href="index.html">The Python standard library</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="functional.html">Functional Programming Modules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">operator</span></code> — Standard operators as functions</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="#" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="search" name="q" id="search-box">
+          <input type="submit" value="Go">
+        </form>
+    </div>
+                     |
+                </li>
+            <li class="right">
+<label class="theme-selector-label">
+    Theme
+    <select class="theme-selector" oninput="activateTheme(this.value)">
+        <option value="auto" selected>Auto</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+</label> |</li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; <a href="../copyright.html">Copyright</a> 2001 Python Software Foundation.
+    <br>
+    This page is licensed under the Python Software Foundation License Version 2.
+    <br>
+    Examples, recipes, and other code in the documentation are additionally licensed under the Zero Clause BSD License.
+    <br>
+    
+      See <a href="/license.html">History and License</a> for more information.<br>
+    
+    
+    <br>
+
+    The Python Software Foundation is a non-profit corporation.
+<a href="https://www.python.org/psf/donations/">Please donate.</a>
+<br>
+    <br>
+      Last updated on Oct 20, 2026 (12:12 UTC).
+    
+      <a href="/bugs.html">Found a bug</a>?
+    
+    <br>
+
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+
+    
+  </body>
+</html>

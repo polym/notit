@@ -1,0 +1,16 @@
+{
+  "name": "virtual-list-06",
+  "category": "virtual-list",
+  "source": {
+    "url": "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+    "license": "MIT OR Apache-2.0 (The Rust Programming Language)",
+    "retrieved": "2026-10-20",
+    "notes": "Post text from the source; recycling virtual feed authored locally. Even visits rotate the feed by two posts, and a background refresh 1.5 s after the first render replaces every row element with a fresh copy."
+  },
+  "highlights": [
+    { "id": "vl06-1", "text": "Rust uses a third approach: memory is managed through a system of ownership with a set of rules that the compiler checks.", "scope": "#spacer", "note": "whole post" },
+    { "id": "vl06-2", "text": "removes the values in the opposite order", "scope": "#spacer" },
+    { "id": "vl06-3", "text": "All data stored on the stack must have a known, fixed size.", "scope": "#spacer" },
+    { "id": "vl06-4", "text": "you request a certain amount of space", "scope": "#spacer" }
+  ]
+}

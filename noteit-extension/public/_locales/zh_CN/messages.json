@@ -1,0 +1,22 @@
+{
+  "extName": {
+    "message": "NoteIt 网页摘抄",
+    "description": "Extension name shown in the browser and the extensions page."
+  },
+  "extDescription": {
+    "message": "在任意网页选中文字即可摘抄，并在侧栏中回顾。",
+    "description": "Extension description."
+  },
+  "actionTitle": {
+    "message": "打开 NoteIt",
+    "description": "Toolbar button tooltip."
+  },
+  "commandHighlightSelection": {
+    "message": "摘抄选中文字",
+    "description": "Keyboard shortcut description for highlighting the current selection."
+  },
+  "menuHighlightSelection": {
+    "message": "摘抄选中文字",
+    "description": "Context menu title on a text selection. Must equal strings.menuHighlightSelection."
+  }
+}

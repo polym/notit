@@ -1,0 +1,4 @@
+// Fixture: content loader that dynamically imports the content chunk (mirrors the CRXJS loader).
+(async () => {
+  await import(/* @vite-ignore */ chrome.runtime.getURL("assets/content.txt"));
+})();

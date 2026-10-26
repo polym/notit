@@ -1,0 +1,182 @@
+{
+  "generatedAt": "2026-10-21T04:24:54.754Z",
+  "candidate": "highlight-api",
+  "baseline": "mark",
+  "browser": "Playwright Chromium (Chrome for Testing)",
+  "criteria": [
+    {
+      "id": "S1",
+      "title": "corpus recovery >= 95% and not below MarkRenderer",
+      "measured": {
+        "mark": {
+          "eligible": 135,
+          "correct": 130,
+          "rate": 0.9629629629629629,
+          "perCategory": {
+            "long-article": {
+              "eligible": 30,
+              "correct": 30
+            },
+            "docs-site": {
+              "eligible": 27,
+              "correct": 27
+            },
+            "ad-dense": {
+              "eligible": 29,
+              "correct": 29
+            },
+            "inline-script": {
+              "eligible": 26,
+              "correct": 26
+            },
+            "virtual-list": {
+              "eligible": 23,
+              "correct": 18
+            }
+          }
+        },
+        "highlight-api": {
+          "eligible": 135,
+          "correct": 130,
+          "rate": 0.9629629629629629,
+          "perCategory": {
+            "long-article": {
+              "eligible": 30,
+              "correct": 30
+            },
+            "docs-site": {
+              "eligible": 27,
+              "correct": 27
+            },
+            "ad-dense": {
+              "eligible": 29,
+              "correct": 29
+            },
+            "inline-script": {
+              "eligible": 26,
+              "correct": 26
+            },
+            "virtual-list": {
+              "eligible": 23,
+              "correct": 18
+            }
+          }
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "S2",
+      "title": "hover / click hit 100% on adjacent, overlapping and cross-element highlights",
+      "measured": {
+        "mark": {
+          "checks": 26,
+          "correct": 26,
+          "failures": []
+        },
+        "highlight-api": {
+          "checks": 26,
+          "correct": 26,
+          "failures": []
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "S3",
+      "title": "dotted underline of commented highlights visible in ::highlight() (Chrome screenshot)",
+      "measured": {
+        "mark": {
+          "differs": true,
+          "screenshots": [
+            "spike-results/mark-plain.png",
+            "spike-results/mark-commented.png"
+          ]
+        },
+        "highlight-api": {
+          "differs": true,
+          "screenshots": [
+            "spike-results/highlight-api-plain.png",
+            "spike-results/highlight-api-commented.png"
+          ]
+        }
+      },
+      "pass": true,
+      "notes": "Chrome (Playwright Chromium) only; the Edge comparison is a manual item."
+    },
+    {
+      "id": "S4",
+      "title": "flash via noteit-flash for 1200ms",
+      "measured": {
+        "mark": {
+          "observed": true,
+          "durationMs": 1217
+        },
+        "highlight-api": {
+          "observed": true,
+          "durationMs": 1202
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "S5",
+      "title": "virtual list scrolled out / back repaints correctly within 1000ms",
+      "measured": {
+        "mark": {
+          "rounds": 4,
+          "worstReappearMs": 339,
+          "textCorrect": true
+        },
+        "highlight-api": {
+          "rounds": 4,
+          "worstReappearMs": 348,
+          "textCorrect": true
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "S6",
+      "title": "restore long task <= 50ms and color -> visible p95 <= 100ms",
+      "measured": {
+        "mark": {
+          "restoreLongestTaskMs": 0,
+          "colorToVisibleP95Ms": 11,
+          "colorSamples": 10
+        },
+        "highlight-api": {
+          "restoreLongestTaskMs": 0,
+          "colorToVisibleP95Ms": 17.6,
+          "colorSamples": 10
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "S7",
+      "title": "host getBoundingClientRect unchanged by painting",
+      "measured": {
+        "mark": {
+          "maxShiftPx": 2,
+          "elements": 9
+        },
+        "highlight-api": {
+          "maxShiftPx": 0,
+          "elements": 9
+        }
+      },
+      "pass": true
+    }
+  ],
+  "automatedPass": true,
+  "manual": [
+    {
+      "id": "S3",
+      "title": "Edge screenshot comparison of the commented dotted underline",
+      "status": "pending",
+      "owner": "Polym",
+      "instructions": "During the Edge smoke test, load a VITE_RENDERER=highlight-api build, add one highlight with a comment and one without, and confirm the commented one shows the dotted underline like in Chrome (Chromium screenshots in spike-results/)."
+    }
+  ]
+}

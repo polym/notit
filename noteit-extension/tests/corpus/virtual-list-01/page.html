@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Marginalia feed - virtual list (corpus snapshot)</title>
+<!-- Feed text: Wikipedia "Marginalia" (CC BY-SA 4.0), split into posts. Models a public infinite feed
+     (x.com style): rows render after a simulated fetch and only the visible window exists in the DOM. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 0; background: #fafafa; color: #111; }
+  header { padding: 12px 16px; border-bottom: 1px solid #ddd; background: #fff; }
+  #feed { height: 640px; overflow-y: auto; max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid #ddd; }
+  #spacer { position: relative; }
+  .row { position: absolute; left: 0; right: 0; height: 96px; box-sizing: border-box; padding: 12px 16px; border-bottom: 1px solid #eee; overflow: hidden; }
+  .row .handle { font-weight: 600; font-size: 13px; color: #555; }
+  .row p { margin: 4px 0 0; font-size: 15px; line-height: 1.4; }
+  .promo { background: #eef6ff; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-feed-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+
+    var POSTS = [
+      'One of the earliest forms of marginal commentary were scholia, or written notes in the margins of text, typically provided by the scribe who created the handwritten manuscript copy.',
+      'In Europe, before the invention of the printing press, books were copied by hand, originally onto vellum and later onto paper.',
+      'Paper was expensive and vellum was much more expensive. A single book cost as much as a house.',
+      'Books, therefore, were long-term investments expected to be handed down to succeeding generations.',
+      'Readers commonly wrote notes in the margins of books in order to enhance the understanding of later readers.',
+      'The practice of writing in the margins of books gradually declined over several centuries after the invention of the printing press.',
+      'The first Gutenberg Bible was printed in the 1450s. Hand annotations occur in most surviving books through the end of the 1500s.',
+      'Fermat wrote, around 1637, of a proof of his last theorem too big to fit in the margin; it is the most famous mathematical marginal note.',
+      'Voltaire, in the 1700s, annotated books in his library so extensively that his annotations have been collected and published.',
+      'The first recorded use of the word marginalia is in 1819 in Blackwood\'s Magazine.',
+      'Some famous marginalia were serious works, or drafts thereof, written in margins due to scarcity of paper.',
+      'Voltaire composed in book margins while in prison, and Sir Walter Raleigh wrote a personal statement in margins just before his execution.',
+    ]
+    var ROW_HEIGHT = 96
+    var OVERSCAN = 3
+    var TOTAL = 200
+    // A promoted post appears on alternate visits, shifting every following row (and its text offset).
+    var promoted = visit % 2 === 1
+    var items = []
+    if (promoted) items.push({ promo: true, handle: '@sponsor', text: 'Promoted: discover rare annotated first editions at your local library.' })
+    for (var i = 0; i < TOTAL; i++) {
+      items.push({ promo: false, handle: '@reader' + (i % 17), text: POSTS[i % POSTS.length] + ' (#' + (i + 1) + ')' })
+    }
+
+    function render(feed, spacer) {
+      var first = Math.max(0, Math.floor(feed.scrollTop / ROW_HEIGHT) - OVERSCAN)
+      var last = Math.min(items.length, Math.ceil((feed.scrollTop + feed.clientHeight) / ROW_HEIGHT) + OVERSCAN)
+      var rows = []
+      for (var i = first; i < last; i++) {
+        var row = document.createElement('div')
+        row.className = items[i].promo ? 'row promo' : 'row'
+        row.style.top = i * ROW_HEIGHT + 'px'
+        row.dataset.index = String(i)
+        var handle = document.createElement('div')
+        handle.className = 'handle'
+        handle.textContent = items[i].handle
+        var p = document.createElement('p')
+        p.textContent = items[i].text
+        row.append(handle, p)
+        rows.push(row)
+      }
+      spacer.replaceChildren.apply(spacer, rows)
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var feed = document.getElementById('feed')
+      var spacer = document.getElementById('spacer')
+      // Simulated network fetch before the first render.
+      setTimeout(function () {
+        spacer.style.height = items.length * ROW_HEIGHT + 'px'
+        render(feed, spacer)
+        feed.addEventListener('scroll', function () { render(feed, spacer) })
+      }, 300)
+    })
+  })()
+</script>
+</head>
+<body>
+<header><strong>Marginalia</strong> · Latest posts</header>
+<main>
+  <div id="feed" role="feed" aria-label="Posts"><div id="spacer"></div></div>
+</main>
+</body>
+</html>

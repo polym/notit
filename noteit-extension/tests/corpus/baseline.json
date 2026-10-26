@@ -1,0 +1,187 @@
+{
+  "engine": "anchor-resolve+mark-renderer",
+  "overall": {
+    "eligible": 135,
+    "correct": 130,
+    "rate": 0.9629629629629629
+  },
+  "categories": {
+    "long-article": {
+      "eligible": 30,
+      "correct": 30,
+      "rate": 1
+    },
+    "docs-site": {
+      "eligible": 27,
+      "correct": 27,
+      "rate": 1
+    },
+    "ad-dense": {
+      "eligible": 29,
+      "correct": 29,
+      "rate": 1
+    },
+    "inline-script": {
+      "eligible": 26,
+      "correct": 26,
+      "rate": 1
+    },
+    "virtual-list": {
+      "eligible": 23,
+      "correct": 18,
+      "rate": 0.782608695652174
+    }
+  },
+  "snapshots": {
+    "ad-dense-01": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "ad-dense-02": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "ad-dense-03": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "ad-dense-04": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "ad-dense-05": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "ad-dense-06": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "docs-site-01": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "docs-site-02": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "docs-site-03": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "docs-site-04": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "docs-site-05": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "docs-site-06": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "inline-script-01": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "inline-script-02": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "inline-script-03": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "inline-script-04": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "inline-script-05": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "inline-script-06": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "long-article-01": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "long-article-02": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "long-article-03": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "long-article-04": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "long-article-05": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "long-article-06": {
+      "eligible": 5,
+      "correct": 5,
+      "rate": 1
+    },
+    "virtual-list-01": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "virtual-list-02": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "virtual-list-03": {
+      "eligible": 4,
+      "correct": 1,
+      "rate": 0.25
+    },
+    "virtual-list-04": {
+      "eligible": 3,
+      "correct": 3,
+      "rate": 1
+    },
+    "virtual-list-05": {
+      "eligible": 4,
+      "correct": 4,
+      "rate": 1
+    },
+    "virtual-list-06": {
+      "eligible": 4,
+      "correct": 2,
+      "rate": 0.5
+    }
+  }
+}

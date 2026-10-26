@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notebook - native ads layout (corpus snapshot)</title>
+<!-- Article text: Wikipedia "Notebook" (CC BY-SA 4.0). Layout authored locally to model a page with a dismissible
+     top banner (alternate visits), native "sponsored" cards whose copy reuses article words, and a late
+     "recommended" block inserted before the article body. -->
+<style>
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; color: #1f2937; }
+  #banner { background: #fde68a; padding: 10px 16px; font-size: 14px; }
+  main { max-width: 760px; margin: 0 auto; padding: 16px 24px; line-height: 1.65; }
+  .native:not(:empty), #recommended:not(:empty) { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin: 16px 0; background: #fafafa; }
+  .native .label, #recommended .label { font-size: 11px; color: #6b7280; text-transform: uppercase; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-native-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    document.addEventListener('DOMContentLoaded', function () {
+      if (visit % 2 === 0) {
+        var banner = document.createElement('div')
+        banner.id = 'banner'
+        banner.textContent = 'Back to school: notebooks, legal pads and binders from 1.99. Shop the sale.'
+        document.body.prepend(banner)
+      }
+      var natives = document.querySelectorAll('.native')
+      var COPY = [
+        'Sponsored: the spiral-bound notebook that lies flat. Ruled, grid or blank pages.',
+        'Sponsored: digital paper that turns every notebook page into searchable notes.',
+      ]
+      for (var i = 0; i < natives.length; i++) {
+        var label = document.createElement('div')
+        label.className = 'label'
+        label.textContent = 'Sponsored'
+        var p = document.createElement('p')
+        p.textContent = COPY[(i + visit) % COPY.length]
+        natives[i].replaceChildren(label, p)
+      }
+      setTimeout(function () {
+        var rec = document.getElementById('recommended')
+        var label = document.createElement('div')
+        label.className = 'label'
+        label.textContent = 'Recommended for you'
+        var p = document.createElement('p')
+        p.textContent = visit % 2 === 1 ? 'Ten notebook habits of famous writers.' : 'Why the legal pad is yellow, and other notebook stories you never knew.'
+        rec.replaceChildren(label, p)
+      }, 700)
+    })
+  })()
+</script>
+</head>
+<body>
+<main id="story">
+    <h1>Notebook</h1>
+    <div id="recommended"></div>
+    <p id="n1">A notebook (also known as a notepad, writing pad, drawing pad, or legal pad) is a book or stack of paper pages that are often ruled and used for purposes such as note-taking, journaling, or other writing, drawing, or scrapbooking and more.</p>
+    <p id="n2">The earliest form of notebook was the wax tablet, which was used as a reusable and portable writing surface in classical antiquity and throughout the Middle Ages.</p>
+    <p id="n3">As paper became more readily available in European countries from the 11th century onwards, wax tablets gradually fell out of use, although they remained relatively common in England, which did not possess a commercially successful paper mill until the late 16th century.</p>
+    <p id="n4">While paper was cheaper than wax, its cost was sufficiently high to ensure the popularity of erasable notebooks, made of specially-treated paper that could be wiped clean and used again. These were commonly known as table-books, and are frequently referenced in Renaissance literature, most famously in Shakespeare's Hamlet: "My tables,—meet it is I set it down, That one may smile, and smile, and be a villain."Despite the apparent ubiquity of such table-books in Shakespeare's time, very few examples have survived, and little is known about their exact nature, use, or history of production. The earliest extant edition, bound together with a printed almanac, was made in Antwerp, Belgium, in 1527.</p>
+    <div class="native" data-native="3"></div>
+    <p id="n5">At this time, however, it appears that the concept of an erasable notebook was still something of a novelty to the British public, as the printed instructions included with some books were headed: "To make clean your Tables when they be written on, which to some as yet is unknown." The leaves of some table-books were made of donkey skin; others had leaves of ivory or simple pasteboard. The coating was made from a mixture of glue and gesso, and modern-day experiments have shown that ink, graphite and silverpoint writing can be easily erased from the treated pages with the application of a wet sponge or fingertip.</p>
+    <p id="n6">Other types of notebook may also have been in circulation during this time; 17th-century writer Samuel Hartlib describes a table-book made of slate, which did "not need such tedious wiping out by spunges or cloutes".</p>
+    <p id="n7">The leaves of a table-book could be written upon with a stylus, which added to their convenience, as it meant that impromptu notes could be taken without the need for an inkwell (graphite pencils were not in common use until the late 17th century). Table-books were owned by all classes of people, from merchants to nobles, and were employed for a variety of purposes:</p>
+    <p id="n8">Surviving copies suggest that at least some owners (and/or their children) used table-books as suitable places in which to learn how to write. Tables were also used for collecting pieces of poetry, noteworthy epigrams, and new words; recording sermons, legal proceedings, or parliamentary debates; jotting down conversations, recipes, cures, and jokes; keeping financial records; recalling addresses and meetings; and collecting notes on foreign customs while travelling.</p>
+    <p id="n9">The use of table-books for trivial purposes was often satirized on the English stage. For example, Antonio's Revenge by John Marston (c. 1600) contains the following exchange:</p>
+    <div class="native" data-native="8"></div>
+    <p id="n10">Their use in some contexts was seen as pretentious; Joseph Hall, writing in 1608, describes "the hypocrite" as one who, "in the midst of the sermon pulls out his tables in haste, as if he feared to lose that note". The practice of making notes during sermons was a common subject of ridicule, and led to table-books becoming increasingly associated with Puritanism during the 17th century.</p>
+    <p id="n11">By the early 19th century, there was far less demand for erasable notebooks, due to the mass-production of fountain pens and the development of cheaper methods for manufacturing paper. Ordinary paper notebooks became the norm. During the Enlightenment, British schoolchildren were commonly taught how to make their own notebooks out of loose sheets of paper, a process that involved folding, piercing, gathering, sewing and/or binding the sheets.</p>
+    <p id="n12">According to a legend, Thomas W. Holley of Holyoke, Massachusetts, invented the legal pad around the year 1888 when he innovated the idea to collect all the sortings, various sorts of sub-standard paper scraps from various factories, and stitch them together in order to sell them as pads at an affordable and fair price.</p>
+    <p id="n13">In about 1900, the latter then evolved into the modern, traditionally yellow legal pad when a local judge requested for a margin to be drawn on the left side of the paper. This was the first legal pad.</p>
+    <p id="n14">The only technical requirement for this type of stationery to be considered a true "legal pad" is that it must have margins of 1.25 inches (3.17 centimeters) from the left edge. Here, the margin, also known as down lines, is room used to write notes or comments.</p>
+</main>
+<footer>Text from Wikipedia, available under CC BY-SA 4.0.</footer>
+</body>
+</html>

@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Vitest browser-mode failure screenshots
+.vitest
+
+# Playwright output
+test-results
+spike-results
+playwright-report
+
+# Anchoring corpus run output (the committed baseline is tests/corpus/baseline.json)
+tests/corpus/corpus-report.json
+
+# Perf run output (the committed baseline is tests/perf/baseline.json)
+tests/perf/perf-report.json
+
+# E1 legacy backups hold a full export of the user's highlights; never commit them
+backup-*.json

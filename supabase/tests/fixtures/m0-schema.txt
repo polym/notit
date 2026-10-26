@@ -1,0 +1,49 @@
+column highlights.color text null=NO default=-
+column highlights.comment text null=YES default=-
+column highlights.context jsonb null=YES default=-
+column highlights.created_at timestamp with time zone null=YES default=now()
+column highlights.favicon text null=YES default=-
+column highlights.id text null=NO default=-
+column highlights.length integer null=YES default=-
+column highlights.pageTitle text null=YES default=-
+column highlights.start integer null=YES default=-
+column highlights.text text null=NO default=-
+column highlights.timestamp bigint null=NO default=-
+column highlights.url text null=NO default=-
+column highlights.xpath text null=YES default=-
+constraint highlights highlights_pkey PRIMARY KEY (id)
+grant highlights anon DELETE
+grant highlights anon INSERT
+grant highlights anon REFERENCES
+grant highlights anon SELECT
+grant highlights anon TRIGGER
+grant highlights anon TRUNCATE
+grant highlights anon UPDATE
+grant highlights authenticated DELETE
+grant highlights authenticated INSERT
+grant highlights authenticated REFERENCES
+grant highlights authenticated SELECT
+grant highlights authenticated TRIGGER
+grant highlights authenticated TRUNCATE
+grant highlights authenticated UPDATE
+grant highlights postgres DELETE
+grant highlights postgres INSERT
+grant highlights postgres REFERENCES
+grant highlights postgres SELECT
+grant highlights postgres TRIGGER
+grant highlights postgres TRUNCATE
+grant highlights postgres UPDATE
+grant highlights service_role DELETE
+grant highlights service_role INSERT
+grant highlights service_role REFERENCES
+grant highlights service_role SELECT
+grant highlights service_role TRIGGER
+grant highlights service_role TRUNCATE
+grant highlights service_role UPDATE
+index highlights_pkey CREATE UNIQUE INDEX highlights_pkey ON public.highlights USING btree (id)
+index idx_highlights_timestamp CREATE INDEX idx_highlights_timestamp ON public.highlights USING btree ("timestamp" DESC)
+index idx_highlights_url CREATE INDEX idx_highlights_url ON public.highlights USING btree (url)
+relation highlights kind=r rls=false
+relation highlights_pkey kind=i rls=false
+relation idx_highlights_timestamp kind=i rls=false
+relation idx_highlights_url kind=i rls=false

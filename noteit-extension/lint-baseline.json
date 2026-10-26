@@ -1,0 +1,11 @@
+{
+  "total": 1,
+  "byRule": {
+    "noteit/no-raw-color": 1
+  },
+  "byFile": {
+    "src/content/SelectionManager.ts": {
+      "noteit/no-raw-color": 1
+    }
+  }
+}

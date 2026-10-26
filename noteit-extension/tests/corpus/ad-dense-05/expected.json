@@ -1,0 +1,25 @@
+{
+  "name": "ad-dense-05",
+  "category": "ad-dense",
+  "source": {
+    "url": "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+    "license": "MIT OR Apache-2.0 (The Rust Programming Language)",
+    "retrieved": "2026-10-20",
+    "notes": "Article text from the source; ad-funded blog layout authored locally. Odd visits insert a sponsored block before the first paragraph, even visits fill the in-article slots; a sidebar slot fills 0.9 s after load and repeats article phrases."
+  },
+  "highlights": [
+    { "id": "ad05-1", "text": "Ownership is a set of rules that govern how a Rust program manages memory.", "scope": "#p1" },
+    { "id": "ad05-2", "text": "If any of the rules are violated, the program won't compile.", "scope": "#p2" },
+    { "id": "ad05-3", "text": "This is referred to as last in, first out.", "scope": "#p4" },
+    { "id": "ad05-4", "text": "returns a pointer, which is the address of that location", "scope": "#p5" },
+    { "id": "ad05-5", "text": "the heap", "scope": "#story", "occurrence": 3, "note": "repeated phrase; the sidebar outside the scope also contains it" },
+    {
+      "id": "ad05-gone",
+      "text": "Subscribe to read the rest of this chapter.",
+      "scope": "#story",
+      "sourceGone": true,
+      "seedBefore": "#p6",
+      "note": "paywall teaser removed from the page"
+    }
+  ]
+}

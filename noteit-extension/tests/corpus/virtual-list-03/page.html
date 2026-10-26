@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post - x.com style thread (corpus snapshot)</title>
+<!-- Post text: Wikipedia "Notebook" (CC BY-SA 4.0), split into a root post and replies. Layout authored locally to model an x.com thread: virtualized cellInnerDiv rows, a 400 ms simulated fetch, and replies reranked (reversed) on even visits. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; background: #fff; color: #0f1419; }
+  header { position: sticky; top: 0; z-index: 3; background: rgba(255,255,255,.9); border-bottom: 1px solid #eff3f4; padding: 12px 16px; font-weight: 700; }
+  main { max-width: 600px; margin: 0 auto; border-left: 1px solid #eff3f4; border-right: 1px solid #eff3f4; }
+  #new-posts { text-align: center; color: #1d9bf0; padding: 12px; border-bottom: 1px solid #eff3f4; }
+  [data-testid="cellInnerDiv"] { position: absolute; left: 0; right: 0; height: 120px; box-sizing: border-box; overflow: hidden; border-bottom: 1px solid #eff3f4; }
+  article[data-testid="tweet"] { padding: 12px 16px; }
+  [data-testid="User-Name"] { font-size: 14px; color: #536471; }
+  [data-testid="User-Name"] b { color: #0f1419; }
+  [data-testid="tweetText"] { font-size: 15px; line-height: 20px; margin-top: 4px; }
+  .tombstone { color: #536471; font-style: italic; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-xthread-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var MODE = "thread"
+    var POSTS = [["Ink Daily","A notebook (also known as a notepad, writing pad, drawing pad, or legal pad) is a book or stack of paper pages that are often ruled and used for purposes such as note-taking, journaling, or other writing, drawing, or scrapbooking and more."],["Paper Trails","The earliest form of notebook was the wax tablet, which was used as a reusable and portable writing surface in classical antiquity and throughout the Middle Ages."],["Marginal Notes","While paper was cheaper than wax, its cost was sufficiently high to ensure the popularity of erasable notebooks, made of specially-treated paper that could be wiped clean and used again."],["Stationery Club","The earliest extant edition, bound together with a printed almanac, was made in Antwerp, Belgium, in 1527."],["Archive Room","The coating was made from a mixture of glue and gesso, and modern-day experiments have shown that ink, graphite and silverpoint writing can be easily erased from the treated pages with the application of a wet sponge or fingertip."],["Desk Studio","Other types of notebook may also have been in circulation during this time; 17th-century writer Samuel Hartlib describes a table-book made of slate, which did \"not need such tedious wiping out by spunges or cloutes\"."],["Ink Daily","The leaves of a table-book could be written upon with a stylus, which added to their convenience, as it meant that impromptu notes could be taken without the need for an inkwell (graphite pencils were not in common use until the late 17th century)."],["Paper Trails","The use of table-books for trivial purposes was often satirized on the English stage."],["Marginal Notes","The practice of making notes during sermons was a common subject of ridicule, and led to table-books becoming increasingly associated with Puritanism during the 17th century."],["Stationery Club","By the early 19th century, there was far less demand for erasable notebooks, due to the mass-production of fountain pens and the development of cheaper methods for manufacturing paper."],["Archive Room","During the Enlightenment, British schoolchildren were commonly taught how to make their own notebooks out of loose sheets of paper, a process that involved folding, piercing, gathering, sewing and/or binding the sheets."],["Desk Studio","In about 1900, the latter then evolved into the modern, traditionally yellow legal pad when a local judge requested for a margin to be drawn on the left side of the paper."],["Ink Daily","The only technical requirement for this type of stationery to be considered a true \"legal pad\" is that it must have margins of 1.25 inches (3.17 centimeters) from the left edge."],["Paper Trails","Here, the margin, also known as down lines, is room used to write notes or comments."],["Marginal Notes","Birchall of Birchalls, a stationery shop based in Launceston, Tasmania, Australia, decided that the cumbersome method of selling writing paper in folded stacks of \"quires\" (four sheets of paper or parchment folded to form eight leaves) was inefficient."],["Stationery Club","As a solution, he glued together a stack of halved sheets of paper, supported by a sheet of cardboard, creating what he called the \"Silver City Writing Tablet\"."],["Archive Room","Principal types of binding are padding, perfect, spiral, comb, sewn, clasp, disc, and pressure, some of which can be combined."],["Desk Studio","Binding methods can affect whether a notebook can lie flat when open and whether the pages are likely to remain attached."],["Ink Daily","It is frequently cheaper to purchase notebooks that are spiral-bound, meaning that a spiral of wire is looped through large perforations at the top or side of the page."],["Paper Trails","Other bound notebooks are available that use glue to hold the pages together; this process is \"padding.\" Notebooks for writing usually have some kind of printing on the writing material, if only lines to align writing or facilitate certain kinds of drawing."],["Marginal Notes","Spiral-bound pages can be torn out, but frequently leave thin scraggly strips from the small amount of paper that is within the spiral, as well as an uneven rip along the top of the torn-out page."],["Stationery Club","Hard-bound notebooks include a sewn spine, and the pages are not easily removed."],["Archive Room","Some styles of sewn bindings allow pages to open flat, while others cause the pages to drape."],["Desk Studio","Variations of notebooks that allow pages to be added, removed, and replaced are bound by rings, rods, or discs."],["Ink Daily","In each of these systems, the pages are modified with perforations that facilitate the specific binding mechanism's ability to secure them."],["Paper Trails","Ring-bound and rod-bound notebooks secure their contents by threading perforated pages around straight or curved prongs."],["Marginal Notes","In the open position, the pages can be removed and rearranged."],["Stationery Club","Disc-bound notebooks remove the open or closed operation by modifying the pages themselves."],["Archive Room","A page perforated for a disc-bound binding system contains a row of teeth along the side edge of the page that grip onto the outside raised perimeter of individual discs."],["Desk Studio","Artists often use sketchbooks which include wide spaces of blank paper appropriate for drawing."]]
+    var ROW = 120
+    var OVERSCAN = 2
+    var items = POSTS.map(function (p, i) { return { id: 'p' + i, user: p[0], text: p[1] } })
+    if (MODE === 'timeline' && visit % 2 === 0) {
+      // "Show new posts": two posts arrived since the last visit and are prepended.
+      items.unshift({ id: 'n1', user: 'Paper Trails', text: 'New: a short thread on how readers marked their place before bookmarks existed.' },
+                    { id: 'n0', user: 'Ink Daily', text: 'Fresh ink reviews are up. Which nib do you write with?' })
+    }
+    if (MODE === 'thread' && visit % 2 === 0) {
+      // Replies are ranked differently on each visit; the root post stays first.
+      var replies = items.slice(1).reverse()
+      items = [items[0]].concat(replies)
+    }
+    if (MODE === 'search' && visit % 2 === 0) {
+      // One post was deleted by its author since the last visit; x.com shows a tombstone in its place.
+      items = items.map(function (it, i) { return i === 3 ? { id: it.id, user: '', text: '', gone: true } : it })
+    }
+
+    function cell(it, index) {
+      var c = document.createElement('div')
+      c.setAttribute('data-testid', 'cellInnerDiv')
+      c.style.transform = 'translateY(' + index * ROW + 'px)'
+      var a = document.createElement('article')
+      a.setAttribute('data-testid', 'tweet')
+      a.dataset.postId = it.id
+      if (it.gone) {
+        a.className = 'tombstone'
+        a.textContent = 'This post was deleted by the post author.'
+      } else {
+        var u = document.createElement('div')
+        u.setAttribute('data-testid', 'User-Name')
+        var b = document.createElement('b')
+        b.textContent = it.user
+        u.append(b, ' @' + it.user.toLowerCase().replace(/[^a-z]/g, '') + ' \u00b7 ' + (index + 1) + 'h')
+        var t = document.createElement('div')
+        t.setAttribute('data-testid', 'tweetText')
+        t.lang = 'en'
+        t.textContent = it.text
+        a.append(u, t)
+      }
+      c.append(a)
+      return c
+    }
+    function render(list) {
+      var top = list.getBoundingClientRect().top + window.scrollY
+      var first = Math.max(0, Math.floor((window.scrollY - top) / ROW) - OVERSCAN)
+      var last = Math.min(items.length, Math.ceil((window.scrollY - top + window.innerHeight) / ROW) + OVERSCAN)
+      var cells = []
+      for (var i = first; i < last; i++) cells.push(cell(items[i], i))
+      list.replaceChildren.apply(list, cells)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var list = document.getElementById('timeline-list')
+      if (MODE === 'timeline' && visit % 2 === 0) document.getElementById('new-posts').textContent = 'Show 2 posts'
+      // Simulated GraphQL fetch before the first render.
+      setTimeout(function () {
+        list.style.height = items.length * ROW + 'px'
+        render(list)
+        window.addEventListener('scroll', function () { render(list) })
+      }, 400)
+    })
+  })()
+</script>
+</head>
+<body>
+<header>Post</header>
+<main>
+  <div id="new-posts"></div>
+  <section aria-label="Timeline" id="timeline"><div id="timeline-list" style="position: relative"></div></section>
+</main>
+</body>
+</html>

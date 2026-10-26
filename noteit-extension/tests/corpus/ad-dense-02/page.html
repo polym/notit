@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fountain pen - interstitial ad layout (corpus snapshot)</title>
+<!-- Article text: Wikipedia "Fountain pen" (CC BY-SA 4.0). Layout authored locally to model a news page that
+     injects in-article ad breaks after load; the number and position of breaks changes on every visit. -->
+<style>
+  body { font-family: Georgia, serif; margin: 0; color: #222; }
+  article { max-width: 720px; margin: 0 auto; padding: 24px; line-height: 1.6; }
+  .ad-break:not(:empty) { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; margin: 16px 0; font: 14px/1.4 sans-serif; }
+  .ad-break .label { font-size: 11px; text-transform: uppercase; color: #64748b; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-interstitial-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var CREATIVES = [
+      'Write beautifully: premium ink sampler, twelve colors, free returns.',
+      'Your next notebook is waiting. Members save 20% this week.',
+      'Calligraphy masterclass starts Monday. Seats are limited.',
+    ]
+    document.addEventListener('DOMContentLoaded', function () {
+      var slots = document.querySelectorAll('.ad-break')
+      // Odd visits fill every third break immediately; even visits fill every second break after a delay.
+      var step = visit % 2 === 1 ? 3 : 2
+      var delay = visit % 2 === 1 ? 0 : 900
+      setTimeout(function () {
+        for (var i = 0; i < slots.length; i++) {
+          if ((i + 1) % step !== 0) continue
+          var label = document.createElement('div')
+          label.className = 'label'
+          label.textContent = 'Advertisement'
+          var p = document.createElement('p')
+          p.textContent = CREATIVES[(i + visit) % CREATIVES.length]
+          slots[i].replaceChildren(label, p)
+        }
+      }, delay)
+    })
+  })()
+</script>
+</head>
+<body>
+<article id="story">
+    <h1>Fountain pen</h1>
+    <p id="p1">It is distinguished from earlier dip pens by using an internal reservoir to hold ink, eliminating the need to repeatedly dip the pen in an inkwell during use. The pen draws ink from the reservoir through a feed to the nib and deposits the ink on paper via a combination of gravity and capillary action. Filling the reservoir with ink may be achieved manually, via the use of an eyedropper or syringe, or via an internal filling mechanism that creates suction (for example, through a piston mechanism) or a vacuum to transfer ink directly through the nib into the reservoir. Some pens employ removable reservoirs in the form of pre-filled ink cartridges or ink converters.</p>
+    <div class="ad-break" data-after="1"></div>
+    <p id="p2">According to Qadi al-Nu'man al-Tamimi (d. 974) in his Kitab al-Majalis wa 'l-musayarat, the Fatimid caliph Al-Mu'izz li-Din Allah (reigned  953–975) in Arab Egypt demanded a pen that would not stain his hands or clothes, and was provided with a pen that held ink in a reservoir, allowing it to be held upside-down without leaking.</p>
+    <div class="ad-break" data-after="2"></div>
+    <p id="p3">There is compelling evidence that a working fountain pen was constructed and used during the Renaissance by artist and inventor Leonardo da Vinci. Leonardo's journals contain drawings with cross-sections of what appears to be a reservoir pen that works by both gravity and capillary action. Historians also took note of the fact that the handwriting in the inventor's surviving journals is of a consistent contrast throughout, rather than exhibiting the characteristic fading pattern typical of a quill pen caused by expending and re-dipping. While no physical item survives, several working models were reconstructed in 2011 by artist Amerigo Bombara that have since been put on display in museums dedicated to Leonardo.</p>
+    <div class="ad-break" data-after="3"></div>
+    <p id="p4">The fountain pen was available in Europe in the 17th century and is shown by contemporary references. In Deliciæ Physico-Mathematicæ (a 1636 magazine), German inventor Daniel Schwenter described a pen made from two quills. One quill served as a reservoir for ink inside the other quill. The ink was sealed inside the quill with cork. Ink was squeezed through a small hole to the writing point. In 1663, the diarist Samuel Pepys wrote to have been given a silver pen "to carry inke in". Noted Maryland historian Hester Dorsey Richardson (1862–1933) documented a reference to "three silver fountain pens, worth 15 shillings" in England during the reign of Charles II, c. 1649–1685. By the early 18th century such pens were already commonly known as "fountain pens". Hester Dorsey Richardson also found a 1734 notation made by Robert Morris the elder in the ledger of the expenses of Robert Morris the younger, who was at the time in Philadelphia, for "one fountain pen". Perhaps the best-known reference, however, is that of Nicholas Bion (1652–1733), whose illustrated description of a "plume sans fin" was published in 1709 in his treatise published in English in 1723 as "The Construction and Principal Uses of Mathematical Instruments". The earliest datable pen of the form described by Bion is inscribed 1702, while other examples bear French hallmarks as late as the early 19th century.</p>
+    <div class="ad-break" data-after="4"></div>
+    <p id="p5">Progress in developing a reliable pen was slow until the mid-19th century because of an imperfect understanding of the role that air pressure plays in the operation of pens. Furthermore, most inks were highly corrosive and full of sedimentary inclusions. The first English patent for a fountain pen was issued in May 1809 to Frederick Fölsch, with a patent covering (among other things) an improved fountain pen feed issued to Joseph Bramah in September 1809. John Scheffer's patent of 1819 was the first design to see commercial success, with a number of surviving examples of his "Penographic" known. Another noteworthy pioneer design was John Jacob Parker's, patented in 1832 – a self-filler with a screw-operated piston. The Romanian inventor Petrache Poenaru received a French patent on 25 May 1827, for the invention of a fountain pen with a barrel made from a large swan quill.</p>
+    <div class="ad-break" data-after="5"></div>
+    <p id="p6">In 1828, Josiah Mason improved a cheap and efficient slip-in nib in Birmingham, England, which could be added to a fountain pen. In 1830, with the invention of a new machine, William Joseph Gillott, William Mitchell, and James Stephen Perry devised a way to mass manufacture robust, cheap steel pen nibs (Perry &amp; Co.). This boosted the Birmingham pen trade and by the 1850s, more than half the steel-nib pens manufactured in the world were made in Birmingham. Thousands of skilled craftsmen were employed in the industry. Many new manufacturing techniques were perfected, enabling the city's factories to mass-produce their pens cheaply and efficiently. These were sold worldwide to many who previously could not afford to write, thus encouraging the development of education and literacy.</p>
+    <div class="ad-break" data-after="6"></div>
+    <p id="p7">In 1848, American inventor Azel Storrs Lyman patented a pen with "a combined holder and nib". In 1849 Scottish inventor Robert William Thomson invented the refillable fountain pen. From the 1850s, there was a steadily accelerating stream of fountain pen patents and pens in production. However, it was only after three key inventions were in place that the fountain pen became a widely popular writing instrument. Those were the iridium-tipped gold nib, hard rubber, and free-flowing ink.</p>
+    <div class="ad-break" data-after="7"></div>
+    <p id="p8">The first fountain pens making use of all these key ingredients appeared in the 1850s. In the 1870s Duncan MacKinnon, a Canadian living in New York City, and Alonzo T. Cross of Providence, Rhode Island, created stylographic pens with a hollow, tubular nib and a wire acting as a valve. Stylographic pens are now used mostly for drafting and technical drawing but were very popular in the decade beginning in 1875. In the 1880s the era of the mass-produced fountain pen finally began. The dominant American producers in this pioneer era were Waterman, of New York City, and Wirt, based in Bloomsburg, Pennsylvania. Waterman soon outstripped Wirt, along with many companies that sprang up to fill the new and growing fountain pen market. Waterman remained the market leader until the early 1920s.</p>
+    <div class="ad-break" data-after="8"></div>
+    <p id="p9">At this time, fountain pens were almost all filled by unscrewing a portion of the hollow barrel or holder and inserting the ink by means of a dropper – a slow and messy procedure. Pens also tended to leak inside their caps and at the joint where the barrel opened for filling. Now that the materials' problems had been overcome and the flow of ink while writing had been regulated, the next problems to be solved were the creation of a simple, convenient self-filler and the problem of leakage. Self-fillers began to gain in popularity around the turn of the century; the most successful of these was probably the Conklin crescent-filler, followed by A. A. Waterman's twist-filler. The tipping point, however, was the runaway success of Walter A. Sheaffer's lever-filler, introduced in 1912, paralleled by Parker's roughly contemporary button-filler.</p>
+    <div class="ad-break" data-after="9"></div>
+    <p id="p10">Meanwhile, many inventors turned their attention to the problem of leakage. Some of the earliest solutions to this problem came in the form of a "safety" pen with a retractable point that allowed the ink reservoir to be corked like a bottle. Horton, Moore, and Caw's were the earliest makers of such pens, all starting in the 1890s.</p>
+    <div class="ad-break" data-after="10"></div>
+    <p id="p11">In 1898, George Safford Parker released the Parker Jointless, so named because its barrel was single-piece with no section joint to leak and stain the writer's fingers. The nib and feed assembly fit into the barrel's end like a cork stopper.</p>
+    <div class="ad-break" data-after="11"></div>
+    <p id="p12">In 1908, Waterman began marketing a popular safety pen of its own. For pens with non-retractable nibs, the adoption of screw-on caps with inner caps that sealed around the nib by bearing against the front of the section effectively solved the leakage problem (such pens were also marketed as "safety pens", as with the Parker Jack-Knife Safety and the Swan Safety Screw-Cap).</p>
+    <div class="ad-break" data-after="12"></div>
+</article>
+<footer>Text from Wikipedia, available under CC BY-SA 4.0.</footer>
+</body>
+</html>

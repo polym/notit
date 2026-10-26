@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoteIt Diagnostics</title>
+    <style>
+      body { font: 13px/1.5 system-ui, sans-serif; margin: 16px; color: #1f2328; }
+      section { margin-bottom: 20px; }
+      h1 { font-size: 16px; }
+      h2 { font-size: 14px; margin: 0 0 6px; }
+      pre { background: #f6f8fa; padding: 8px; overflow: auto; max-height: 320px; margin: 0; }
+      button { font: inherit; padding: 4px 10px; }
+    </style>
+  </head>
+  <body>
+    <!-- Diagnostics page (architecture.md "Diagnostics"); intentionally not linked from any UI. -->
+    <h1 id="title"></h1>
+    <section data-testid="debug-sync-status" aria-labelledby="sync-heading">
+      <h2 id="sync-heading"></h2>
+      <pre id="sync-body"></pre>
+    </section>
+    <section data-testid="debug-outbox" aria-labelledby="outbox-heading">
+      <h2 id="outbox-heading"></h2>
+      <pre id="outbox-body"></pre>
+    </section>
+    <section data-testid="debug-logs" aria-labelledby="logs-heading">
+      <h2 id="logs-heading"></h2>
+      <pre id="logs-body"></pre>
+    </section>
+    <section data-testid="debug-export">
+      <button type="button" id="export-button"></button>
+      <span id="export-status" role="status"></span>
+      <pre id="export-body" data-testid="debug-export-json" hidden></pre>
+    </section>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -3,10 +3,10 @@ name: Release Extension
 on:
   push:
     tags:
-      - 'v*.*.*'  # 当推送如 v1.0.0 格式的 tag 时触发
+      - 'v*.*.*'  # runs only when a version tag such as v1.0.0 is pushed
 
 permissions:
-  contents: write  # 允许创建 release
+  contents: write  # allows creating the GitHub release
 
 jobs:
   release:
@@ -19,7 +19,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version-file: noteit-extension/.nvmrc
         cache: 'npm'
         cache-dependency-path: noteit-extension/package-lock.json
         
@@ -27,9 +27,25 @@ jobs:
       working-directory: ./noteit-extension
       run: npm ci
       
+    - name: Require live Supabase Variables
+      # Fail before building: an empty URL or anon key builds a backend-less extension (E4 is required).
+      env:
+        VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+      run: |
+        test -n "$VITE_SUPABASE_URL" && test -n "$VITE_SUPABASE_ANON_KEY" || { echo '::error::Set repository Variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (E4)'; exit 1; }
+
     - name: Build extension
       working-directory: ./noteit-extension
+      # Live public values set by Polym in repository Variables (E4); never secrets.
+      env:
+        VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
       run: npm run build
+
+    - name: Scan build output
+      working-directory: ./noteit-extension
+      run: npm run scan:dist
       
     - name: Package extension
       working-directory: ./noteit-extension
@@ -42,7 +58,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: noteit-extension/noteit-extension-${{ github.ref_name }}.zip
-        generate_release_notes: true  # 自动生成 release notes
+        generate_release_notes: true  # generate release notes automatically
         draft: false
         prerelease: false
       env:

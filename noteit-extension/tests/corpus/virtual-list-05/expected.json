@@ -1,0 +1,16 @@
+{
+  "name": "virtual-list-05",
+  "category": "virtual-list",
+  "source": {
+    "url": "https://go.dev/doc/effective_go",
+    "license": "CC BY 4.0 (Go documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Post text from the source; x.com-style home timeline authored locally. Relative timestamps age by 3 h per visit and even visits prepend one post, so both the offsets and the context of every post change between visits."
+  },
+  "highlights": [
+    { "id": "vl05-1", "text": "Go is an open-source programming language that focuses on simplicity, reliability, and efficiency.", "scope": "#timeline-list", "note": "whole post; both context sides are timestamps that change" },
+    { "id": "vl05-2", "text": "Formatting issues are the most contentious but the least consequential.", "scope": "#timeline-list" },
+    { "id": "vl05-3", "text": "the visibility of a name outside a package is determined by whether its first character is upper case.", "scope": "#timeline-list" },
+    { "id": "vl05-4", "text": "By convention, packages are given lower case, single-word names; there should be no need for underscores or mixedCaps.", "scope": "#timeline-list", "note": "whole post" }
+  ]
+}

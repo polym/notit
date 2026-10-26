@@ -1,0 +1,25 @@
+{
+  "name": "ad-dense-01",
+  "category": "ad-dense",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Typewriter",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Article text from the source; ad-funded news layout authored locally. Ad slots rotate creatives per visit and one slot fills 1.2 s after load."
+  },
+  "highlights": [
+    { "id": "ad01-1", "text": "inked ribbon selectively against the paper", "scope": "#p1" },
+    { "id": "ad01-2", "text": "Typewriters were a standard fixture in most offices up to the 1980s.", "scope": "#p3" },
+    { "id": "ad01-3", "text": "de facto standard keyboard layout", "scope": "#p4" },
+    { "id": "ad01-4", "text": "130 words per minute", "scope": "#p6" },
+    { "id": "ad01-5", "text": "typewriter", "scope": "#story", "occurrence": 7, "note": "repeated word across ad-separated paragraphs" },
+    {
+      "id": "ad01-gone",
+      "text": "Readers can subscribe for unlimited access.",
+      "scope": "#story",
+      "sourceGone": true,
+      "seedBefore": "#p7",
+      "note": "paywall teaser removed from the page"
+    }
+  ]
+}

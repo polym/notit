@@ -1,0 +1,34 @@
+{
+  "name": "virtual-list-03",
+  "category": "virtual-list",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Notebook",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Post text from the source; x.com-style thread authored locally. The root post stays first; reply order is reversed on even visits, so replies move in and out of the rendered window."
+  },
+  "highlights": [
+    {
+      "id": "vl03-1",
+      "text": "A notebook (also known as a notepad, writing pad, drawing pad, or",
+      "scope": "#timeline-list",
+      "note": "root post"
+    },
+    {
+      "id": "vl03-2",
+      "text": "The earliest form of notebook was the wax tablet, which was used as a reusable and portable writing surface in classical antiquity and throughout the Middle Ages.",
+      "scope": "#timeline-list",
+      "note": "reply that moves out of the rendered window on reload"
+    },
+    {
+      "id": "vl03-3",
+      "text": "paper was cheaper than wax, its cost was sufficiently high",
+      "scope": "#timeline-list"
+    },
+    {
+      "id": "vl03-4",
+      "text": "The coating was made from a mixture of",
+      "scope": "#timeline-list"
+    }
+  ]
+}

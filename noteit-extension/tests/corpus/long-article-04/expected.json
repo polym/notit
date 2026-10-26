@@ -1,0 +1,17 @@
+{
+  "name": "long-article-04",
+  "category": "long-article",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Index_card",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; head and footer inline scripts kept."
+  },
+  "highlights": [
+    { "id": "la04-1", "text": "used for recording and storing small amounts of discrete data", "scope": "#mw-content-text" },
+    { "id": "la04-2", "text": "hence the common name 3-by-5 card", "scope": "#mw-content-text" },
+    { "id": "la04-3", "text": "in schools as flash cards or other visual aids", "scope": "#mw-content-text" },
+    { "id": "la04-4", "text": "designed by 17th-century English inventor Thomas Harrison", "scope": "#mw-content-text" },
+    { "id": "la04-5", "text": "index card", "scope": "#mw-content-text", "occurrence": 3, "note": "repeated phrase; only the 4th instance is correct" }
+  ]
+}

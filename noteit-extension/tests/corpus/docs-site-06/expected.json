@@ -1,0 +1,39 @@
+{
+  "name": "docs-site-06",
+  "category": "docs-site",
+  "source": {
+    "url": "https://nodejs.org/docs/latest-v24.x/api/querystring.html",
+    "license": "MIT (Node.js documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external api.js and web fonts removed."
+  },
+  "highlights": [
+    {
+      "id": "ds06-1",
+      "text": "provides utilities for parsing and formatting URL\nquery strings",
+      "scope": "#apicontent"
+    },
+    {
+      "id": "ds06-2",
+      "text": "querystring is more performant than",
+      "scope": "#apicontent"
+    },
+    {
+      "id": "ds06-3",
+      "text": "performs URL percent-encoding on the given\nstr in a manner that is optimized",
+      "scope": "#apicontent"
+    },
+    {
+      "id": "ds06-4",
+      "text": "The substring used to delimit",
+      "scope": "#apicontent",
+      "occurrence": 1,
+      "note": "phrase repeated for sep and eq"
+    },
+    {
+      "id": "ds06-5",
+      "text": "Multiple empty entries are now parsed correctly",
+      "scope": "#apicontent"
+    }
+  ]
+}

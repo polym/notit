@@ -1,0 +1,17 @@
+{
+  "name": "ad-dense-06",
+  "category": "ad-dense",
+  "source": {
+    "url": "https://go.dev/doc/effective_go",
+    "license": "CC BY 4.0 (Go documentation)",
+    "retrieved": "2026-10-20",
+    "notes": "Article text from the source; ad-funded tutorial layout authored locally. On even visits a sticky banner fills and the words gofmt and tabs are wrapped in in-text ad links; native card copy rotates per visit and reuses article phrases."
+  },
+  "highlights": [
+    { "id": "ad06-1", "text": "Formatting issues are the most contentious but the least consequential.", "scope": "#p1" },
+    { "id": "ad06-2", "text": "The gofmt program reads a Go program and emits the source", "scope": "#p2", "note": "spans a word wrapped in an ad link on even visits" },
+    { "id": "ad06-3", "text": "All Go code in the standard packages has been formatted with gofmt.", "scope": "#p3" },
+    { "id": "ad06-4", "text": "We use tabs for indentation", "scope": "#p4", "note": "spans a word wrapped in an ad link on even visits" },
+    { "id": "ad06-5", "text": "gofmt", "scope": "#story", "occurrence": 3, "note": "repeated word; the first instance is wrapped in an ad link on even visits" }
+  ]
+}

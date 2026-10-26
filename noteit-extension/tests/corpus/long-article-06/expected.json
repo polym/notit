@@ -1,0 +1,39 @@
+{
+  "name": "long-article-06",
+  "category": "long-article",
+  "source": {
+    "url": "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+    "license": "MIT OR Apache-2.0 (The Rust Programming Language)",
+    "retrieved": "2026-10-20",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; mdBook inline theme and sidebar scripts kept (several in body before the content, issue #5)."
+  },
+  "highlights": [
+    {
+      "id": "la06-1",
+      "text": "Ownership is a set of rules that govern how a Rust program manages memory.",
+      "scope": "#mdbook-content"
+    },
+    {
+      "id": "la06-2",
+      "text": "None of the features\nof ownership will slow down your program while it’s running.",
+      "scope": "#mdbook-content"
+    },
+    {
+      "id": "la06-3",
+      "text": "This is referred to as last in, first out (LIFO).",
+      "scope": "#mdbook-content"
+    },
+    {
+      "id": "la06-4",
+      "text": "The heap is less organized",
+      "scope": "#mdbook-content"
+    },
+    {
+      "id": "la06-5",
+      "text": "the heap",
+      "scope": "#mdbook-content",
+      "occurrence": 5,
+      "note": "repeated phrase; only the 6th instance is correct"
+    }
+  ]
+}

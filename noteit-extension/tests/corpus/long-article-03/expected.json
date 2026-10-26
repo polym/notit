@@ -1,0 +1,17 @@
+{
+  "name": "long-article-03",
+  "category": "long-article",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Commonplace_book",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; head and footer inline scripts kept."
+  },
+  "highlights": [
+    { "id": "la03-1", "text": "personal notebooks used to compile any information the owner finds interesting or useful", "scope": "#mw-content-text" },
+    { "id": "la03-2", "text": "which are chronological and introspective", "scope": "#mw-content-text" },
+    { "id": "la03-3", "text": "an information management device", "scope": "#mw-content-text" },
+    { "id": "la03-4", "text": "John Locke wrote a treatise in French on commonplace books", "scope": "#mw-content-text" },
+    { "id": "la03-5", "text": "commonplace", "scope": "#mw-content-text", "occurrence": 6, "note": "repeated word; only the 7th instance is correct" }
+  ]
+}

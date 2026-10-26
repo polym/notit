@@ -1,0 +1,39 @@
+{
+  "name": "ad-dense-02",
+  "category": "ad-dense",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Fountain_pen",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Article text from the source; interstitial ad layout authored locally. Odd visits fill every third ad break immediately, even visits fill every second break after 900 ms."
+  },
+  "highlights": [
+    {
+      "id": "ad02-1",
+      "text": "There is compelling evidence that a working fountain pen was constructed and",
+      "scope": "#p3"
+    },
+    {
+      "id": "ad02-2",
+      "text": "improved a cheap and efficient slip-in nib in Birmingham, England,",
+      "scope": "#p6"
+    },
+    {
+      "id": "ad02-3",
+      "text": "inventors turned their attention to the problem of leakage.",
+      "scope": "#p10"
+    },
+    {
+      "id": "ad02-4",
+      "text": "In 1908, Waterman began marketing a popular safety",
+      "scope": "#p12"
+    },
+    {
+      "id": "ad02-5",
+      "text": "fountain pen",
+      "scope": "#story",
+      "occurrence": 6,
+      "note": "repeated phrase across ad breaks"
+    }
+  ]
+}

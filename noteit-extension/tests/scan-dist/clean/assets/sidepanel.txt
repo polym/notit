@@ -1,0 +1,2 @@
+// Fixture: a non-content asset that must not count toward the content gzip size.
+export const big = "x";

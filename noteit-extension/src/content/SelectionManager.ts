@@ -1,18 +1,41 @@
-import { v4 as uuidv4 } from 'uuid';
-import { HighlightManager } from './HighlightManager';
-import { FloatingMenu } from './FloatingMenu';
-import type { IHighlight } from '../shared/types';
-import { getExtensionEnabled } from './index';
+import type { ColorName, HighlightRecord } from '../core/model';
+import {
+  createTextIndex,
+  describeSelection,
+  type Renderer,
+  hideCommentPreview,
+  hideFloatingMenu,
+  hideHighlightPopover,
+  hideUndoToast,
+  isInsideFloatingMenu,
+  isInsideHighlightPopover,
+  openCommentPreviewKey,
+  openHighlightPopoverKey,
+  refreshHighlightPopover,
+  repositionHighlightPopover,
+  showCommentPreview,
+  showFloatingMenu,
+  showHighlightPopover,
+  showUndoToast,
+} from '../features/highlight/inpage.ts';
+import { HOST_TAG, type OverlayRect } from '../ui/inpage/index.ts';
+import type { ErrorCode, Result } from '../core/messaging';
+import type { CreateHighlightReq } from '../features/highlight/index.ts';
+import { errorText } from '../ui/strings.ts';
+import { client } from './client';
+import { isExtensionEnabled, isSignedIn, pageRecords } from './state';
+import { generateId } from './id';
+
+const ERROR_LINE_ID = 'noteit-error-line';
+const ERROR_LINE_MS = 4000;
 
 export class SelectionManager {
-  private highlightManager: HighlightManager;
-  private floatingMenu: FloatingMenu;
+  private renderer: Renderer;
   private currentSelectionRange: Range | null = null;
   private justClosedMenu: boolean = false;
 
-  constructor(highlightManager: HighlightManager) {
-    this.highlightManager = highlightManager;
-    this.floatingMenu = new FloatingMenu(this.handleColorSelect.bind(this), this.onMenuClose.bind(this));
+  constructor(renderer: Renderer) {
+    this.renderer = renderer;
     this.init();
   }
 
@@ -28,45 +51,163 @@ export class SelectionManager {
     document.addEventListener('mouseup', this.handleMouseUp.bind(this));
     // Use capture phase to handle clicks before they reach the menu
     document.addEventListener('mousedown', this.handleMouseDown.bind(this), true);
-    // Add hover listener for existing highlights
+    // Hovering a commented highlight shows the read-only comment preview (Story 3.14, #14).
     document.addEventListener('mouseover', this.handleMouseOver.bind(this));
+    document.addEventListener('mouseout', this.handleMouseOut.bind(this));
+    // Highlight API paints no elements, so mouseover never fires on entering a highlight; hit test on
+    // pointer moves instead (one per animation frame).
+    if (!this.renderer.paintsElements) {
+      document.addEventListener('mousemove', this.handleMouseMove.bind(this), { passive: true });
+    }
+    // Clicking a highlight opens the highlight popover (Story 3.15, FR5, Q39).
+    document.addEventListener('click', this.handleClick.bind(this));
+    // The preview is fixed-positioned next to the highlight; a scroll would leave it behind. The
+    // popover may hold unsaved input, so it follows its highlight instead of closing.
+    window.addEventListener('scroll', () => {
+      hideCommentPreview();
+      this.schedulePopoverReposition();
+    }, { capture: true, passive: true });
+    window.addEventListener('resize', () => this.schedulePopoverReposition(), { passive: true });
+  }
+
+  private repositionFrame: number | null = null;
+
+  private schedulePopoverReposition() {
+    if (openHighlightPopoverKey() === null || this.repositionFrame !== null) return;
+    this.repositionFrame = requestAnimationFrame(() => {
+      this.repositionFrame = null;
+      const key = openHighlightPopoverKey();
+      if (key === null) return;
+      const rect = this.renderer.boundingRect(key);
+      if (rect) repositionHighlightPopover(rect);
+      else hideHighlightPopover();
+    });
   }
 
   private handleMouseDown(e: MouseEvent) {
-    // Check if click is inside the floating menu's host element
-    const target = e.target as HTMLElement;
-    const menuHost = document.querySelector('[data-noteit-menu]');
-    
-    if (menuHost && menuHost.contains(target)) {
-      // Click is inside menu, don't hide
+    // Clicks inside a menu or popover keep it open; any other click closes it (unsaved input dropped).
+    if (!isInsideFloatingMenu(e)) hideFloatingMenu();
+    if (!isInsideHighlightPopover(e)) hideHighlightPopover();
+    hideCommentPreview();
+  }
+
+  private handleClick(e: MouseEvent) {
+    // Login gate (FR27): no popover while signed out or with the site off.
+    if (!isExtensionEnabled() || !isSignedIn()) return;
+    if (e.button !== 0 || this.isFromOverlay(e)) return;
+    // The end of a drag selection inside a highlight is not a click on it.
+    const selection = window.getSelection();
+    if (selection && !selection.isCollapsed && selection.toString().trim()) return;
+    const id = this.renderer.hitTest(e.clientX, e.clientY);
+    if (!id) return;
+    // The popover is filled from the stored record, never from the DOM.
+    const record = pageRecords.get(id);
+    if (!record) return;
+    const anchor = this.renderer.boundingRect(id);
+    if (!anchor) return;
+    showHighlightPopover(id, anchor, { color: record.color, comment: record.comment }, {
+      onPickColor: (color) => void this.updateRecord(id, { color }),
+      onSaveComment: (comment) => {
+        const next = comment === '' ? null : comment;
+        if ((pageRecords.get(id)?.comment ?? null) === next) return;
+        void this.updateRecord(id, { comment: next });
+      },
+      onDelete: (rect) => void this.deleteWithUndo(id, rect),
+    });
+  }
+
+  /** Writes a patch through the service worker and repaints from the returned record (no optimism). */
+  private async updateRecord(id: string, patch: { color?: ColorName; comment?: string | null }): Promise<void> {
+    const result = await client.send('highlight/update', { id, patch });
+    if (!result.ok) {
+      console.error('[NoteIt] Failed to update highlight:', result.error.code);
       return;
     }
-    
-    // Click outside menu, hide it
-    this.floatingMenu.remove();
+    // The highlight left this page while the write was in flight (navigation, reload, removal).
+    if (!pageRecords.has(id)) return;
+    pageRecords.set(result.data.id, result.data);
+    this.renderer.restyle(result.data.id, { color: result.data.color, commented: Boolean(result.data.comment) });
+    refreshHighlightPopover(result.data.id, result.data.color);
+  }
+
+  /**
+   * Delete from the popover (FR7, Q57, Q60): the soft delete goes through the service worker, the
+   * highlight leaves this page, and "deleted · undo" shows here for 5 seconds. Undo clears the soft
+   * delete; page/sync brings the highlight back in every tab and the side panel.
+   */
+  private async deleteWithUndo(id: string, at: OverlayRect): Promise<void> {
+    const result = await client.send('highlight/delete', { id });
+    if (!result.ok) {
+      console.error('[NoteIt] Failed to delete highlight:', result.error.code);
+      return;
+    }
+    this.renderer.remove(id);
+    pageRecords.delete(id);
+    showUndoToast(at, () => {
+      void client.send('highlight/restore', { id }).then((restored) => {
+        if (!restored.ok) console.error('[NoteIt] Failed to restore highlight:', restored.error.code);
+      });
+    });
+  }
+
+  /** Closes the popover and the undo toast (site switched off, signed out, data wiped). */
+  public hideOverlays() {
+    hideHighlightPopover();
+    hideUndoToast();
+  }
+
+  /** True for events that come from NoteIt's own overlays in the Shadow host. */
+  private isFromOverlay(e: Event): boolean {
+    return e.composedPath().some((node) => node instanceof Element && node.localName === HOST_TAG);
   }
 
   private handleMouseOver(e: MouseEvent) {
-    // Don't show edit menu if extension is disabled
-    if (!getExtensionEnabled()) {
+    // No preview while the extension is disabled or signed out (login gate, FR27)
+    if (!isExtensionEnabled() || !isSignedIn()) {
+      hideCommentPreview();
       return;
     }
-    
-    const target = e.target as HTMLElement;
-    
-    // Check if hovering over a highlight
-    if (target.classList && target.classList.contains('noteit-highlight')) {
-      const rect = target.getBoundingClientRect();
-      const x = rect.left;
-      const y = rect.top - 40; // 40px above, using viewport coordinates
-      
-      this.floatingMenu.showEditMode(x, y, target, this.updateHighlight.bind(this));
+    const id = this.renderer.hitTest(e.clientX, e.clientY);
+    if (!id) return;
+    // The preview content comes from the stored record, never from the DOM.
+    const comment = pageRecords.get(id)?.comment;
+    if (!comment) {
+      hideCommentPreview();
+      return;
     }
+    const rect = this.renderer.boundingRect(id);
+    if (rect) showCommentPreview(id, rect, comment);
   }
 
-  private async handleMouseUp() {
-    // Don't show menu if extension is disabled
-    if (!getExtensionEnabled()) {
+  private moveFrame: number | null = null;
+  private lastMove: MouseEvent | null = null;
+
+  private handleMouseMove(e: MouseEvent) {
+    this.lastMove = e;
+    if (this.moveFrame !== null) return;
+    this.moveFrame = requestAnimationFrame(() => {
+      this.moveFrame = null;
+      const move = this.lastMove;
+      if (!move || this.isFromOverlay(move)) return;
+      const key = openCommentPreviewKey();
+      const id = this.renderer.hitTest(move.clientX, move.clientY);
+      if (id === key) return;
+      if (key !== null) hideCommentPreview();
+      if (id !== null) this.handleMouseOver(move);
+    });
+  }
+
+  private handleMouseOut(e: MouseEvent) {
+    const key = openCommentPreviewKey();
+    if (key === null) return;
+    // Moving between marks of the same highlight keeps the preview.
+    if (e.relatedTarget instanceof Node && this.renderer.hitTest(e.clientX, e.clientY) === key) return;
+    hideCommentPreview();
+  }
+
+  private async handleMouseUp(e: MouseEvent) {
+    // Don't show menu if extension is disabled or signed out (login gate, FR27)
+    if (!isExtensionEnabled() || !isSignedIn()) {
       return;
     }
     
@@ -74,6 +215,9 @@ export class SelectionManager {
     if (this.justClosedMenu) {
       return;
     }
+
+    // A click inside a menu (dot, comment button, editor) must not reopen the selection menu.
+    if (this.isFromOverlay(e)) return;
     
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) {
@@ -109,276 +253,121 @@ export class SelectionManager {
     // Check if selection contains existing highlight
     const existingHighlight = this.getExistingHighlightInSelection(selection);
     if (existingHighlight) {
-      console.log('[NoteIt] Existing highlight detected, edit menu already shown on hover');
-      // Edit menu is already shown on hover, do nothing
+      // Editing an existing highlight happens in the sidebar (and in the click popover, Story 3.15).
       return;
     }
     
     const rect = this.currentSelectionRange.getBoundingClientRect();
-    
-    // Show menu above the selection, using viewport coordinates
-    const x = rect.left;
-    const y = rect.top - 40; // 40px above
-    
-    console.log('[NoteIt] Showing menu at:', x, y);
-    this.floatingMenu.show(x, y);
+    // Story 3.13: Preact floating menu in the Shadow host, placed by placeOverlay (Q65).
+    showFloatingMenu(
+      { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+      {
+        onPick: (color, comment) => void this.handleColorSelect(color, comment ?? undefined),
+        // Only an explicit Esc blocks the next mouseup; an outside click or a replacement menu must
+        // not swallow the selection that follows it.
+        onDismiss: (reason) => {
+          if (reason === 'explicit') this.onMenuClose();
+        },
+      },
+    );
   }
 
-  private getExistingHighlightInSelection(selection: Selection): HTMLElement | null {
+  /** True when the selection starts and ends inside one painted highlight. */
+  private getExistingHighlightInSelection(selection: Selection): boolean {
     const range = selection.getRangeAt(0);
-    const container = range.commonAncestorContainer;
-    
-    // Check if the selection itself or its parent is a highlight
-    let element = container.nodeType === Node.ELEMENT_NODE 
-      ? container as HTMLElement 
-      : container.parentElement;
-    
-    while (element) {
-      if (element.classList && element.classList.contains('noteit-highlight')) {
-        return element;
-      }
-      // Don't traverse beyond body
-      if (element === document.body) break;
-      element = element.parentElement;
-    }
-    
-    return null;
+    const at = (rect: DOMRect | undefined) => (rect ? this.renderer.hitTest(rect.left + 1, rect.top + rect.height / 2) : null);
+    const rects = range.getClientRects();
+    const first = at(rects[0]);
+    return first !== null && first === at(rects[rects.length - 1]);
   }
 
-  private async updateHighlight(highlightElement: HTMLElement, color: string, comment?: string) {
-    const highlightId = highlightElement.dataset.highlightId;
-    if (!highlightId) return;
-
-    console.log('[NoteIt] Updating highlight:', highlightId);
-
-    // Set flag to prevent observer from triggering during update
-    (window as any).__noteit_creating_highlight__ = true;
-
-    try {
-      const result = await chrome.storage.local.get('highlights');
-      const highlights = (result.highlights as IHighlight[]) || [];
-      const index = highlights.findIndex(h => h.id === highlightId);
-      
-      if (index !== -1) {
-        // Update the highlight data
-        highlights[index] = {
-          ...highlights[index],
-          color,
-          ...(comment !== undefined && { comment }),
-        };
-        
-        await chrome.storage.local.set({ highlights });
-        console.log('[NoteIt] Highlight updated in storage');
-        
-        // Update all elements with this highlight ID (there may be multiple spans for one highlight)
-        const elements = document.querySelectorAll(`[data-highlight-id="${highlightId}"]`);
-        console.log(`[NoteIt] Updating ${elements.length} elements with new color`);
-        
-        elements.forEach((el) => {
-          const element = el as HTMLElement;
-          // Update color
-          element.style.setProperty('background-color', color, 'important');
-          
-          // Handle comment changes
-          if (comment !== undefined) {
-            if (comment) {
-              // Add or update comment
-              element.classList.add('noteit-with-comment');
-              // Remove old tooltip if exists
-              const oldTooltip = element.querySelector('.noteit-comment-tooltip');
-              if (oldTooltip) {
-                oldTooltip.remove();
-              }
-              // Add new tooltip
-              const tooltip = document.createElement('div');
-              tooltip.className = 'noteit-comment-tooltip';
-              tooltip.textContent = comment;
-              element.appendChild(tooltip);
-            } else {
-              // Remove comment
-              element.classList.remove('noteit-with-comment');
-              const tooltip = element.querySelector('.noteit-comment-tooltip');
-              if (tooltip) {
-                tooltip.remove();
-              }
-            }
-          }
-        });
-      }
-    } catch (error) {
-      console.error('[NoteIt] Failed to update highlight:', error);
-    } finally {
-      // Reset flag after update completes
-      setTimeout(() => {
-        (window as any).__noteit_creating_highlight__ = false;
-      }, 100);
-    }
-  }
-
-  public async triggerHighlight() {
+  /**
+   * Creates a highlight of `color` from the current selection (shortcut / context menu).
+   * Resolves to null when nothing is selected; otherwise to the create Result.
+   */
+  public async triggerHighlight(color: ColorName = 'yellow'): Promise<Result<HighlightRecord> | null> {
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed) {
-      return;
-    }
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return null;
     const text = selection.toString().trim();
-    if (!text) return;
+    if (!text) return null;
 
     this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
-    // Default color for shortcuts/context menu
-    await this.handleColorSelect('#ffeb3b');
+    hideFloatingMenu();
+    return this.handleColorSelect(color);
   }
 
-  private async handleColorSelect(color: string, comment?: string) {
-    if (!this.currentSelectionRange) return;
+  private async handleColorSelect(color: ColorName, comment?: string): Promise<Result<HighlightRecord> | null> {
+    const range = this.currentSelectionRange;
+    if (!range) return null;
 
-    const text = this.currentSelectionRange.toString().trim();
-    if (!text) return;
-    
-    const id = uuidv4();
     const url = window.location.href;
-    const timestamp = Date.now();
-
-    // Get page metadata
-    const pageTitle = document.title || new URL(url).hostname;
-    
-    // Get favicon
-    let favicon = '';
-    const linkElements = document.querySelectorAll('link[rel*="icon"]');
-    if (linkElements.length > 0) {
-      const iconLink = linkElements[0] as HTMLLinkElement;
-      favicon = iconLink.href;
-    } else {
-      // Fallback to default favicon location
-      const urlObj = new URL(url);
-      favicon = `${urlObj.origin}/favicon.ico`;
-    }
-
-    // Validate favicon accessibility
-    favicon = await this.validateFavicon(favicon);
-
-    // Calculate precise position to ensure only the selected instance is highlighted
-    const start = this.getSelectionOffset(this.currentSelectionRange);
-    const length = text.length;
-
-    // Capture surrounding context for robust re-anchoring when page content changes
-    const context = this.getSelectionContext(this.currentSelectionRange);
-
-    const highlight: IHighlight = {
-      id,
-      text,
+    // Creation and restoration share one TextIndex baseline (architecture.md D7). describeSelection
+    // returns null for a blank selection; record.text is the indexed text, never Range.toString()
+    // (which would include script / style / textarea text the TextIndex excludes).
+    const index = createTextIndex();
+    const anchor = describeSelection(index, range);
+    if (!anchor) return null;
+    const text = anchor.exact;
+    const paintRange = index.offsetsToRange(anchor.start, anchor.end);
+    const req: CreateHighlightReq = {
+      id: generateId(),
       url,
+      text,
       color,
-      timestamp,
-      pageTitle,
-      favicon,
-      start,
-      length,
-      context,
-      ...(comment && { comment }), // Add comment if provided
+      comment: comment || null,
+      anchor,
+      pageTitle: document.title || new URL(url).hostname,
+      // FR9 / #15: only the URL string from the page's <link>; the extension never fetches it.
+      favicon: this.faviconUrl(),
     };
-
-    console.log('[NoteIt] Creating highlight:', highlight);
-
-    // Set loading flag to prevent observer from triggering reload
-    (window as any).__noteit_creating_highlight__ = true;
-
-    // 1. Visual Highlight
-    this.highlightManager.highlight(highlight);
-
-    // 2. Save to Storage
-    await this.saveHighlight(highlight);
-
-    // Reset flag after a delay
-    setTimeout(() => {
-      (window as any).__noteit_creating_highlight__ = false;
-    }, 500);
+    const errorRect = range.getBoundingClientRect();
 
     // Clear selection
     window.getSelection()?.removeAllRanges();
     this.currentSelectionRange = null;
-  }
 
-  private async saveHighlight(highlight: IHighlight) {
-    try {
-      const result = await chrome.storage.local.get('highlights');
-      const highlights = (result.highlights as IHighlight[]) || [];
-      highlights.push(highlight);
-      await chrome.storage.local.set({ highlights });
-      console.log('[NoteIt] Saved to storage:', highlights.length);
-    } catch (error) {
-      console.error('[NoteIt] Failed to save highlight:', error);
+    // 1. Optimistic paint (architecture.md "Process Patterns": create path only).
+    if (paintRange) this.renderer.paint(req.id, paintRange, { color, commented: Boolean(req.comment) });
+
+    // 2. Persist through the service worker; roll the paint back on failure.
+    const result = await client.send('highlight/create', req);
+    if (!result.ok) {
+      console.error('[NoteIt] Failed to save highlight:', result.error.code);
+      this.renderer.remove(req.id);
+      this.showError(errorRect, result.error.code);
+      return result;
     }
+    pageRecords.set(result.data.id, result.data);
+    return result;
   }
 
-  /**
-   * Calculate the character offset of the range start position
-   * relative to the document body text content
-   */
-  private getSelectionOffset(range: Range): number {
-    const preRange = document.createRange();
-    preRange.selectNodeContents(document.body);
-    preRange.setEnd(range.startContainer, range.startOffset);
-    const offset = preRange.toString().length;
-    preRange.detach();
-    return offset;
+  private faviconUrl(): string | null {
+    const link = document.querySelector<HTMLLinkElement>('link[rel*="icon"]');
+    return link?.href ? link.href : null;
   }
 
-  /**
-   * Capture the text immediately before and after the selection.
-   * This prefix/suffix context is used to re-anchor the highlight when the
-   * page's character offsets change (e.g. SPA navigation, lazy-loaded ads).
-   */
-  private getSelectionContext(range: Range): IHighlight['context'] {
-    const CONTEXT_LENGTH = 64;
-
-    const preRange = document.createRange();
-    preRange.selectNodeContents(document.body);
-    preRange.setEnd(range.startContainer, range.startOffset);
-    const preText = preRange.toString();
-    preRange.detach();
-
-    const postRange = document.createRange();
-    postRange.selectNodeContents(document.body);
-    postRange.setStart(range.endContainer, range.endOffset);
-    const postText = postRange.toString();
-    postRange.detach();
-
-    return {
-      prefix: preText.slice(-CONTEXT_LENGTH),
-      suffix: postText.slice(0, CONTEXT_LENGTH),
-      offset: preText.length,
-    };
-  }
-
-  /**
-   * Validate if a favicon URL is accessible
-   * Uses Image object to test loading - this works reliably even with CORS restrictions
-   * Returns the URL if accessible, empty string if not
-   */
-  private async validateFavicon(faviconUrl: string): Promise<string> {
-    if (!faviconUrl) return '';
-    
-    return new Promise((resolve) => {
-      const img = new Image();
-      const timeout = setTimeout(() => {
-        img.src = ''; // Cancel loading
-        console.warn('[NoteIt] Favicon validation timeout:', faviconUrl);
-        resolve(''); // Timeout = not accessible
-      }, 3000); // 3 second timeout
-      
-      img.onload = () => {
-        clearTimeout(timeout);
-        console.log('[NoteIt] Favicon validated successfully:', faviconUrl);
-        resolve(faviconUrl); // Successfully loaded
-      };
-      
-      img.onerror = () => {
-        clearTimeout(timeout);
-        console.warn('[NoteIt] Favicon not accessible:', faviconUrl);
-        resolve(''); // Failed to load
-      };
-      
-      img.src = faviconUrl; // Start loading
-    });
+  /** One line of error text at the given position; removed after a few seconds. */
+  private showError(rect: DOMRect, code: ErrorCode) {
+    document.getElementById(ERROR_LINE_ID)?.remove();
+    const line = document.createElement('div');
+    line.id = ERROR_LINE_ID;
+    line.setAttribute('role', 'alert');
+    line.textContent = errorText(code);
+    line.style.cssText = `
+      position: fixed;
+      left: ${Math.max(8, rect.left)}px;
+      top: ${Math.max(8, rect.top - 36)}px;
+      max-width: 360px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.98);
+      color: #b42318;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      font: 13px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      z-index: 2147483647;
+    `;
+    document.body.appendChild(line);
+    setTimeout(() => line.remove(), ERROR_LINE_MS);
   }
 }

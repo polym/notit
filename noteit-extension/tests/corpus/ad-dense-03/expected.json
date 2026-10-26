@@ -1,0 +1,42 @@
+{
+  "name": "ad-dense-03",
+  "category": "ad-dense",
+  "source": {
+    "url": "https://en.wikipedia.org/wiki/Notebook",
+    "license": "CC BY-SA 4.0",
+    "retrieved": "2026-10-18",
+    "notes": "Article text from the source; native-ad layout authored locally. A top banner appears on even visits, native card copy rotates per visit and reuses the word notebook, a recommended block fills 700 ms after load."
+  },
+  "highlights": [
+    {
+      "id": "ad03-1",
+      "text": "The earliest form of notebook was the wax tablet,",
+      "scope": "#n2"
+    },
+    {
+      "id": "ad03-2",
+      "text": "a table-book could be written upon with a stylus, which added",
+      "scope": "#n7"
+    },
+    {
+      "id": "ad03-3",
+      "text": "According to a legend, Thomas W. Holley of Holyoke, Massachusetts,",
+      "scope": "#n12"
+    },
+    {
+      "id": "ad03-4",
+      "text": "notebook",
+      "scope": "#story",
+      "occurrence": 8,
+      "note": "repeated word that also appears in rotating native ads and the recommended block"
+    },
+    {
+      "id": "ad03-gone",
+      "text": "Readers who enjoyed this story also bought a leather journal.",
+      "scope": "#story",
+      "sourceGone": true,
+      "seedBefore": "#n5",
+      "note": "sponsored sentence removed from the article body"
+    }
+  ]
+}

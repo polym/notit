@@ -1,0 +1,3 @@
+// Fixture: a JWT whose decoded role is service_role (fake signature, not a real key).
+const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.fake-signature-not-a-real-key";
+const label = "service_role";

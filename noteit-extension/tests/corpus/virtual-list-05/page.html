@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home - x.com style timeline with relative times (corpus snapshot)</title>
+<!-- Post text: "Effective Go" (CC BY 4.0, go.dev), split into posts. Layout authored locally to model the x.com home
+     timeline: cellInnerDiv rows positioned with translateY, only the visible window in the DOM, a 350 ms simulated
+     fetch, relative timestamps that age between visits, and one new post prepended on even visits. -->
+<style>
+  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 0; background: #fff; color: #0f1419; }
+  header { position: sticky; top: 0; z-index: 3; background: rgba(255,255,255,.9); border-bottom: 1px solid #eff3f4; padding: 12px 16px; font-weight: 700; }
+  main { max-width: 600px; margin: 0 auto; border-left: 1px solid #eff3f4; border-right: 1px solid #eff3f4; }
+  [data-testid="cellInnerDiv"] { position: absolute; left: 0; right: 0; height: 120px; box-sizing: border-box; overflow: hidden; border-bottom: 1px solid #eff3f4; }
+  article[data-testid="tweet"] { padding: 12px 16px; }
+  [data-testid="User-Name"] { font-size: 14px; color: #536471; }
+  [data-testid="User-Name"] b { color: #0f1419; }
+  [data-testid="tweetText"] { font-size: 15px; line-height: 20px; margin-top: 4px; }
+</style>
+<script>
+  (function () {
+    var KEY = 'corpus-xrel-visit'
+    var visit = Number(localStorage.getItem(KEY) || '0') + 1
+    localStorage.setItem(KEY, String(visit))
+    var POSTS = [
+      ['Gopher Notes', 'Go is an open-source programming language that focuses on simplicity, reliability, and efficiency.'],
+      ['Style Guide', 'Formatting issues are the most contentious but the least consequential. Let the machine take care of most formatting issues.'],
+      ['Naming Things', 'Names are as important in Go as in any other language. They even have semantic effect: the visibility of a name outside a package is determined by whether its first character is upper case.'],
+      ['Package Club', 'By convention, packages are given lower case, single-word names; there should be no need for underscores or mixedCaps.'],
+      ['Gopher Notes', 'Long names don\'t automatically make things more readable. A helpful doc comment can often be more valuable than an extra long name.'],
+      ['Style Guide', 'Go doesn\'t provide automatic support for getters and setters.'],
+      ['Naming Things', 'By convention, one-method interfaces are named by the method name plus an -er suffix or similar modification to construct an agent noun.'],
+      ['Package Club', 'Finally, the convention in Go is to use MixedCaps or mixedCaps rather than underscores to write multiword names.'],
+      ['Gopher Notes', 'Like C, Go\'s formal grammar uses semicolons to terminate statements, but unlike in C, those semicolons do not appear in the source.'],
+      ['Style Guide', 'Go needs fewer parentheses than C and Java: control structures do not have parentheses in their syntax.'],
+      ['Naming Things', 'Go has no line length limit. Don\'t worry about overflowing a punched card.'],
+      ['Package Club', 'We use tabs for indentation and gofmt emits them by default. Use spaces only if you must.'],
+    ]
+    var ROW = 120
+    var OVERSCAN = 2
+    // Each visit is "a few hours later": every relative timestamp ages, so the text around each post changes.
+    var items = POSTS.map(function (p, i) { return { id: 'p' + i, user: p[0], text: p[1], age: i * 2 + 1 + (visit - 1) * 3 } })
+    if (visit % 2 === 0) items.unshift({ id: 'n0', user: 'Gopher Notes', text: 'New post: which formatting rule surprised you most when you started with Go?', age: 0 })
+
+    function cell(it, index) {
+      var c = document.createElement('div')
+      c.setAttribute('data-testid', 'cellInnerDiv')
+      c.style.transform = 'translateY(' + index * ROW + 'px)'
+      var a = document.createElement('article')
+      a.setAttribute('data-testid', 'tweet')
+      a.dataset.postId = it.id
+      var u = document.createElement('div')
+      u.setAttribute('data-testid', 'User-Name')
+      var b = document.createElement('b')
+      b.textContent = it.user
+      u.append(b, ' @' + it.user.toLowerCase().replace(/[^a-z]/g, '') + ' · ' + (it.age === 0 ? 'now' : it.age + 'h'))
+      var t = document.createElement('div')
+      t.setAttribute('data-testid', 'tweetText')
+      t.lang = 'en'
+      t.textContent = it.text
+      a.append(u, t)
+      c.append(a)
+      return c
+    }
+    function render(list) {
+      var top = list.getBoundingClientRect().top + window.scrollY
+      var first = Math.max(0, Math.floor((window.scrollY - top) / ROW) - OVERSCAN)
+      var last = Math.min(items.length, Math.ceil((window.scrollY - top + window.innerHeight) / ROW) + OVERSCAN)
+      var cells = []
+      for (var i = first; i < last; i++) cells.push(cell(items[i], i))
+      list.replaceChildren.apply(list, cells)
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var list = document.getElementById('timeline-list')
+      setTimeout(function () {
+        list.style.height = items.length * ROW + 'px'
+        render(list)
+        window.addEventListener('scroll', function () { render(list) })
+      }, 350)
+    })
+  })()
+</script>
+</head>
+<body>
+<header>Home</header>
+<main>
+  <section aria-label="Timeline" id="timeline"><div id="timeline-list" style="position: relative"></div></section>
+</main>
+</body>
+</html>

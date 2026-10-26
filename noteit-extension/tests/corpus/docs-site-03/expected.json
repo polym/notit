@@ -1,0 +1,16 @@
+{
+  "name": "docs-site-03",
+  "category": "docs-site",
+  "source": {
+    "url": "https://nodejs.org/docs/latest-v24.x/api/events.html",
+    "license": "MIT (Node.js documentation)",
+    "retrieved": "2026-10-18",
+    "notes": "Sanitized with scripts/corpus-sanitize.ts; external api.js and web fonts removed."
+  },
+  "highlights": [
+    { "id": "ds03-1", "text": "Much of the Node.js core API is built around an idiomatic asynchronous", "scope": "#apicontent" },
+    { "id": "ds03-2", "text": "to that specific event are called synchronously.", "scope": "#apicontent" },
+    { "id": "ds03-3", "text": "called listeners are ignored and discarded.", "scope": "#apicontent" },
+    { "id": "ds03-4", "text": "EventEmitter instance", "scope": "#apicontent", "occurrence": 3, "note": "phrase repeated many times" }
+  ]
+}

@@ -33,7 +33,7 @@
 
 3. **或运行完整架构更新**
    
-   执行项目中的 `/supabase-migrations/complete-schema.sql` 文件，确保所有字段都存在。
+   执行项目中的 `/supabase/legacy/complete-schema.sql` 文件，确保所有字段都存在。
 
 #### 2. 本地存储未正确保存批注
 
@@ -73,9 +73,8 @@ chrome.storage.local.get('highlights', (result) => {
 **解决方法：**
 
 1. **检查 Supabase 配置**
-   - 点击扩展图标打开侧边栏
-   - 点击设置（齿轮图标）
-   - 确认 Project URL 和 Anon Key 正确
+   - 确认构建时设置了 `VITE_SUPABASE_URL` 与 `VITE_SUPABASE_ANON_KEY`
+   - 点击扩展图标打开侧边栏，用邮箱和密码登录
 
 2. **检查表权限（RLS Policies）**
    
@@ -96,25 +95,7 @@ chrome.storage.local.get('highlights', (result) => {
 
 3. **测试数据库连接**
    
-   在浏览器 Console 中运行：
-   ```javascript
-   chrome.storage.sync.get(['supabaseUrl', 'supabaseKey'], async (result) => {
-     if (!result.supabaseUrl || !result.supabaseKey) {
-       console.error('Supabase 未配置');
-       return;
-     }
-     
-     const { createClient } = window.supabase;
-     const supabase = createClient(result.supabaseUrl, result.supabaseKey);
-     
-     const { data, error } = await supabase.from('highlights').select('count');
-     if (error) {
-       console.error('数据库连接失败:', error);
-     } else {
-       console.log('数据库连接成功，记录数:', data);
-     }
-   });
-   ```
+   Supabase 地址与 anon key 在构建时通过 `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` 注入（见 `noteit-extension/.env.example`），扩展内不再有配置表单。登录后在侧栏确认摘抄列表能正常显示。
 
 ## 测试批注功能
 

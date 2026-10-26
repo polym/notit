@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Home / X</title>
+    <link rel="icon" href="data:," />
+    <style>
+      body { font-family: sans-serif; margin: 0; }
+      #feed { height: 400px; overflow-y: auto; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; }
+      #spacer { position: relative; }
+      .row { position: absolute; left: 0; right: 0; height: 80px; box-sizing: border-box; padding: 8px 16px; border-bottom: 1px solid #eee; }
+      .row p { margin: 4px 0 0; font-size: 15px; line-height: 1.4; }
+    </style>
+  </head>
+  <body>
+    <!-- Virtual timeline (Key Flow 2, Story 3.17): only rows near the viewport exist in the DOM, like
+         the x.com home timeline. The test serves it as https://x.com/home and may replace the
+         target post text to model a tweet deleted by its author. -->
+    <div id="feed"><div id="spacer"></div></div>
+    <script>
+      ;(function () {
+        var ROW_HEIGHT = 80
+        var OVERSCAN = 2
+        var TOTAL = 60
+        var posts = []
+        for (var i = 0; i < TOTAL; i++) posts.push('Timeline post number ' + (i + 1) + ' about nothing in particular.')
+        posts[3] = 'TARGET_POST'
+        var feed = document.getElementById('feed')
+        var spacer = document.getElementById('spacer')
+        spacer.style.height = TOTAL * ROW_HEIGHT + 'px'
+        function render() {
+          var first = Math.max(0, Math.floor(feed.scrollTop / ROW_HEIGHT) - OVERSCAN)
+          var last = Math.min(TOTAL, Math.ceil((feed.scrollTop + feed.clientHeight) / ROW_HEIGHT) + OVERSCAN)
+          var rows = []
+          for (var i = first; i < last; i++) {
+            var row = document.createElement('div')
+            row.className = 'row'
+            row.style.top = i * ROW_HEIGHT + 'px'
+            row.dataset.index = String(i)
+            var p = document.createElement('p')
+            p.textContent = posts[i]
+            row.append(p)
+            rows.push(row)
+          }
+          spacer.replaceChildren.apply(spacer, rows)
+        }
+        render()
+        feed.addEventListener('scroll', render)
+      })()
+    </script>
+  </body>
+</html>
