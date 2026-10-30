@@ -9,6 +9,13 @@ export const STORAGE_KEYS = {
   sbAuth: 'sb-auth',
   /** Supabase {url, anonKey, savedAt} saved on the login page; overrides the build-time config. */
   supabaseConfig: 'supabaseConfig',
+  /**
+   * Translation provider {baseUrl, apiKey, model, savedAt}; local only, never synced, kept across
+   * sign-out (it belongs to the device, not the account). Read only by the service worker.
+   */
+  translateConfig: 'translateConfig',
+  /** chrome.storage.session mirror of the translation LRU cache; cleared when the browser restarts. */
+  translateCache: 'translateCache',
   /** Legacy keys from the pre-M1 extension; deleted by the first sign-in wipe (FR39). */
   legacyHighlights: 'highlights',
   legacyEnabledSites: 'enabledSites',

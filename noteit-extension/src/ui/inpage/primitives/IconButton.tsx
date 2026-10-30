@@ -29,6 +29,24 @@ export function DeleteIcon() {
   )
 }
 
+/** Line translate icon (selection translation): "A" with a small glyph. */
+export function TranslateIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2 3.5h6M5 2v1.5M3.5 3.5c.5 2.5 2 4 4 5M7 3.5c-.5 2.5-2 4-4.5 5M9 14l2.5-6 2.5 6M9.8 12h3.4" />
+    </svg>
+  )
+}
+
+/** Line speaker icon (selection translation pronunciation). */
+export function SpeakerIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2.5 6h2.5l3.5-3v10l-3.5-3h-2.5zM11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" />
+    </svg>
+  )
+}
+
 /** Line comment icon (mockups/key-in-page-overlays.html). */
 export function CommentIcon() {
   return (

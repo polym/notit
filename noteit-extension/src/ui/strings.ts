@@ -115,7 +115,57 @@ export const strings = {
   // In-page comment preview title.
   commentPreviewTitle: '你的批注',
   close: '关闭',
+
+  // Selection translation settings (spec "selection translation").
+  translateSettings: '划词翻译',
+  translateNotConfigured: '未配置',
+  translateConfigured: (hint: string) => `已配置 ···${hint}`,
+  translateBaseUrl: '接口地址',
+  translateModel: '模型',
+  translateApiKey: 'API Key',
+  translateApiKeyKeep: '留空则保留已保存的 Key',
+  translatePrivacyNote: '只有在你点击「翻译」时，选中的文字和所在句子才会发送到上面的接口；费用由你的账户承担。',
+  translateTesting: '正在测试…',
+  translateTestOk: '可以正常翻译',
+  translateSaved: '已保存',
+  translatePermissionDenied: '未授予访问该接口的权限，翻译可能无法连接',
+  translateBaseUrlInvalid: '请输入 https 地址，例如 https://api.deepseek.com',
+  translateModelMissing: '请填写模型名',
+  translateKeyMissing: '请填写 API Key',
+  // In-page translate card.
+  translateButton: '翻译',
+  translateCardLabel: '翻译',
+  translateLoading: '正在翻译…',
+  translateRetry: '重试',
+  translateOpenSettings: '打开翻译设置',
+  translateHighlight: '摘抄',
+  translateInsert: '插入译文',
+  translatePronounce: '朗读',
+  translateNoVoice: '没有可用的英文语音',
+  translateIpaUs: '美',
+  translateIpaUk: '英',
+  translatePronounceUnavailable: '朗读（没有可用的英文语音）',
+  translateOtherSensesLine: (list: string) => `其他释义：${list}`,
+  translateTooLong: '选中的文字太长，请缩短后再翻译',
+  menuTranslateSelection: '用 NoteIt 翻译',
 } as const
+
+/** Error text for translation requests; the highlight copy in ERROR_TEXT talks about saving. */
+const TRANSLATE_ERROR_TEXT: Record<ErrorCode, string> = {
+  unauthenticated: 'API Key 无效，请在侧栏检查翻译设置',
+  network: '无法连接翻译接口，请检查网络或接口权限后重试',
+  server: '翻译服务暂时不可用，请稍后重试',
+  conflict_rejected: '翻译没有完成，请重试',
+  bad_request: '翻译结果解析失败，请重试',
+  not_found: '翻译没有完成，请重试',
+  quota: '翻译额度不足或请求过于频繁，请检查账户余额后重试',
+  not_configured: '还没有配置翻译，请在侧栏填写 API Key',
+  internal: '翻译没有完成，请重试',
+}
+
+export function translateErrorText(code: ErrorCode): string {
+  return TRANSLATE_ERROR_TEXT[code]
+}
 
 const ERROR_TEXT: Record<ErrorCode, string> = {
   unauthenticated: '尚未登录，请先在侧栏登录',

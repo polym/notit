@@ -3,13 +3,14 @@
 // opens the first module in its default view (highlight: "current page").
 // Spec "login-supabase-config" (variant A) adds the server row under the form; without any config
 // the row is forced open, a notice explains why and the form is disabled.
-import type { ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { strings } from '../../strings.ts'
 import { useAuth, useServerConfig } from './auth.ts'
 import { LoginForm } from './LoginForm.tsx'
 import { ServerSettings } from './ServerSettings.tsx'
 
-export function AuthGate({ children }: { children: ReactNode }) {
+/** `settings` is injected device settings (e.g. translation) shown under the server row while signed out. */
+export function AuthGate({ children, settings: Settings }: { children: ReactNode; settings?: FC }) {
   const { state, setState } = useAuth()
   const { config, setConfig } = useServerConfig(state?.signedIn === false)
   // Render nothing until the first auth/getState answer, so the form never flashes for a session.
@@ -38,6 +39,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
         <LoginForm onSignedIn={setState} disabled={noServer} />
         {/* key resets the row (draft fields, open state) whenever the active server changes. */}
         {config && <ServerSettings key={`${config.source}:${config.url ?? ''}`} config={config} onChange={setConfig} />}
+        {Settings && <Settings />}
       </div>
     )
   }

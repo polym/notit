@@ -18,5 +18,9 @@
   "menuHighlightSelection": {
     "message": "摘抄选中文字",
     "description": "Context menu title on a text selection. Must equal strings.menuHighlightSelection."
+  },
+  "menuTranslateSelection": {
+    "message": "用 NoteIt 翻译",
+    "description": "Context menu title that translates the text selection. Must equal strings.menuTranslateSelection."
   }
 }

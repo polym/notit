@@ -10,7 +10,7 @@ export {
   siteHandlers,
 } from './background/handlers.ts'
 export { startBadge } from './background/badge.ts'
-export { registerCommands } from './background/commands.ts'
+export { addMenu, registerCommands } from './background/commands.ts'
 export { broadcastAuthChanged } from './background/broadcast.ts'
 export { isSignedIn, setCachedSignedIn, setSignedInChangeListener, setSignedInSource } from './background/auth-gate.ts'
 export type {

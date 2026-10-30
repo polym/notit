@@ -30,7 +30,10 @@ describe('manifest permissions', () => {
   it('adds no host_permissions or optional permissions', () => {
     expect(resolved.host_permissions).toBeUndefined()
     expect(resolved.optional_permissions).toBeUndefined()
-    expect(resolved.optional_host_permissions).toBeUndefined()
+  })
+
+  it('declares https origins only as optional host permissions (translation provider, granted per origin)', () => {
+    expect(resolved.optional_host_permissions).toEqual(['https://*/*'])
   })
 
   it('keeps the content script match as the only host access', () => {

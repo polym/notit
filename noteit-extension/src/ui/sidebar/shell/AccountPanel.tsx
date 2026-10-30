@@ -2,7 +2,7 @@
 // while the module tabs are hidden. Read-only rows: signed-in email, last sync time, pending count; a
 // strings.logout outline button at the bottom. With pending items sign-out asks first (logout-confirm);
 // otherwise it signs out at once. Sign-out success arrives as auth/changed, which shows the login form.
-import { useState, type ReactNode } from 'react'
+import { useState, type FC, type ReactNode } from 'react'
 import { strings } from '../../strings.ts'
 import { formatDateTime } from '../../format/time.ts'
 import { Button } from '../components/button.tsx'
@@ -30,7 +30,17 @@ function Row({ label, testId, children }: { label: string; testId: string; child
   )
 }
 
-export function AccountPanel({ email, sync, onBack }: { email: string | null; sync: SyncStatusState; onBack: () => void }) {
+export function AccountPanel({
+  email,
+  sync,
+  onBack,
+  settings: Settings,
+}: {
+  email: string | null
+  sync: SyncStatusState
+  onBack: () => void
+  settings?: FC
+}) {
   const { status } = sync
   const [confirmCount, setConfirmCount] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
@@ -103,6 +113,7 @@ export function AccountPanel({ email, sync, onBack }: { email: string | null; sy
           {strings.logout}
         </Button>
       </div>
+      {Settings && <Settings />}
       {confirmCount !== null && (
         <LogoutConfirm pending={confirmCount} busy={busy} onCancel={() => setConfirmCount(null)} onConfirm={() => void logout()} />
       )}

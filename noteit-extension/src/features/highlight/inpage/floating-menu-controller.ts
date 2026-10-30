@@ -1,6 +1,6 @@
 // Mounts the floating menu into the page's Shadow host (Story 3.13). One menu at a time, registered
 // with the page-wide overlay manager so any other overlay closes it.
-import { h, render } from 'preact'
+import { h, render, type ComponentChildren } from 'preact'
 import type { ColorName } from '../../../core/model/index.ts'
 import { HOST_TAG, mountShadowHost, overlayManager, type OverlayRect } from '../../../ui/inpage/index.ts'
 import { PRIMITIVES_CSS, isSaveChord } from '../../../ui/inpage/primitives/index.ts'
@@ -14,13 +14,22 @@ export interface FloatingMenuHandlers {
    * covers an outside click, a replacement menu or another overlay taking over.
    */
   onDismiss?: (reason: DismissReason) => void
+  /**
+   * Injected by the content script (selection translation, another feature): renders the translate
+   * section inside the menu while its translate toggle is on (see FloatingMenu).
+   */
+  renderTranslation?: (onResult: (insertable: string | null) => void) => ComponentChildren
 }
 
 export type DismissReason = 'explicit' | 'other'
 
 let sheet: CSSStyleSheet | null = null
-let open: { container: HTMLElement; overlay: { close(): void }; dismiss: (reason: DismissReason) => void } | null =
-  null
+let open: {
+  container: HTMLElement
+  overlay: { close(): void }
+  dismiss: (reason: DismissReason) => void
+  draw: (anchor: OverlayRect) => void
+} | null = null
 
 /** Opens the menu next to `anchor` (viewport coordinates); replaces a menu that is already open. */
 export function showFloatingMenu(anchor: OverlayRect, handlers: FloatingMenuHandlers): boolean {
@@ -45,21 +54,30 @@ export function showFloatingMenu(anchor: OverlayRect, handlers: FloatingMenuHand
     reason = why
     overlayManager.close(overlay)
   }
-  open = { container, overlay, dismiss }
+  // Re-rendering the same component keeps its state (open editor, translation, typed comment).
+  const draw = (at: OverlayRect) =>
+    render(
+      h(FloatingMenu, {
+        anchor: at,
+        onPick: (color, comment) => {
+          picked = true
+          overlayManager.close(overlay)
+          handlers.onPick(color, comment)
+        },
+        onClose: () => dismiss('explicit'),
+        renderTranslation: handlers.renderTranslation,
+      }),
+      container,
+    )
+  open = { container, overlay, dismiss, draw }
   overlayManager.open(overlay)
-  render(
-    h(FloatingMenu, {
-      anchor,
-      onPick: (color, comment) => {
-        picked = true
-        overlayManager.close(overlay)
-        handlers.onPick(color, comment)
-      },
-      onClose: () => dismiss('explicit'),
-    }),
-    container,
-  )
+  draw(anchor)
   return true
+}
+
+/** Moves the open menu next to the selection's new rect (page scroll); the menu keeps its state. */
+export function repositionFloatingMenu(anchor: OverlayRect): void {
+  open?.draw(anchor)
 }
 
 export function hideFloatingMenu(reason: DismissReason = 'other'): void {
@@ -107,11 +125,14 @@ export function installFloatingMenuKeyGuard(win: Window = window): void {
       const host = path.find((node) => node instanceof Element && node.localName === HOST_TAG)
       if (!host) {
         const popoverOpen = openHighlightPopoverKey() !== null
-        if (!isEsc || (!open && !popoverOpen)) return
+        // Any other overlay (e.g. the translate card of another feature) closes through the manager.
+        const otherOpen = !open && !popoverOpen && overlayManager.active !== null
+        if (!isEsc || (!open && !popoverOpen && !otherOpen)) return
         e.preventDefault()
         e.stopImmediatePropagation()
         if (popoverOpen) hideHighlightPopover({ restoreFocus: true })
-        else hideFloatingMenu('explicit')
+        else if (open) hideFloatingMenu('explicit')
+        else overlayManager.closeAll()
         return
       }
       e.preventDefault()

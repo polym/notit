@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getDb } from '../../../core/db/schema.ts'
 import { STORAGE_KEYS, setSiteOverride } from '../../../core/settings/index.ts'
 import { strings } from '../../../ui/strings.ts'
-import { HIGHLIGHT_MENU_ID, LOGIN_NEEDED_BADGE, createMenus, onCommand, onMenuClicked, triggerHighlight } from './commands.ts'
+import { HIGHLIGHT_MENU_ID, LOGIN_NEEDED_BADGE, addMenu, createMenus, onCommand, onMenuClicked, triggerHighlight } from './commands.ts'
 import { setCachedSignedIn, setSignedInSource } from './auth-gate.ts'
 
 function installChromeMock() {
@@ -178,5 +178,15 @@ describe('shortcut and context menu commands', () => {
     expect(mock.chromeMock.contextMenus.create).toHaveBeenCalledWith(
       expect.objectContaining({ title: strings.menuHighlightSelection }),
     )
+  })
+
+  // Last in this file: addMenu keeps module state, which would change the item count above.
+  it("creates other features' items inside the same removeAll callback, after its own", () => {
+    const order: string[] = []
+    mock.chromeMock.contextMenus.create.mockImplementation((item: { id: string }) => void order.push(item.id))
+    addMenu(() => chrome.contextMenus.create({ id: 'other-feature', title: 't', contexts: ['selection'] }))
+    createMenus()
+    expect(mock.chromeMock.contextMenus.removeAll).toHaveBeenCalledTimes(1)
+    expect(order).toEqual([HIGHLIGHT_MENU_ID, 'other-feature'])
   })
 })

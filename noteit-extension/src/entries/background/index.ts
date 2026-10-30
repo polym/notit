@@ -3,6 +3,7 @@ import { createRouter } from '../../core/messaging/index.ts'
 import { authHandlers, getAuthState, onAuthChanged, type AuthRequests } from '../../core/auth/index.ts'
 import { clockReady, schedulePush, startSyncEngine, syncHandlers, type SyncRequests } from '../../core/sync/index.ts'
 import {
+  addMenu,
   anchorHandlers,
   broadcastAuthChanged,
   isSignedIn,
@@ -23,6 +24,7 @@ import {
   type HighlightRequests,
   type SiteRequests,
 } from '../../features/highlight/index.ts'
+import { createTranslateMenu, registerTranslateMenu, translateHandlers, type TranslateRequests } from '../../features/translate/index.ts'
 
 console.log('[NoteIt] Service Worker Loaded')
 
@@ -44,21 +46,23 @@ setBeforeLocalWrite(clockReady)
 
 // debug/dump is registered only outside production builds (architecture.md D6 [proxy]).
 if (import.meta.env.MODE !== 'production') {
-  createRouter<HighlightRequests & SiteRequests & AnchorRequests & AuthRequests & SyncRequests & DebugRequests>({
+  createRouter<HighlightRequests & SiteRequests & AnchorRequests & AuthRequests & SyncRequests & TranslateRequests & DebugRequests>({
     ...highlightHandlers,
     ...authHandlers,
     ...syncHandlers,
     ...siteHandlers,
     ...anchorHandlers,
+    ...translateHandlers,
     ...debugHandlers,
   }).listen()
 } else {
-  createRouter<HighlightRequests & SiteRequests & AnchorRequests & AuthRequests & SyncRequests>({
+  createRouter<HighlightRequests & SiteRequests & AnchorRequests & AuthRequests & SyncRequests & TranslateRequests>({
     ...highlightHandlers,
     ...authHandlers,
     ...syncHandlers,
     ...siteHandlers,
     ...anchorHandlers,
+    ...translateHandlers,
   }).listen()
 }
 
@@ -80,7 +84,10 @@ if (chrome.sidePanel) {
     .catch((error: unknown) => console.error(error))
 }
 
+// Translation's context menu item is created inside the highlight menu setup (one removeAll).
+addMenu(createTranslateMenu)
 registerCommands()
+registerTranslateMenu()
 
 // Liveness probe: any extension page can wake the service worker with { action: 'PING' }.
 // Used by the E2E sw-restart helper to prove the worker restarts on a message.

@@ -121,7 +121,16 @@ export function createMenus(): void {
   // Drop items left by an earlier version (the legacy site toggle) before creating ours.
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({ id: HIGHLIGHT_MENU_ID, title, contexts: ['selection'] })
+    // Items of other features are created in the same callback, so removeAll never drops them.
+    for (const create of extraMenus) create()
   })
+}
+
+const extraMenus: (() => void)[] = []
+
+/** Registers another feature's context menu item (wired by entries/background). */
+export function addMenu(create: () => void): void {
+  extraMenus.push(create)
 }
 
 /** Registers the context menu item (on install) and the shortcut / menu listeners. */
