@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NoteIt SVG diagram</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root { --ink: #1f1e1d; --ink-2: #5e5d59; }
+    </style>
+  </head>
+  <body>
+    <h1>SVG diagram</h1>
+    <p id="intro">Every pull request passes two gates before it can merge.</p>
+    <!-- Same shape as the inline diagram on claude.dev/blog/solving-code-review-at-anthropic. -->
+    <svg id="diagram" width="640" height="180" viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg">
+      <text x="32" y="40" font-size="14" font-weight="500" style="fill: var(--ink)">Required CI</text>
+      <text id="row1" x="277" y="40" font-size="13" style="fill: var(--ink-2)">Lint, types, tests across platforms, build and packaging. Red</text>
+      <text id="row2" x="277" y="57" font-size="13" style="fill: var(--ink-2)">blocks the merge</text>
+      <text x="32" y="100" font-size="14" font-weight="500" style="fill: var(--ink)">Claude code review</text>
+      <text id="row3" x="277" y="100" font-size="13" style="fill: var(--ink-2)"><tspan>A second agent reviews the diff</tspan></text>
+    </svg>
+    <p id="outro">This paragraph exists so the diagram is not the last block.</p>
+  </body>
+</html>
