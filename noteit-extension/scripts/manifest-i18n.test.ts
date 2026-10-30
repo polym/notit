@@ -58,6 +58,7 @@ describe('manifest i18n', () => {
 
   it('the context menu title in zh_CN matches the runtime title', () => {
     expect(messages.menuHighlightSelection?.message).toBe(strings.menuHighlightSelection)
+    expect(messages.menuTranslateSelection?.message).toBe(strings.menuTranslateSelection)
     expect(messages.menuToggleSite).toBeUndefined()
   })
 

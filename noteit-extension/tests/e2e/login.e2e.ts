@@ -31,8 +31,9 @@ test('signed out shows only the login form; correct credentials show the list', 
   // Only the form: no header (site toggle lives there later) and no module tabs, no sign-up link.
   await expect(panel.getByTestId('sidebar-header')).toHaveCount(0)
   await expect(panel.getByRole('tablist')).toHaveCount(0)
-  // Sign-in plus the collapsed server row.
-  await expect(panel.getByRole('button')).toHaveCount(2)
+  // Sign-in plus the collapsed server and translation settings rows.
+  await expect(panel.getByRole('button')).toHaveCount(3)
+  await expect(panel.getByTestId('translate-toggle')).toHaveAttribute('aria-expanded', 'false')
   await expect(panel.getByRole('link')).toHaveCount(0)
   // DESIGN.md login-form: 30px inputs, 12px labels, full-width primary button.
   const emailBox = (await panel.getByLabel(strings.loginEmail).boundingBox())!

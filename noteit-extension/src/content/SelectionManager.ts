@@ -12,12 +12,21 @@ import {
   openCommentPreviewKey,
   openHighlightPopoverKey,
   refreshHighlightPopover,
+  repositionFloatingMenu,
   repositionHighlightPopover,
   showCommentPreview,
+  isFloatingMenuOpen,
   showFloatingMenu,
   showHighlightPopover,
   showUndoToast,
 } from '../features/highlight/inpage.ts';
+import {
+  hideTranslateCard,
+  isInsideTranslateCard,
+  selectionContext,
+  showTranslateCard,
+  translatePanelRenderer,
+} from '../features/translate/inpage.ts';
 import { HOST_TAG, type OverlayRect } from '../ui/inpage/index.ts';
 import type { ErrorCode, Result } from '../core/messaging';
 import type { CreateHighlightReq } from '../features/highlight/index.ts';
@@ -63,14 +72,34 @@ export class SelectionManager {
     document.addEventListener('click', this.handleClick.bind(this));
     // The preview is fixed-positioned next to the highlight; a scroll would leave it behind. The
     // popover may hold unsaved input, so it follows its highlight instead of closing.
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', (e) => {
       hideCommentPreview();
+      // The card is fixed next to the selection; a page scroll leaves it behind. Scrolling inside
+      // the card (a long translation) keeps it.
+      if (!isInsideTranslateCard(e)) hideTranslateCard();
       this.schedulePopoverReposition();
+      // The floating menu may hold a translation or a typed comment: it follows the selection.
+      if (!isInsideFloatingMenu(e)) this.scheduleMenuReposition();
     }, { capture: true, passive: true });
-    window.addEventListener('resize', () => this.schedulePopoverReposition(), { passive: true });
+    window.addEventListener('resize', () => {
+      this.schedulePopoverReposition();
+      this.scheduleMenuReposition();
+    }, { passive: true });
   }
 
   private repositionFrame: number | null = null;
+  private menuFrame: number | null = null;
+
+  private scheduleMenuReposition() {
+    if (!isFloatingMenuOpen() || this.menuFrame !== null) return;
+    this.menuFrame = requestAnimationFrame(() => {
+      this.menuFrame = null;
+      const range = this.currentSelectionRange;
+      if (!isFloatingMenuOpen() || !range) return;
+      const rect = range.getBoundingClientRect();
+      repositionFloatingMenu({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+    });
+  }
 
   private schedulePopoverReposition() {
     if (openHighlightPopoverKey() === null || this.repositionFrame !== null) return;
@@ -88,6 +117,7 @@ export class SelectionManager {
     // Clicks inside a menu or popover keep it open; any other click closes it (unsaved input dropped).
     if (!isInsideFloatingMenu(e)) hideFloatingMenu();
     if (!isInsideHighlightPopover(e)) hideHighlightPopover();
+    if (!isInsideTranslateCard(e)) hideTranslateCard();
     hideCommentPreview();
   }
 
@@ -154,6 +184,7 @@ export class SelectionManager {
   public hideOverlays() {
     hideHighlightPopover();
     hideUndoToast();
+    hideTranslateCard();
   }
 
   /** True for events that come from NoteIt's own overlays in the Shadow host. */
@@ -258,11 +289,14 @@ export class SelectionManager {
     }
     
     const rect = this.currentSelectionRange.getBoundingClientRect();
+    const anchor = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
     // Story 3.13: Preact floating menu in the Shadow host, placed by placeOverlay (Q65).
     showFloatingMenu(
-      { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+      anchor,
       {
         onPick: (color, comment) => void this.handleColorSelect(color, comment ?? undefined),
+        // Spec "selection translation": the translate section opens inside the menu.
+        renderTranslation: translatePanelRenderer(range, text) ?? undefined,
         // Only an explicit Esc blocks the next mouseup; an outside click or a replacement menu must
         // not swallow the selection that follows it.
         onDismiss: (reason) => {
@@ -294,6 +328,32 @@ export class SelectionManager {
     this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
     hideFloatingMenu();
     return this.handleColorSelect(color);
+  }
+
+  /**
+   * Translates the current selection (context menu, spec "selection translation"). Works signed out
+   * and on sites that are off: it creates nothing. The card offers highlighting only when this tab
+   * could highlight. Resolves false when nothing is selected.
+   */
+  public translateSelection(): boolean {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return false;
+    const text = selection.toString().trim();
+    if (!text) return false;
+    const range = selection.getRangeAt(0).cloneRange();
+    this.currentSelectionRange = range;
+    hideFloatingMenu();
+    const rect = range.getBoundingClientRect();
+    const anchor = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+    const canHighlight = isExtensionEnabled() && isSignedIn();
+    return showTranslateCard(anchor, text, selectionContext(range, text), {
+      onHighlight: canHighlight
+        ? () => {
+            hideTranslateCard();
+            void this.handleColorSelect('yellow');
+          }
+        : undefined,
+    });
   }
 
   private async handleColorSelect(color: ColorName, comment?: string): Promise<Result<HighlightRecord> | null> {

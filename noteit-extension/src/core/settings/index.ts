@@ -5,3 +5,5 @@ export { clearSiteOverrides, getSiteOverride, getSiteOverrides, removeLegacyKeys
 export type { SiteOverride, SiteOverrides } from './site-overrides.ts'
 export { clearStoredSupabaseConfig, getStoredSupabaseConfig, setStoredSupabaseConfig } from './supabase-config.ts'
 export type { StoredSupabaseConfig } from './supabase-config.ts'
+export { getStoredTranslateConfig, setStoredTranslateConfig } from './translate-config.ts'
+export type { StoredTranslateConfig } from './translate-config.ts'

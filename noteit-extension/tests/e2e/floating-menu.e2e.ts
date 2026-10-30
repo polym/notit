@@ -65,7 +65,14 @@ test('menu content: four named color chips (yellow first) and the comment button
   // The menu lives in the Shadow host, not in the page body.
   expect(await page.evaluate(() => document.body.querySelector('[data-noteit-menu]'))).toBeNull()
   const labels = await menu.locator('button').evaluateAll((els) => els.map((el) => el.getAttribute('aria-label')))
-  expect(labels).toEqual([strings.colorYellow, strings.colorOrange, strings.colorBlue, strings.colorGreen, strings.commentButton])
+  expect(labels).toEqual([
+    strings.colorYellow,
+    strings.colorOrange,
+    strings.colorBlue,
+    strings.colorGreen,
+    strings.commentButton,
+    strings.translateButton,
+  ])
 
   // color-chip: every chip shows its color name without hovering.
   await expect(menuButton(page, 0)).toHaveText(strings.colorYellow)

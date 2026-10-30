@@ -127,6 +127,26 @@ export const PRIMITIVES_CSS = `
   line-height: var(--nt-caption-line-height);
   color: var(--nt-subtle-foreground);
 }
+.nt-editor-insert {
+  all: unset;
+  box-sizing: border-box;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--nt-radius-full);
+  background: var(--nt-canvas);
+  color: var(--nt-foreground);
+  font-family: var(--nt-font-family);
+  font-size: var(--nt-meta-font-size);
+  line-height: 28px;
+  cursor: pointer;
+}
+.nt-editor-insert:hover {
+  background: var(--nt-hover);
+}
+.nt-editor-insert:focus-visible {
+  outline: 2px solid var(--nt-ring);
+  outline-offset: 2px;
+}
 .nt-save {
   all: unset;
   box-sizing: border-box;

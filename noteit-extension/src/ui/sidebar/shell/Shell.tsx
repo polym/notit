@@ -13,7 +13,8 @@ import { ModuleTabs } from './ModuleTabs.tsx'
 import { useSidebarOpened, useSyncStatus } from './sync.ts'
 import type { SidebarModule } from './types.ts'
 
-export function Shell({ modules, headerStart }: { modules: readonly SidebarModule[]; headerStart?: FC }) {
+/** `settings` is injected device settings (e.g. translation) shown at the bottom of the account panel. */
+export function Shell({ modules, headerStart, settings }: { modules: readonly SidebarModule[]; headerStart?: FC; settings?: FC }) {
   const [activeId, setActiveId] = useState(() => modules[0]?.id ?? '')
   const [accountOpen, setAccountOpen] = useState(false)
   const active = modules.find((m) => m.id === activeId) ?? modules[0]
@@ -24,7 +25,7 @@ export function Shell({ modules, headerStart }: { modules: readonly SidebarModul
   return (
     <div data-testid="sidebar-shell" className="flex min-h-screen flex-col bg-canvas text-foreground font-sans">
       <Header start={headerStart} sync={sync} accountOpen={accountOpen} onToggleAccount={() => setAccountOpen((v) => !v)} />
-      {accountOpen && <AccountPanel email={auth?.email ?? null} sync={sync} onBack={() => setAccountOpen(false)} />}
+      {accountOpen && <AccountPanel email={auth?.email ?? null} sync={sync} onBack={() => setAccountOpen(false)} settings={settings} />}
       {active && (
         <>
           <ModuleTabs modules={modules} activeId={active.id} onSelect={setActiveId} hidden={accountOpen} />

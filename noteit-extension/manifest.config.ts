@@ -12,6 +12,9 @@ export default defineManifest({
   // Least privilege (NFR15, #20): only what the extension calls. No host_permissions: the content
   // script match below is the only host access, and Supabase is reached via CORS.
   permissions: ['storage', 'sidePanel', 'contextMenus', 'tabs', 'alarms'],
+  // Selection translation (spec "selection translation"): nothing is granted at install. Saving the
+  // provider in the side panel requests only that one origin, inside the click.
+  optional_host_permissions: ['https://*/*'],
   background: {
     service_worker: 'src/entries/background/index.ts',
     type: 'module',

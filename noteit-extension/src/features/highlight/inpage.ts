@@ -5,6 +5,7 @@ export {
   installFloatingMenuKeyGuard,
   isFloatingMenuOpen,
   isInsideFloatingMenu,
+  repositionFloatingMenu,
   showFloatingMenu,
   type DismissReason,
   type FloatingMenuHandlers,

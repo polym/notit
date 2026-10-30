@@ -40,7 +40,8 @@ test('the built manifest requests only the least-privilege permissions', () => {
   expect([...(manifest.permissions ?? [])].sort()).toEqual(['alarms', 'contextMenus', 'sidePanel', 'storage', 'tabs'])
   expect(manifest.host_permissions ?? []).toEqual([])
   expect(manifest.optional_permissions ?? []).toEqual([])
-  expect(manifest.optional_host_permissions ?? []).toEqual([])
+  // Translation provider origins are granted one at a time from the side panel, never at install.
+  expect(manifest.optional_host_permissions ?? []).toEqual(['https://*/*'])
 })
 
 test('login, create, edit, delete, sync and logout only reach Supabase and the test page', async ({

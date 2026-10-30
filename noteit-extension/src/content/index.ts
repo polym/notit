@@ -9,6 +9,7 @@ import { HandlerError, createRouter, onEvent, type Handlers } from '../core/mess
 import { ANCHOR_LOST_WINDOW_MS, isColorName, type HighlightRecord } from '../core/model';
 import type { PageEvents, PageRequests, PageState, PageSync, SiteChanged } from '../features/highlight/index.ts';
 import { mountShadowHost } from '../ui/inpage/index.ts';
+import type { TranslatePageRequests } from '../features/translate/inpage.ts';
 import {
   createRenderer,
   anchorQuery,
@@ -313,7 +314,14 @@ const flashHighlight = async (id: string): Promise<boolean> => {
 // Shortcut / context menu (Story 2.10): the service worker has already written the 'on' override,
 // so the site is on before the create. The selection is used as it is when the request arrives;
 // existing highlights are loaded only after the create so their repaint cannot drop the selection.
-const pageHandlers: Handlers<PageRequests> = {
+// One router per content script: a second one would answer the first one's types with bad_request.
+const pageHandlers: Handlers<PageRequests & TranslatePageRequests> = {
+  // Context menu "translate with NoteIt" (spec "selection translation"): works signed out and on
+  // sites that are off, and changes no site state.
+  async 'page/translateSelection'() {
+    return { shown: selectionManager.translateSelection() };
+  },
+
   async 'page/triggerHighlight'(req) {
     const color = typeof req === 'object' && req !== null && isColorName(req.color) ? req.color : 'yellow';
     const wasEnabled = isExtensionEnabled();
@@ -341,6 +349,6 @@ const pageHandlers: Handlers<PageRequests> = {
   },
 };
 
-createRouter<PageRequests>(pageHandlers).listen();
+createRouter<PageRequests & TranslatePageRequests>(pageHandlers).listen();
 
 console.log('[NoteIt] Managers Initialized');

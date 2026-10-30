@@ -18,12 +18,14 @@ export interface CommentEditorProps {
   autoFocus?: boolean
   /** Control at the start of the footer (highlight-popover: the delete button). */
   leading?: ComponentChildren
+  /** Footer button that appends `text` on a new line (floating menu: insert the translation). */
+  insert?: { label: string; text: string }
 }
 
 /** macOS shows the symbol chord; Windows / Linux show Ctrl+Enter. */
 const isMac = (): boolean => /mac/i.test(navigator.platform || navigator.userAgent)
 
-export function CommentEditor({ initial = '', onSave, onCancel, autoFocus = true, leading }: CommentEditorProps) {
+export function CommentEditor({ initial = '', onSave, onCancel, autoFocus = true, leading, insert }: CommentEditorProps) {
   const [value, setValue] = useState(initial)
   const ref = useRef<HTMLTextAreaElement>(null)
 
@@ -42,6 +44,10 @@ export function CommentEditor({ initial = '', onSave, onCancel, autoFocus = true
     }
   }
   const stop = (e: Event) => e.stopPropagation()
+  const append = (text: string) => {
+    setValue((v) => (v.trim() ? `${v.replace(/\s+$/, '')}\n${text}` : text))
+    ref.current?.focus()
+  }
 
   return (
     <div class="nt-editor">
@@ -59,6 +65,11 @@ export function CommentEditor({ initial = '', onSave, onCancel, autoFocus = true
       />
       <div class="nt-editor-foot">
         {leading}
+        {insert && (
+          <button type="button" class="nt-editor-insert" data-noteit-insert="" onClick={() => append(insert.text)}>
+            {insert.label}
+          </button>
+        )}
         <span class="nt-editor-hint">{isMac() ? strings.commentSaveHint : strings.commentSaveHintCtrl}</span>
         <button type="button" class="nt-save" onClick={() => onSave(value.trim())}>
           {strings.commentSave}
