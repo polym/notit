@@ -229,4 +229,65 @@ describe('MarkRenderer', () => {
       document.body.style.backgroundColor = ''
     }
   })
+
+  it('paints SVG text with a visible rect behind it and never wraps it in an HTML mark', () => {
+    // Shape of an inline diagram: SVG <text> rows after an HTML paragraph.
+    document.body.innerHTML =
+      '<p id="p">Intro paragraph.</p>' +
+      '<svg width="600" height="200" xmlns="http://www.w3.org/2000/svg">' +
+      '<text id="t1" x="20" y="40" font-size="13">Lint, types, tests across platforms, build and packaging. Red</text>' +
+      '<text id="t2" x="20" y="60" font-size="13"><tspan>blocks the merge</tspan></text>' +
+      '</svg>'
+    const t1 = document.getElementById('t1') as unknown as SVGTextElement
+    const t2 = document.getElementById('t2') as unknown as SVGTextElement
+    const widths = () => [t1.getBBox().width, t2.getBBox().width]
+    const before = widths()
+    const renderer = new MarkRenderer()
+
+    const svgOnly = document.createRange()
+    svgOnly.setStart(t1.firstChild!, 0)
+    svgOnly.setEnd(t2.querySelector('tspan')!.firstChild!, 'blocks the merge'.length)
+    renderer.paint('svg', svgOnly, STYLE)
+    expect(document.querySelectorAll('svg mark')).toHaveLength(0)
+    expect(widths()).toEqual(before)
+
+    // One rect per covered text node, drawn before its <text> (behind it), covering the text box.
+    const rects = Array.from(document.querySelectorAll<SVGRectElement>('rect[data-noteit-id="svg"]'))
+    expect(rects).toHaveLength(2)
+    expect(rects[0].nextElementSibling).toBe(t1)
+    expect(rects[1].nextElementSibling).toBe(t2)
+    for (const [rect, text] of [
+      [rects[0], t1],
+      [rects[1], t2],
+    ] as const) {
+      const r = rect.getBoundingClientRect()
+      const t = text.getBoundingClientRect()
+      expect(Math.abs(r.left - t.left)).toBeLessThan(1)
+      expect(Math.abs(r.width - t.width)).toBeLessThan(1)
+      expect(r.height).toBeGreaterThan(0)
+      const expected = document.createElement('i')
+      expected.style.backgroundColor = overlayColor('yellow')
+      expect(getComputedStyle(rect).fill).toBe(expected.style.backgroundColor)
+    }
+    expect(renderer.isPainted('svg')).toBe(true)
+    expect(renderer.boundingRect('svg')).not.toBeNull()
+    const hit = rects[0].getBoundingClientRect()
+    expect(renderer.hitTest(hit.left + 5, hit.top + hit.height / 2)).toBe('svg')
+
+    // A range starting in HTML and ending in SVG paints both parts.
+    const mixed = document.createRange()
+    mixed.setStart(document.getElementById('p')!.firstChild!, 6)
+    mixed.setEnd(t1.firstChild!, 4)
+    renderer.paint('mixed', mixed, STYLE)
+    expect(paintedText('mixed')).toBe('paragraph.')
+    expect(document.querySelectorAll('rect[data-noteit-id="mixed"]')).toHaveLength(1)
+    expect(document.querySelectorAll('svg mark')).toHaveLength(0)
+    expect(widths()).toEqual(before)
+
+    // Removing leaves the drawing as it was.
+    renderer.remove('svg')
+    renderer.remove('mixed')
+    expect(document.querySelectorAll('rect[data-noteit-id]')).toHaveLength(0)
+    expect(widths()).toEqual(before)
+  })
 })

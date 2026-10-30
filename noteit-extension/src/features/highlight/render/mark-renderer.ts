@@ -15,12 +15,18 @@ export const COMMENTED_CLASS = 'noteit-commented'
 /** Last fragment of a highlight, where the comment marker is drawn. */
 const LAST_CLASS = 'noteit-last'
 const FLASH_CLASS = 'noteit-flash'
+/** Class on the SVG <rect> drawn behind highlighted SVG text. */
+export const SVG_HIGHLIGHT_CLASS = 'noteit-svg-highlight'
+const SVG_NS = 'http://www.w3.org/2000/svg'
 const ID_ATTR = 'data-noteit-id'
 const STYLE_ID = 'noteit-highlight-styles'
 
 // mark.js only tests a text node's direct parent against `exclude`, so every TextIndex exclusion is
 // listed both for the element and for its descendants. mark.js adds its own built-ins on top.
-export const MARK_EXCLUDE: readonly string[] = TEXT_INDEX_EXCLUDE.flatMap((tag) => [tag, `${tag} *`])
+// SVG text stays indexed (it can be selected and anchored) but is never wrapped: an HTML <mark> inside
+// <text> / <tspan> is not rendered by SVG, so the wrapped text would vanish from the page. SVG text is
+// painted with a <rect> drawn behind its <text> element instead (svgHighlightRect).
+export const MARK_EXCLUDE: readonly string[] = [...TEXT_INDEX_EXCLUDE, 'svg'].flatMap((tag) => [tag, `${tag} *`])
 const MARKJS_BUILTIN_EXCLUDE = ['script', 'style', 'title', 'head', 'html']
 const MARK_SPACE_EXCLUDE = [...MARK_EXCLUDE, ...MARKJS_BUILTIN_EXCLUDE].join(',')
 
@@ -41,7 +47,7 @@ const STYLES = `
     box-shadow: inset 0 0 0 100vmax var(--noteit-hover) !important;
   }
   /* highlight-flash (DESIGN.md): the jump target darkens, then eases back. */
-  mark.${HIGHLIGHT_CLASS}.${FLASH_CLASS} {
+  mark.${HIGHLIGHT_CLASS}.${FLASH_CLASS}, rect.${SVG_HIGHLIGHT_CLASS}.${FLASH_CLASS} {
     filter: saturate(2.2) brightness(0.82);
     transition: filter 0.2s ease !important;
   }
@@ -56,10 +62,72 @@ const STYLES = `
     border-radius: 3px 3px 3px 0 !important;
     background: var(--noteit-marker) !important;
   }
+  /* SVG text: the overlay is a <rect> behind the <text>; clicks pass through to the host text. */
+  rect.${SVG_HIGHLIGHT_CLASS} {
+    pointer-events: none !important;
+  }
 `
 
-const isOwnMark = (node: Node | null): node is HTMLElement =>
-  node instanceof HTMLElement && node.localName === 'mark' && node.hasAttribute(ID_ATTR)
+const isOwnMark = (node: Node | null): node is Element =>
+  node instanceof Element && (node.localName === 'mark' || node.localName === 'rect') && node.hasAttribute(ID_ATTR)
+
+const isSvgHighlight = (el: Element): el is SVGRectElement => el instanceof SVGRectElement
+
+/** Part of a Range inside one SVG <text> element. */
+interface SvgSegment {
+  range: Range
+  text: SVGTextElement
+}
+
+/** The SVG text nodes a Range covers (HTML text and non-rendered SVG text such as <title> are skipped). */
+function svgTextSegments(range: Range): SvgSegment[] {
+  const root = range.commonAncestorContainer
+  const segments: SvgSegment[] = []
+  // A walker never returns its own root, so a Range inside one text node walks from its parent.
+  const walker = document.createTreeWalker(root instanceof Text ? root.parentNode! : root, NodeFilter.SHOW_TEXT)
+  for (let node = walker.nextNode() as Text | null; node; node = walker.nextNode() as Text | null) {
+    const parent = node.parentElement
+    const text = parent instanceof SVGElement ? parent.closest('text') : null
+    if (!(text instanceof SVGTextElement) || !range.intersectsNode(node)) continue
+    const part = document.createRange()
+    part.setStart(node, node === range.startContainer ? range.startOffset : 0)
+    part.setEnd(node, node === range.endContainer ? range.endOffset : node.data.length)
+    if (!part.collapsed) segments.push({ range: part, text })
+  }
+  return segments
+}
+
+/**
+ * Draws a <rect> behind one SVG text segment, in the user space of the <text>'s parent so it follows
+ * the drawing's transforms and viewBox scaling. Returns null when the segment has no rendered box.
+ */
+function svgHighlightRect({ range, text }: SvgSegment): SVGRectElement | null {
+  const parent = text.parentNode
+  const ctm = parent instanceof SVGGraphicsElement && text.isConnected ? parent.getScreenCTM() : null
+  const box = range.getBoundingClientRect()
+  if (!ctm || !box.width || !box.height) return null
+  const toUser = ctm.inverse()
+  const xs: number[] = []
+  const ys: number[] = []
+  for (const x of [box.left, box.right]) {
+    for (const y of [box.top, box.bottom]) {
+      const p = new DOMPoint(x, y).matrixTransform(toUser)
+      xs.push(p.x)
+      ys.push(p.y)
+    }
+  }
+  const x = Math.min(...xs)
+  const y = Math.min(...ys)
+  const rect = document.createElementNS(SVG_NS, 'rect')
+  const attrs = { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y, rx: 2, class: SVG_HIGHLIGHT_CLASS }
+  for (const [name, value] of Object.entries(attrs)) rect.setAttribute(name, String(value))
+  parent!.insertBefore(rect, text)
+  return rect
+}
+
+/** Sorts painted elements into document order (marks and SVG rects are created in separate passes). */
+const byDocumentOrder = (a: Element, b: Element) =>
+  a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
 
 /**
  * Offsets of a Range in mark.js's text space (text nodes under `root` whose parent is not excluded,
@@ -107,7 +175,7 @@ function sameRecord(a: MutationRecord, b: MutationRecord): boolean {
 
 export class MarkRenderer implements Renderer {
   readonly paintsElements = true
-  private readonly marks = new Map<string, HTMLElement[]>()
+  private readonly marks = new Map<string, Element[]>()
   // Last style per id, so a host theme change can repaint every mark without the caller.
   private readonly styles = new Map<string, HighlightStyle>()
   private readonly flashTimers = new Map<string, number>()
@@ -184,17 +252,41 @@ export class MarkRenderer implements Renderer {
     // Ranges are live and mark.js splits / replaces text nodes, which moves the boundaries of the
     // Ranges not painted yet. Read every Range as mark-space offsets while the DOM is untouched;
     // painting and unwrapping never change the text, so the offsets stay valid in any order.
-    const fixed = Array.from(items, (item) => ({ ...item, ...markSpaceOffsets(this.root, item.range) }))
+    // SVG text is not in mark space: its covered text nodes are read here too (mark.js never touches them).
+    const fixed = Array.from(items, (item) => ({
+      ...item,
+      ...markSpaceOffsets(this.root, item.range),
+      svg: svgTextSegments(item.range),
+    }))
     for (const item of fixed) this.remove(item.id)
     // One dark-host cache for the batch: marks sharing ancestors read each computed style once.
     const cache: DarkHostCache = new Map()
-    for (const item of fixed) this.paintOffsets(item.id, item.start, item.end, item.style, cache)
+    for (const item of fixed) this.paintOffsets(item.id, item.start, item.end, item.svg, item.style, cache)
   }
 
-  private paintOffsets(id: string, start: number, end: number, style: HighlightStyle, cache: DarkHostCache): void {
+  private paintOffsets(
+    id: string,
+    start: number,
+    end: number,
+    svg: SvgSegment[],
+    style: HighlightStyle,
+    cache: DarkHostCache,
+  ): void {
     this.remove(id)
-    if (end <= start) return
-    const painted: HTMLElement[] = []
+    const painted: Element[] = []
+    if (end > start) this.markText(id, start, end, painted)
+    for (const segment of svg) {
+      const rect = svgHighlightRect(segment)
+      if (!rect) continue
+      rect.setAttribute(ID_ATTR, id)
+      painted.push(rect)
+    }
+    if (painted.length === 0) return
+    this.marks.set(id, painted.sort(byDocumentOrder))
+    this.applyStyle(id, style, cache)
+  }
+
+  private markText(id: string, start: number, end: number, painted: Element[]): void {
     // markRanges is synchronous without the iframes option: `each` runs before it returns.
     new Mark(this.root).markRanges([{ start, length: end - start }], {
       element: 'mark',
@@ -206,9 +298,6 @@ export class MarkRenderer implements Renderer {
         painted.push(el)
       },
     })
-    if (painted.length === 0) return
-    this.marks.set(id, painted)
-    this.applyStyle(id, style, cache)
   }
 
   remove(id: string): void {
@@ -228,7 +317,7 @@ export class MarkRenderer implements Renderer {
     this.own(() => {
       for (const id of [...this.marks.keys()]) this.removeNow(id)
       // Marks this instance does not track (e.g. left by a previous content script after a reload).
-      this.unwrap(Array.from(this.root.querySelectorAll<HTMLElement>(`mark[${ID_ATTR}]`)))
+      this.unwrap(Array.from(this.root.querySelectorAll(`mark[${ID_ATTR}], rect[${ID_ATTR}]`)))
     })
   }
 
@@ -248,9 +337,22 @@ export class MarkRenderer implements Renderer {
   }
 
   hitTest(x: number, y: number): string | null {
-    const el = document.elementFromPoint(x, y)?.closest(`mark[${ID_ATTR}]`)
+    const target = document.elementFromPoint(x, y)
+    const el = target?.closest(`mark[${ID_ATTR}]`)
     const id = el?.getAttribute(ID_ATTR) ?? null
-    return id !== null && this.marks.has(id) ? id : null
+    if (id !== null && this.marks.has(id)) return id
+    // SVG rects ignore pointer events (the text above them stays clickable): test their boxes instead,
+    // only when the point is on the same drawing.
+    const svg = target?.closest('svg')
+    if (!svg) return null
+    for (const [key, painted] of this.marks) {
+      for (const rect of painted) {
+        if (!isSvgHighlight(rect) || !rect.isConnected || rect.ownerSVGElement !== svg) continue
+        const box = rect.getBoundingClientRect()
+        if (x >= box.left && x <= box.right && y >= box.top && y <= box.bottom) return key
+      }
+    }
+    return null
   }
 
   isOwnMutation(record: MutationRecord): boolean {
@@ -271,10 +373,16 @@ export class MarkRenderer implements Renderer {
     if (!painted) return
     this.styles.set(id, style)
     const solid = colors[solidToken(style.color)]
-    const last = painted[painted.length - 1]
+    // The comment marker is a ::after on the last HTML mark; SVG rects cannot carry it.
+    const last = painted.filter((el) => !isSvgHighlight(el)).at(-1)
     for (const el of painted) {
       // Read from the parent: the mark's own background is the overlay being set.
       const onDark = isOnDarkHost(el.parentElement, cache)
+      if (isSvgHighlight(el)) {
+        el.style.setProperty('fill', overlayColor(style.color, onDark), 'important')
+        continue
+      }
+      if (!(el instanceof HTMLElement)) continue
       el.style.setProperty('background-color', overlayColor(style.color, onDark), 'important')
       el.style.setProperty('--noteit-hover', `color-mix(in srgb, ${solid} 22%, transparent)`)
       el.style.setProperty('--noteit-marker', colors[onDark ? 'comment-marker-on-dark' : 'comment-marker'])
@@ -312,15 +420,20 @@ export class MarkRenderer implements Renderer {
     return true
   }
 
-  private connected(id: string): HTMLElement[] {
+  private connected(id: string): Element[] {
     return (this.marks.get(id) ?? []).filter((el) => el.isConnected)
   }
 
-  private unwrap(elements: HTMLElement[]): void {
+  private unwrap(elements: Element[]): void {
     const parents = new Set<Node>()
     for (const el of elements) {
       const parent = el.parentNode
       if (!parent) continue
+      // SVG rects only overlay text: removing them is enough.
+      if (isSvgHighlight(el)) {
+        parent.removeChild(el)
+        continue
+      }
       while (el.firstChild) parent.insertBefore(el.firstChild, el)
       parent.removeChild(el)
       parents.add(parent)
