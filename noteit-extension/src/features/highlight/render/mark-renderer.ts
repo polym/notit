@@ -47,7 +47,7 @@ const STYLES = `
     box-shadow: inset 0 0 0 100vmax var(--noteit-hover) !important;
   }
   /* highlight-flash (DESIGN.md): the jump target darkens, then eases back. */
-  mark.${HIGHLIGHT_CLASS}.${FLASH_CLASS} {
+  mark.${HIGHLIGHT_CLASS}.${FLASH_CLASS}, rect.${SVG_HIGHLIGHT_CLASS}.${FLASH_CLASS} {
     filter: saturate(2.2) brightness(0.82);
     transition: filter 0.2s ease !important;
   }
@@ -65,10 +65,6 @@ const STYLES = `
   /* SVG text: the overlay is a <rect> behind the <text>; clicks pass through to the host text. */
   rect.${SVG_HIGHLIGHT_CLASS} {
     pointer-events: none !important;
-    transition: filter 0.2s ease !important;
-  }
-  rect.${SVG_HIGHLIGHT_CLASS}.${FLASH_CLASS} {
-    filter: saturate(2.2) brightness(0.82);
   }
 `
 
@@ -77,39 +73,27 @@ const isOwnMark = (node: Node | null): node is Element =>
 
 const isSvgHighlight = (el: Element): el is SVGRectElement => el instanceof SVGRectElement
 
-/** Part of a Range inside one SVG text node. */
+/** Part of a Range inside one SVG <text> element. */
 interface SvgSegment {
-  node: Text
-  start: number
-  end: number
+  range: Range
   text: SVGTextElement
 }
 
-/** The <text> element that renders `node`, or null for HTML text and non-rendered SVG text (style, title). */
-function svgTextHost(node: Text): SVGTextElement | null {
-  const parent = node.parentElement
-  if (!(parent instanceof SVGElement)) return null
-  const text = parent.closest('text')
-  return text instanceof SVGTextElement ? text : null
-}
-
-/** The SVG text nodes a Range covers, with the covered offsets. */
+/** The SVG text nodes a Range covers (HTML text and non-rendered SVG text such as <title> are skipped). */
 function svgTextSegments(range: Range): SvgSegment[] {
   const root = range.commonAncestorContainer
   const segments: SvgSegment[] = []
-  const visit = (node: Text) => {
-    const text = svgTextHost(node)
-    if (!text || !range.intersectsNode(node)) return
-    const start = node === range.startContainer ? range.startOffset : 0
-    const end = node === range.endContainer ? range.endOffset : node.data.length
-    if (end > start) segments.push({ node, start, end, text })
+  // A walker never returns its own root, so a Range inside one text node walks from its parent.
+  const walker = document.createTreeWalker(root instanceof Text ? root.parentNode! : root, NodeFilter.SHOW_TEXT)
+  for (let node = walker.nextNode() as Text | null; node; node = walker.nextNode() as Text | null) {
+    const parent = node.parentElement
+    const text = parent instanceof SVGElement ? parent.closest('text') : null
+    if (!(text instanceof SVGTextElement) || !range.intersectsNode(node)) continue
+    const part = document.createRange()
+    part.setStart(node, node === range.startContainer ? range.startOffset : 0)
+    part.setEnd(node, node === range.endContainer ? range.endOffset : node.data.length)
+    if (!part.collapsed) segments.push({ range: part, text })
   }
-  if (root instanceof Text) {
-    visit(root)
-    return segments
-  }
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
-  for (let node = walker.nextNode() as Text | null; node; node = walker.nextNode() as Text | null) visit(node)
   return segments
 }
 
@@ -117,33 +101,27 @@ function svgTextSegments(range: Range): SvgSegment[] {
  * Draws a <rect> behind one SVG text segment, in the user space of the <text>'s parent so it follows
  * the drawing's transforms and viewBox scaling. Returns null when the segment has no rendered box.
  */
-function svgHighlightRect(segment: SvgSegment): SVGRectElement | null {
-  const parent = segment.text.parentNode
-  if (!segment.node.isConnected || !(parent instanceof SVGGraphicsElement)) return null
-  const ctm = parent.getScreenCTM()
-  if (!ctm) return null
-  const probe = document.createRange()
-  probe.setStart(segment.node, segment.start)
-  probe.setEnd(segment.node, segment.end)
-  const box = probe.getBoundingClientRect()
-  if (box.width === 0 || box.height === 0) return null
+function svgHighlightRect({ range, text }: SvgSegment): SVGRectElement | null {
+  const parent = text.parentNode
+  const ctm = parent instanceof SVGGraphicsElement && text.isConnected ? parent.getScreenCTM() : null
+  const box = range.getBoundingClientRect()
+  if (!ctm || !box.width || !box.height) return null
   const toUser = ctm.inverse()
-  const corners = [
-    [box.left, box.top],
-    [box.right, box.top],
-    [box.left, box.bottom],
-    [box.right, box.bottom],
-  ].map(([x, y]) => new DOMPoint(x, y).matrixTransform(toUser))
-  const xs = corners.map((p) => p.x)
-  const ys = corners.map((p) => p.y)
+  const xs: number[] = []
+  const ys: number[] = []
+  for (const x of [box.left, box.right]) {
+    for (const y of [box.top, box.bottom]) {
+      const p = new DOMPoint(x, y).matrixTransform(toUser)
+      xs.push(p.x)
+      ys.push(p.y)
+    }
+  }
+  const x = Math.min(...xs)
+  const y = Math.min(...ys)
   const rect = document.createElementNS(SVG_NS, 'rect')
-  rect.setAttribute('x', String(Math.min(...xs)))
-  rect.setAttribute('y', String(Math.min(...ys)))
-  rect.setAttribute('width', String(Math.max(...xs) - Math.min(...xs)))
-  rect.setAttribute('height', String(Math.max(...ys) - Math.min(...ys)))
-  rect.setAttribute('rx', '2')
-  rect.setAttribute('class', SVG_HIGHLIGHT_CLASS)
-  parent.insertBefore(rect, segment.text)
+  const attrs = { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y, rx: 2, class: SVG_HIGHLIGHT_CLASS }
+  for (const [name, value] of Object.entries(attrs)) rect.setAttribute(name, String(value))
+  parent!.insertBefore(rect, text)
   return rect
 }
 
