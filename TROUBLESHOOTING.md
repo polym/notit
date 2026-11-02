@@ -95,7 +95,7 @@ chrome.storage.local.get('highlights', (result) => {
 
 3. **测试数据库连接**
    
-   Supabase 地址与 anon key 在构建时通过 `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` 注入（见 `noteit-extension/.env.example`），扩展内不再有配置表单。登录后在侧栏确认摘抄列表能正常显示。
+   Supabase 地址与 anon key 在构建时通过 `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` 注入（见 `qingmark-extension/.env.example`），扩展内不再有配置表单。登录后在侧栏确认摘抄列表能正常显示。
 
 ## 测试批注功能
 

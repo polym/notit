@@ -4,6 +4,7 @@
 // exists (helpers/two-device.ts converge). Runs in the "two-device" Playwright project, which repeats
 // every scenario 3 times without retries (flake guard).
 // Needs the local Supabase stack (npm run db:start, env:local, build).
+import type { Route } from '@playwright/test'
 import { test as base, expect } from './fixtures/extension.ts'
 import { clickMenuButton, dragSelect } from './fixtures/page-actions.ts'
 import { controlServiceWorker } from '../helpers/sw-restart.ts'
@@ -236,17 +237,26 @@ test('side panel closed, service worker killed, browser closed and reopened: not
   await expect.poll(async () => (await cloud.rows()).length, { timeout: 10_000 }).toBe(1)
   await article.close()
 
-  // 2. Created, then the service worker is terminated before its debounced push.
+  // 2. Created, then the service worker is terminated before it could push.
   const page = await a.extensionPage()
+  // Opening the page starts a push + pull; let it finish so the block below catches only the new push.
+  await expect.poll(async () => (await a.syncStatus()).state, { timeout: 10_000 }).toBe('idle')
   const sw = await controlServiceWorker(a.context, a.extensionId, page)
+  // Fails the push RPC, so the 1.5s debounced push cannot race the precondition below. Only that one
+  // call is blocked (offline emulation does not reliably lift for the restarted worker).
+  const PUSH_RPC = '**/rest/v1/rpc/sync_push*'
+  const failPush = (route: Route) => route.abort('failed')
   let afterKill: HighlightRecord
   try {
+    await a.context.route(PUSH_RPC, failPush)
     afterKill = await a.call<HighlightRecord>('highlight/create', createReq(server.origin, 'sw-kill'))
     // Precondition: the item is still unpushed, so only the restarted worker can deliver it.
     expect((await a.local()).outbox.map((o) => o.id)).toContain(afterKill.id)
     await sw.stop()
+    await a.context.unroute(PUSH_RPC, failPush)
     await sw.wake({ kind: 'qingmark/request', type: 'sync/getStatus', req: undefined })
   } finally {
+    await a.context.unroute(PUSH_RPC, failPush).catch(() => undefined)
     await sw.dispose()
   }
   await expect.poll(async () => (await cloud.rows()).some((r) => r.id === afterKill.id), { timeout: 10_000 }).toBe(true)

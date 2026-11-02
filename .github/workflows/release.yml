@@ -19,12 +19,12 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version-file: noteit-extension/.nvmrc
+        node-version-file: qingmark-extension/.nvmrc
         cache: 'npm'
-        cache-dependency-path: noteit-extension/package-lock.json
+        cache-dependency-path: qingmark-extension/package-lock.json
         
     - name: Install dependencies
-      working-directory: ./noteit-extension
+      working-directory: ./qingmark-extension
       run: npm ci
       
     - name: Require live Supabase Variables
@@ -36,7 +36,7 @@ jobs:
         test -n "$VITE_SUPABASE_URL" && test -n "$VITE_SUPABASE_ANON_KEY" || { echo '::error::Set repository Variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (E4)'; exit 1; }
 
     - name: Build extension
-      working-directory: ./noteit-extension
+      working-directory: ./qingmark-extension
       # Live public values set by Polym in repository Variables (E4); never secrets.
       env:
         VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
@@ -44,11 +44,11 @@ jobs:
       run: npm run build
 
     - name: Scan build output
-      working-directory: ./noteit-extension
+      working-directory: ./qingmark-extension
       run: npm run scan:dist
       
     - name: Package extension
-      working-directory: ./noteit-extension
+      working-directory: ./qingmark-extension
       run: |
         cd dist
         zip -r ../qingmark-extension-${{ github.ref_name }}.zip .
@@ -57,7 +57,7 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        files: noteit-extension/qingmark-extension-${{ github.ref_name }}.zip
+        files: qingmark-extension/qingmark-extension-${{ github.ref_name }}.zip
         generate_release_notes: true  # generate release notes automatically
         draft: false
         prerelease: false

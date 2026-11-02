@@ -1,7 +1,7 @@
 // M1 release handoff (Story 2.24, architecture.md "Escalations"). Runs the pre-release checks an agent can
 // do offline and prints the ordered checklist of online steps Polym runs himself (E1-E6).
 //
-// Usage (Node 24 runs this TypeScript file natively, cwd = noteit-extension, after `npm run build`):
+// Usage (Node 24 runs this TypeScript file natively, cwd = qingmark-extension, after `npm run build`):
 //   node scripts/release-m1-checklist.ts [--backup <file>]
 //
 //   --backup <file>   count the rows of an E1 backup (migrate-legacy.ts --backup output) and print them
@@ -80,7 +80,7 @@ export function formatChecklist(facts: ReleaseFacts, errors: readonly string[]):
     '  machine meets the SC-3 create and open-side-panel budgets',
     errors.length === 0 ? '- result: READY' : `- result: NOT READY\n${errors.map((e) => `  - ${e}`).join('\n')}`,
     '',
-    '## Steps for Polym (run in this order, cwd = noteit-extension unless noted)',
+    '## Steps for Polym (run in this order, cwd = qingmark-extension unless noted)',
     '',
     '1. E1 backup of the live legacy table before db push (read-only, service role key from your shell only):',
     `   SUPABASE_URL=<live url> SUPABASE_SERVICE_ROLE_KEY=<key> node scripts/migrate-legacy.ts --backup ${backupFile} --source highlights`,

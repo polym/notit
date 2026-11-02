@@ -2,7 +2,7 @@
 // devices (debug.html -> "export local ids") with the cloud rows of the same account and prints the
 // missing count and the duplicate count (same text at the same position). 0 / 0 means consistent.
 //
-// Usage (Node 24 runs this TypeScript file natively, cwd = noteit-extension):
+// Usage (Node 24 runs this TypeScript file natively, cwd = qingmark-extension):
 //   SUPABASE_URL=... SUPABASE_ANON_KEY=... QINGMARK_EMAIL=... QINGMARK_PASSWORD=... \
 //     node scripts/verify-consistency.ts <device-a.json> <device-b.json>
 //   node scripts/verify-consistency.ts <device-a.json> <device-b.json> --cloud <snapshot.json>

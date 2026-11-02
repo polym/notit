@@ -1,5 +1,5 @@
 # Full merge gate (NFR23, architecture.md "Testing & CI Architecture"). Replaces build.yml.
-# Gate step order must match noteit-extension/scripts/verify.ts (asserted by scripts/verify.test.ts).
+# Gate step order must match qingmark-extension/scripts/verify.ts (asserted by scripts/verify.test.ts).
 # Uses only the local Supabase stack started in the runner; no hosted Supabase credentials or secrets.
 name: Verify
 
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 60
     defaults:
       run:
-        working-directory: noteit-extension
+        working-directory: qingmark-extension
     env:
       CI: 'true'
     steps:
@@ -33,9 +33,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: noteit-extension/.nvmrc
+          node-version-file: qingmark-extension/.nvmrc
           cache: npm
-          cache-dependency-path: noteit-extension/package-lock.json
+          cache-dependency-path: qingmark-extension/package-lock.json
 
       - name: install
         run: npm ci
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qingmark-extension
-          path: noteit-extension/qingmark-extension.zip
+          path: qingmark-extension/qingmark-extension.zip
           retention-days: 30
 
       - name: Upload test reports
@@ -103,9 +103,9 @@ jobs:
         with:
           name: test-reports
           path: |
-            noteit-extension/playwright-report
-            noteit-extension/test-results
-            noteit-extension/tests/corpus/corpus-report.json
-            noteit-extension/tests/perf/perf-report.json
+            qingmark-extension/playwright-report
+            qingmark-extension/test-results
+            qingmark-extension/tests/corpus/corpus-report.json
+            qingmark-extension/tests/perf/perf-report.json
           if-no-files-found: ignore
           retention-days: 14

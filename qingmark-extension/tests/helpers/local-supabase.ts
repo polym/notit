@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 
 // Repo root holds the Supabase CLI project (supabase/config.toml).
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
-const SUPABASE_BIN = resolve(REPO_ROOT, 'noteit-extension/node_modules/.bin/supabase')
+const SUPABASE_BIN = resolve(REPO_ROOT, 'qingmark-extension/node_modules/.bin/supabase')
 
 export interface LocalSupabaseEnv {
   url: string
