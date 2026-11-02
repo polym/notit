@@ -39,7 +39,7 @@ export function createRouter<M extends RequestMap>(handlers: Handlers<M>): Route
       return ok(await handler(req as M[RequestType<M>]['req'], sender))
     } catch (e) {
       if (e instanceof HandlerError) return err(e.code, e.message)
-      console.error(`[NoteIt] handler "${type}" failed:`, e)
+      console.error(`[QingMark] handler "${type}" failed:`, e)
       return err('internal', e instanceof Error ? e.message : String(e))
     }
   }

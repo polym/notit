@@ -21,7 +21,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /**
@@ -63,7 +63,7 @@ test('menu content: four named color chips (yellow first) and the comment button
   await expect(menu).toBeVisible()
   await expect(menu).toHaveAttribute('role', 'toolbar')
   // The menu lives in the Shadow host, not in the page body.
-  expect(await page.evaluate(() => document.body.querySelector('[data-noteit-menu]'))).toBeNull()
+  expect(await page.evaluate(() => document.body.querySelector('[data-qingmark-menu]'))).toBeNull()
   const labels = await menu.locator('button').evaluateAll((els) => els.map((el) => el.getAttribute('aria-label')))
   expect(labels).toEqual([
     strings.colorYellow,
@@ -104,7 +104,7 @@ test('a dot click creates that color; marks use the overlay color and inherit th
   const selected = await dragSelect(page, page.locator('#target'))
   await clickMenuButton(page, 2)
   await expect(page.locator(MENU)).toHaveCount(0)
-  const mark = page.locator('#target .noteit-highlight').first()
+  const mark = page.locator('#target .qingmark-highlight').first()
   await expect(mark).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   expect((await liveRecords(serviceWorker))[0]).toMatchObject({ text: selected, color: 'blue', comment: null })
@@ -160,7 +160,7 @@ test('the comment editor saves highlight and comment with Mod+Enter; keys never 
   await expect(page.locator(MENU)).toHaveCount(0)
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   expect((await liveRecords(serviceWorker))[0]).toMatchObject({ text: selected, color: 'orange', comment: 'a question' })
-  await expect(page.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#target .qingmark-highlight').first()).toBeVisible()
 
   expect(await hostKeys(page)).toEqual([])
   expect(externalRequests).toEqual([])

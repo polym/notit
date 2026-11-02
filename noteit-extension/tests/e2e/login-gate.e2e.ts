@@ -26,7 +26,7 @@ async function dispatchEntry(serviceWorker: Worker, url: string, entry: Entry): 
           chrome.contextMenus.onClicked as unknown as {
             dispatch(i: Partial<chrome.contextMenus.OnClickData>, t: chrome.tabs.Tab): void
           }
-        ).dispatch({ menuItemId: 'noteit-highlight', selectionText: '' }, tab)
+        ).dispatch({ menuItemId: 'qingmark-highlight', selectionText: '' }, tab)
       }
     },
     { target: url, via: entry },
@@ -142,7 +142,7 @@ for (const entry of ['shortcut', 'menu'] as const) {
     expect(typeof options.windowId).toBe('number')
     await page.waitForTimeout(500)
     expect(await liveRecords(serviceWorker)).toEqual([])
-    await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+    await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
     // The site was not turned on either.
     const overrides = await serviceWorker.evaluate(async () => (await chrome.storage.local.get('siteOverrides')).siteOverrides ?? null)
     expect(overrides).toBeNull()

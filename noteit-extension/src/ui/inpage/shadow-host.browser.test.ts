@@ -6,7 +6,7 @@ afterEach(() => {
 })
 
 describe('mountShadowHost', () => {
-  it('appends one <noteit-root> with an open shadow root at the end of documentElement', () => {
+  it('appends one <qingmark-root> with an open shadow root at the end of documentElement', () => {
     const a = mountShadowHost()!
     const b = mountShadowHost()
     expect(a).toBe(b)

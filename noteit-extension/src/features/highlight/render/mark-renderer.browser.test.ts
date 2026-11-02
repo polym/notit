@@ -15,7 +15,7 @@ afterEach(() => {
 })
 
 const paintedText = (id: string) =>
-  Array.from(document.querySelectorAll(`mark[data-noteit-id="${id}"]`))
+  Array.from(document.querySelectorAll(`mark[data-qingmark-id="${id}"]`))
     .map((m) => m.textContent)
     .join('')
 
@@ -159,7 +159,7 @@ describe('MarkRenderer', () => {
     expect(renderer.flash('x')).toBe(true)
     expect(renderer.flash('missing')).toBe(false)
     renderer.restyle('x', { color: 'blue', commented: true })
-    expect(document.querySelector('mark')!.classList.contains('noteit-commented')).toBe(true)
+    expect(document.querySelector('mark')!.classList.contains('qingmark-commented')).toBe(true)
     renderer.remove('x')
     await new Promise((r) => setTimeout(r, 0))
     expect(own.length).toBeGreaterThan(0)
@@ -188,7 +188,7 @@ describe('MarkRenderer', () => {
       // A mostly transparent ancestor is skipped; the dark block behind it decides.
       { id: 'n', range: range('nested'), style: STYLE },
     ])
-    const bg = (id: string) => document.querySelector<HTMLElement>(`mark[data-noteit-id="${id}"]`)!.style.backgroundColor
+    const bg = (id: string) => document.querySelector<HTMLElement>(`mark[data-qingmark-id="${id}"]`)!.style.backgroundColor
     const expected = (hex: string) => {
       const probe = document.createElement('i')
       probe.style.backgroundColor = hex
@@ -205,16 +205,16 @@ describe('MarkRenderer', () => {
     const index = createTextIndex()
     const at = index.text.indexOf('switch')
     renderer.paint('t', index.offsetsToRange(at, at + 6)!, { color: 'blue', commented: true })
-    const mark = () => document.querySelector<HTMLElement>('mark[data-noteit-id="t"]')!
+    const mark = () => document.querySelector<HTMLElement>('mark[data-qingmark-id="t"]')!
     const probe = (value: string, prop: 'backgroundColor' | 'color') => {
       const el = document.createElement('i')
       el.style[prop] = value
       return el.style[prop]
     }
-    const marker = () => mark().style.getPropertyValue('--noteit-marker')
+    const marker = () => mark().style.getPropertyValue('--qingmark-marker')
     expect(mark().style.backgroundColor).toBe(probe(overlayColor('blue'), 'backgroundColor'))
     expect(marker()).toBe(colors['comment-marker'])
-    expect(mark().classList.contains('noteit-last')).toBe(true)
+    expect(mark().classList.contains('qingmark-last')).toBe(true)
     expect(getComputedStyle(mark(), '::after').content).not.toBe('none')
     try {
       document.body.style.backgroundColor = 'rgb(28, 28, 30)'
@@ -252,7 +252,7 @@ describe('MarkRenderer', () => {
     expect(widths()).toEqual(before)
 
     // One rect per covered text node, drawn before its <text> (behind it), covering the text box.
-    const rects = Array.from(document.querySelectorAll<SVGRectElement>('rect[data-noteit-id="svg"]'))
+    const rects = Array.from(document.querySelectorAll<SVGRectElement>('rect[data-qingmark-id="svg"]'))
     expect(rects).toHaveLength(2)
     expect(rects[0].nextElementSibling).toBe(t1)
     expect(rects[1].nextElementSibling).toBe(t2)
@@ -280,14 +280,14 @@ describe('MarkRenderer', () => {
     mixed.setEnd(t1.firstChild!, 4)
     renderer.paint('mixed', mixed, STYLE)
     expect(paintedText('mixed')).toBe('paragraph.')
-    expect(document.querySelectorAll('rect[data-noteit-id="mixed"]')).toHaveLength(1)
+    expect(document.querySelectorAll('rect[data-qingmark-id="mixed"]')).toHaveLength(1)
     expect(document.querySelectorAll('svg mark')).toHaveLength(0)
     expect(widths()).toEqual(before)
 
     // Removing leaves the drawing as it was.
     renderer.remove('svg')
     renderer.remove('mixed')
-    expect(document.querySelectorAll('rect[data-noteit-id]')).toHaveLength(0)
+    expect(document.querySelectorAll('rect[data-qingmark-id]')).toHaveLength(0)
     expect(widths()).toEqual(before)
   })
 })

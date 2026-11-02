@@ -1,6 +1,6 @@
 // HighlightApiRenderer (architecture.md D7, M3 spike): paints Ranges with the CSS Custom Highlight API.
 // One Highlight per {color, commented} combination is registered in CSS.highlights (names prefixed
-// `noteit-`), and one stylesheet with the ::highlight() rules is injected into the host document. The
+// `qingmark-`), and one stylesheet with the ::highlight() rules is injected into the host document. The
 // host DOM is never changed, so isOwnMutation is always false. Selected by VITE_RENDERER=highlight-api
 // (render/create-renderer.ts); MarkRenderer stays the default per the Story 4.7 decision.
 // Light overlays only: ::highlight() rules are global per name, so a per-host dark variant would need a
@@ -11,15 +11,15 @@ import { colors } from '../../../ui/tokens/index.ts'
 import { HIGHLIGHT_FLASH_MS, type HighlightStyle, type PaintItem, type Renderer, type RendererRect } from './renderer.ts'
 
 /** Prefix of every Highlight name this renderer registers. */
-export const HIGHLIGHT_NAME_PREFIX = 'noteit-'
+export const HIGHLIGHT_NAME_PREFIX = 'qingmark-'
 /** Highlight used by flash(): drawn above the color highlights for HIGHLIGHT_FLASH_MS. */
-export const FLASH_HIGHLIGHT_NAME = 'noteit-flash'
-const STYLE_ID = 'noteit-highlight-api-styles'
+export const FLASH_HIGHLIGHT_NAME = 'qingmark-flash'
+const STYLE_ID = 'qingmark-highlight-api-styles'
 // Color highlights share one priority; the flash layer sits above them.
 const COLOR_PRIORITY = 0
 const FLASH_PRIORITY = 1
 
-/** Registry name of a {color, commented} combination, e.g. noteit-yellow or noteit-yellow-commented. */
+/** Registry name of a {color, commented} combination, e.g. qingmark-yellow or qingmark-yellow-commented. */
 export const highlightName = (style: HighlightStyle): string =>
   `${HIGHLIGHT_NAME_PREFIX}${style.color}${style.commented ? '-commented' : ''}`
 

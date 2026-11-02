@@ -43,7 +43,7 @@ export function createCache(area?: chrome.storage.StorageArea | null): Translate
       const raw: unknown = (await storage.get(STORAGE_KEYS.translateCache))[STORAGE_KEYS.translateCache]
       if (Array.isArray(raw)) for (const [k, v] of raw as [string, TranslateResult][]) entries.set(k, v)
     } catch (e) {
-      console.warn('[NoteIt] translate cache not restored', e)
+      console.warn('[QingMark] translate cache not restored', e)
     }
     return entries
   }
@@ -53,7 +53,7 @@ export function createCache(area?: chrome.storage.StorageArea | null): Translate
     try {
       await storage.set({ [STORAGE_KEYS.translateCache]: [...map] })
     } catch (e) {
-      console.warn('[NoteIt] translate cache not saved', e)
+      console.warn('[QingMark] translate cache not saved', e)
     }
   }
 

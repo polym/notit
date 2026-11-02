@@ -57,7 +57,7 @@ describe('login gate sign-in cache', () => {
     expect(cachedSignedIn()).toBe(false)
     await vi.waitFor(() =>
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-        kind: 'noteit/event',
+        kind: 'qingmark/event',
         type: 'page/sync',
         payload: expect.objectContaining({ canonicalUrl: PAGE, signedIn: false }),
       }),

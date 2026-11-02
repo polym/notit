@@ -39,7 +39,7 @@ const rangesIn = (name: string) => {
 }
 
 describe('HighlightApiRenderer', () => {
-  it('registers one Highlight per {color, commented} plus noteit-flash and never changes the DOM', async () => {
+  it('registers one Highlight per {color, commented} plus qingmark-flash and never changes the DOM', async () => {
     document.body.innerHTML = '<p>alpha <b>beta</b> gamma delta</p>'
     const before = document.body.innerHTML
     const renderer = new HighlightApiRenderer()
@@ -48,24 +48,24 @@ describe('HighlightApiRenderer', () => {
     observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true })
     renderer.paint('a', rangeOf('alpha beta'), STYLE)
     renderer.paint('b', rangeOf('gamma'), { color: 'blue', commented: true })
-    const names = [...CSS.highlights.keys()].filter((n) => n.startsWith('noteit-'))
+    const names = [...CSS.highlights.keys()].filter((n) => n.startsWith('qingmark-'))
     expect(names).toHaveLength(9)
     expect(names).toContain(FLASH_HIGHLIGHT_NAME)
-    expect(rangesIn('noteit-yellow')).toEqual(['alpha beta'])
-    expect(rangesIn('noteit-blue-commented')).toEqual(['gamma'])
+    expect(rangesIn('qingmark-yellow')).toEqual(['alpha beta'])
+    expect(rangesIn('qingmark-blue-commented')).toEqual(['gamma'])
     renderer.restyle('b', { color: 'green', commented: false })
-    expect(rangesIn('noteit-blue-commented')).toEqual([])
+    expect(rangesIn('qingmark-blue-commented')).toEqual([])
     expect(rangesIn(highlightName({ color: 'green', commented: false }))).toEqual(['gamma'])
     renderer.clear()
-    expect(rangesIn('noteit-yellow')).toEqual([])
+    expect(rangesIn('qingmark-yellow')).toEqual([])
     await new Promise((r) => setTimeout(r, 0))
     observer.disconnect()
     expect(seen).toEqual([])
     expect(document.body.innerHTML).toBe(before)
     expect(renderer.isOwnMutation()).toBe(false)
     // One host stylesheet with the ::highlight() rules.
-    expect(document.querySelectorAll('#noteit-highlight-api-styles')).toHaveLength(1)
-    expect(document.getElementById('noteit-highlight-api-styles')!.textContent).toContain('::highlight(noteit-yellow-commented)')
+    expect(document.querySelectorAll('#qingmark-highlight-api-styles')).toHaveLength(1)
+    expect(document.getElementById('qingmark-highlight-api-styles')!.textContent).toContain('::highlight(qingmark-yellow-commented)')
   })
 
   it('paints the same text resolveAnchor returns (random ranges, same TextIndex)', () => {
@@ -83,7 +83,7 @@ describe('HighlightApiRenderer', () => {
       if (!anchor) continue
       const hit = resolveAnchor(createTextIndex(), anchor)!
       renderer.paint('h', hit.range, STYLE)
-      expect(rangesIn('noteit-yellow')).toEqual([anchor.exact])
+      expect(rangesIn('qingmark-yellow')).toEqual([anchor.exact])
     }
     renderer.clear()
   })
@@ -110,7 +110,7 @@ describe('HighlightApiRenderer', () => {
     expect(at('four', 1)).toBe('cross')
   })
 
-  it('flash adds the Range to noteit-flash for HIGHLIGHT_FLASH_MS', async () => {
+  it('flash adds the Range to qingmark-flash for HIGHLIGHT_FLASH_MS', async () => {
     document.body.innerHTML = '<p>flash me here</p>'
     const renderer = new HighlightApiRenderer()
     renderer.paint('f', rangeOf('flash me'), STYLE)

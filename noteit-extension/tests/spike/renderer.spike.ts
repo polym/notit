@@ -1,6 +1,6 @@
 // Renderer spike measurements (Story 4.6): measures S1-S7 for the engine dist/ was built with
 // (SPIKE_ENGINE = VITE_RENDERER, default mark) and writes spike-results/<engine>.json. Every reading is
-// renderer-agnostic: painted highlights are read from <mark data-noteit-id> elements (mark) or from
+// renderer-agnostic: painted highlights are read from <mark data-qingmark-id> elements (mark) or from
 // CSS.highlights (highlight-api; the registry belongs to the document, so the main world sees the
 // content script's ranges). Run through scripts/run-spike.ts, which builds both engines and merges
 // the runs into tests/spike/spike-report.json.
@@ -47,7 +47,7 @@ interface PaintedGroup {
   range: Range
   text: string
 }
-/** Main-world probe (installed by an init script; kept off window.__noteit*, which the extension owns). */
+/** Main-world probe (installed by an init script; kept off window.__qingmark*, which the extension owns). */
 interface SpikeProbe {
   engine(): string | null
   groups(): PaintedGroup[]
@@ -64,7 +64,7 @@ interface SpikeProbe {
 type SpikeWindow = Window & { __spike: SpikeProbe }
 
 function installProbeInPage(): void {
-  const EXCLUDE = 'script,style,noscript,template,textarea,noteit-root'
+  const EXCLUDE = 'script,style,noscript,template,textarea,qingmark-root'
   const w = window as unknown as SpikeWindow
   /** Indexed text of a Range (same exclusions as the TextIndex; never Range.toString()). */
   const textOf = (range: Range): string => {
@@ -83,12 +83,12 @@ function installProbeInPage(): void {
     }
     return out
   }
-  const engine = () => document.querySelector('noteit-root')?.getAttribute('data-noteit-renderer') ?? null
+  const engine = () => document.querySelector('qingmark-root')?.getAttribute('data-qingmark-renderer') ?? null
   const groups = (): PaintedGroup[] => {
     const out: PaintedGroup[] = []
     if (engine() === 'highlight-api') {
       CSS.highlights.forEach((highlight, name) => {
-        if (!name.startsWith('noteit-') || name === 'noteit-flash') return
+        if (!name.startsWith('qingmark-') || name === 'qingmark-flash') return
         highlight.forEach((r) => {
           const range = r as Range
           if (range.collapsed) return
@@ -99,8 +99,8 @@ function installProbeInPage(): void {
       return out
     }
     const byId = new Map<string, Element[]>()
-    for (const el of Array.from(document.querySelectorAll('mark[data-noteit-id]'))) {
-      const id = el.getAttribute('data-noteit-id')!
+    for (const el of Array.from(document.querySelectorAll('mark[data-qingmark-id]'))) {
+      const id = el.getAttribute('data-qingmark-id')!
       byId.set(id, [...(byId.get(id) ?? []), el])
     }
     for (const els of byId.values()) {
@@ -166,8 +166,8 @@ function installProbeInPage(): void {
   }
   const flashing = () =>
     engine() === 'highlight-api'
-      ? (CSS.highlights.get('noteit-flash')?.size ?? 0) > 0
-      : document.querySelector('mark.noteit-flash') !== null
+      ? (CSS.highlights.get('qingmark-flash')?.size ?? 0) > 0
+      : document.querySelector('mark.qingmark-flash') !== null
   w.__spike = { engine, groups, painted: () => groups().map((g) => g.text), classify, pointOf, flashing, longTasks: [] }
   if (typeof PerformanceObserver !== 'undefined' && PerformanceObserver.supportedEntryTypes?.includes('longtask')) {
     new PerformanceObserver((list) => {
@@ -185,7 +185,7 @@ const probe = <T>(page: Page, fn: (p: SpikeProbe) => T) =>
 const paintedCount = (page: Page) => probe(page, (p) => p.groups().length)
 
 async function waitForSite(page: Page): Promise<void> {
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 async function settle(page: Page): Promise<void> {
@@ -230,7 +230,7 @@ function pageRequest(serviceWorker: Worker, url: string, type: string, req: unkn
     async ({ url, type, req }) => {
       const tab = (await chrome.tabs.query({})).find((t) => t.url === url)
       if (tab?.id === undefined) throw new Error(`no tab for ${url}`)
-      return chrome.tabs.sendMessage(tab.id, { kind: 'noteit/request', type, req })
+      return chrome.tabs.sendMessage(tab.id, { kind: 'qingmark/request', type, req })
     },
     { url, type, req },
   )
@@ -569,7 +569,7 @@ test(`renderer spike S1-S7 (${ENGINE})`, async ({ context, extensionId, serviceW
       await page.goto(hitUrl)
       await waitForSite(page)
       // The build flag reached the content script.
-      expect(await page.locator('noteit-root').getAttribute('data-noteit-renderer')).toBe(ENGINE)
+      expect(await page.locator('qingmark-root').getAttribute('data-qingmark-renderer')).toBe(ENGINE)
       await expect.poll(() => paintedCount(page)).toBe(HIT_HIGHLIGHTS.length)
       const after = await rects(page)
       const layout = {

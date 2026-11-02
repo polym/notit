@@ -9,26 +9,26 @@ import type { HighlightPatch } from '../shared/protocol.ts'
 // anchorStatus when the highlight cannot be shown.
 export const jumpTo = async (id: string): Promise<void> => {
   const result = await client.send('nav/jumpTo', { id })
-  if (!result.ok) console.warn('[NoteIt] nav/jumpTo failed:', result.error.code)
+  if (!result.ok) console.warn('[QingMark] nav/jumpTo failed:', result.error.code)
 }
 
 /** Soft delete through the service worker; true when the record was deleted. */
 export const remove = async (id: string): Promise<boolean> => {
   const result = await client.send('highlight/delete', { id })
-  if (!result.ok) console.warn('[NoteIt] highlight/delete failed:', result.error.code)
+  if (!result.ok) console.warn('[QingMark] highlight/delete failed:', result.error.code)
   return result.ok
 }
 
 /** Clears the soft delete (undo); the record is re-stamped by the service worker. */
 export const restore = async (id: string): Promise<boolean> => {
   const result = await client.send('highlight/restore', { id })
-  if (!result.ok) console.warn('[NoteIt] highlight/restore failed:', result.error.code)
+  if (!result.ok) console.warn('[QingMark] highlight/restore failed:', result.error.code)
   return result.ok
 }
 
 const update = async (id: string, patch: HighlightPatch): Promise<boolean> => {
   const result = await client.send('highlight/update', { id, patch })
-  if (!result.ok) console.warn('[NoteIt] highlight/update failed:', result.error.code)
+  if (!result.ok) console.warn('[QingMark] highlight/update failed:', result.error.code)
   return result.ok
 }
 

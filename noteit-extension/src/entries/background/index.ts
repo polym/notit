@@ -26,7 +26,7 @@ import {
 } from '../../features/highlight/index.ts'
 import { createTranslateMenu, registerTranslateMenu, translateHandlers, type TranslateRequests } from '../../features/translate/index.ts'
 
-console.log('[NoteIt] Service Worker Loaded')
+console.log('[QingMark] Service Worker Loaded')
 
 // Login gate (Story 2.15): the highlight feature reads sign-in state through core/auth, and every
 // sign-in change updates its cache, the tabs' selection menus and the badges.

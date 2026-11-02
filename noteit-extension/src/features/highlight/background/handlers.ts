@@ -114,7 +114,7 @@ async function stampedWrite<T>(op: string, run: () => Promise<T>): Promise<T> {
   try {
     await beforeLocalWrite()
   } catch (error) {
-    console.error('[NoteIt] before-write hook failed:', error)
+    console.error('[QingMark] before-write hook failed:', error)
   }
   return guardDb(op, run)
 }
@@ -147,7 +147,7 @@ function changed(record: HighlightRecord): HighlightRecord {
   try {
     afterLocalCommit()
   } catch (error) {
-    console.error('[NoteIt] after-commit hook failed:', error)
+    console.error('[QingMark] after-commit hook failed:', error)
   }
   return record
 }

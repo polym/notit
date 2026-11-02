@@ -36,7 +36,7 @@ describe('local supabase (v2 schema)', () => {
   it('rejects public sign-up', async () => {
     const supabase = newClient(env)
     const { data, error } = await supabase.auth.signUp({
-      email: `signup-${crypto.randomUUID()}@noteit.test`,
+      email: `signup-${crypto.randomUUID()}@qingmark.test`,
       password: 'some-password-123',
     })
     expect(error).not.toBeNull()

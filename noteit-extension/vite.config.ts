@@ -12,7 +12,7 @@ const DEBUG_HTML_SOURCE = 'src/entries/debug/debug.html'
 // paths in the emitted HTML are absolute (/assets/...), so moving the file does not break them.
 function debugPageAtRoot(): Plugin {
   return {
-    name: 'noteit-debug-page-at-root',
+    name: 'qingmark-debug-page-at-root',
     apply: 'build',
     enforce: 'post',
     generateBundle(_options, bundle) {

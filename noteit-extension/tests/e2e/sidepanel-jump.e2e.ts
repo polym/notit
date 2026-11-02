@@ -10,7 +10,7 @@ import { strings } from '../../src/ui/strings.ts'
 import { expandGroup, openAllSites } from './fixtures/all-sites.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt long article'
+const TITLE = 'QingMark long article'
 const TARGET = 'The jump target lives far below the fold.'
 const GHOST = 'This sentence is not on the page at all.'
 const FLASH_MS = 1200
@@ -30,7 +30,7 @@ async function panelItem(panel: Page, text: string): Promise<Locator> {
 /** Whether the first span of the highlight is inside the viewport. */
 function inViewport(page: Page, id: string): Promise<boolean> {
   return page
-    .locator(`[data-noteit-id="${id}"]`)
+    .locator(`[data-qingmark-id="${id}"]`)
     .first()
     .evaluate((el) => {
       const r = el.getBoundingClientRect()
@@ -40,12 +40,12 @@ function inViewport(page: Page, id: string): Promise<boolean> {
 
 /** Waits for the flash to start, then checks that it ends about FLASH_MS later. */
 async function expectFlash(page: Page, id: string): Promise<void> {
-  const span = page.locator(`[data-noteit-id="${id}"]`).first()
-  await expect(span).toHaveClass(/noteit-flash/)
+  const span = page.locator(`[data-qingmark-id="${id}"]`).first()
+  await expect(span).toHaveClass(/qingmark-flash/)
   const startedAt = Date.now()
   // Darker while flashing: the filter is set on top of the normal highlight style.
   await expect.poll(() => span.evaluate((el) => getComputedStyle(el).filter)).not.toBe('none')
-  await expect(span).not.toHaveClass(/noteit-flash/, { timeout: FLASH_MS + 2000 })
+  await expect(span).not.toHaveClass(/qingmark-flash/, { timeout: FLASH_MS + 2000 })
   expect(Date.now() - startedAt).toBeGreaterThanOrEqual(FLASH_MS - 300)
   await expect.poll(() => span.evaluate((el) => getComputedStyle(el).filter)).toBe('none')
 }
@@ -89,7 +89,7 @@ test('clicking an item scrolls to its highlight and flashes it, reusing or openi
   const opened = context.waitForEvent('page')
   await item.getByTestId('highlight-text').click()
   const page = await opened
-  await expect(page.locator(`[data-noteit-id="${target.id}"]`).first()).toBeAttached()
+  await expect(page.locator(`[data-qingmark-id="${target.id}"]`).first()).toBeAttached()
   await expectFlash(page, target.id)
   await expect.poll(() => inViewport(page, target.id)).toBe(true)
   const tabCount = context.pages().length
@@ -128,7 +128,7 @@ test('clicking an item switches to the page open in another window', async ({
   const opened = context.waitForEvent('page')
   await openWindow(serviceWorker, url)
   const page = await opened
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   const windows = await serviceWorker.evaluate(async () => (await chrome.windows.getAll()).length)
   expect(windows).toBeGreaterThanOrEqual(2)
   const tabCount = context.pages().length
@@ -189,7 +189,7 @@ test('an item not found within 3s turns lost, and a lost item does not jump', as
   expect(await page.evaluate(() => window.scrollY)).toBe(scrollBefore)
   expect(context.pages().length).toBe(pagesBefore)
   expect(articleTabs(context.pages())).toHaveLength(1)
-  expect(await page.locator('.noteit-flash').count()).toBe(0)
+  expect(await page.locator('.qingmark-flash').count()).toBe(0)
 
   // Lost, page closed: clicking does not open a new tab.
   await page.close()

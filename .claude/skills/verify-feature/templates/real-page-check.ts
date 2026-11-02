@@ -1,4 +1,4 @@
-// Real-page check for the built NoteIt extension. Copy into noteit-extension/ (it imports test helpers)
+// Real-page check for the built QingMark extension. Copy into noteit-extension/ (it imports test helpers)
 // and run with Node 24 while the local Supabase stack is up:
 //   node tmp-real-page-check.ts --dist dist --url <page> --site <siteKey> --text <start text> \
 //     [--text-end <end text>] --out <path prefix for screenshots>
@@ -33,7 +33,7 @@ const endText = values['text-end'] ?? values.text
 const out = resolve(values.out!)
 mkdirSync(dirname(out), { recursive: true })
 
-const PAINTED = '[data-noteit-id]:not(noteit-root *)'
+const PAINTED = '[data-qingmark-id]:not(qingmark-root *)'
 
 /** Viewport points at the first character of `start` and the last character of `end` (visible text nodes only). */
 const dragPoints = (page: Page) =>
@@ -103,7 +103,7 @@ async function clipAround(page: Page) {
 }
 
 clearCloudRows(TEST_USERS.a.email)
-const dir = mkdtempSync(join(tmpdir(), 'noteit-real-'))
+const dir = mkdtempSync(join(tmpdir(), 'qingmark-real-'))
 const context = await chromium.launchPersistentContext(dir, {
   channel: 'chromium',
   headless: true,
@@ -121,7 +121,7 @@ try {
 
   const page = await context.newPage()
   await page.goto(values.url, { waitUntil: 'networkidle' })
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 
   const widthsBefore = await hostWidths(page)
   const clip = await clipAround(page)
@@ -133,7 +133,7 @@ try {
   await page.mouse.move(pts.end.x, pts.end.y, { steps: 15 })
   await page.mouse.up()
   const selected = await page.evaluate(() => window.getSelection()?.toString() ?? '')
-  const dot = page.locator('noteit-root [data-noteit-menu] button').first()
+  const dot = page.locator('qingmark-root [data-qingmark-menu] button').first()
   await dot.waitFor({ state: 'visible' })
   const db = (await dot.boundingBox())!
   await page.mouse.click(db.x + db.width / 2, db.y + db.height / 2)
@@ -146,13 +146,13 @@ try {
 
   await page.mouse.click(pts.start.x + 10, pts.start.y)
   const popover = await page
-    .locator('noteit-root [data-noteit-popover]')
+    .locator('qingmark-root [data-qingmark-popover]')
     .waitFor({ state: 'visible', timeout: 2000 })
     .then(() => true, () => false)
   await page.screenshot({ path: `${out}-popover.png`, clip })
 
   await page.reload({ waitUntil: 'networkidle' })
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await page.waitForTimeout(1500)
   const paintedReload = await painted(page)
   const widthsReload = await hostWidths(page)

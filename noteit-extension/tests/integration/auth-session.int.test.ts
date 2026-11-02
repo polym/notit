@@ -70,6 +70,6 @@ describe('core/auth (local Supabase)', () => {
     await logout()
     expect(store.has('sb-auth')).toBe(false)
     expect(await getAuthState()).toEqual({ signedIn: false, email: null })
-    expect(sent).toContainEqual({ kind: 'noteit/event', type: 'auth/changed', payload: { signedIn: false, email: null } })
+    expect(sent).toContainEqual({ kind: 'qingmark/event', type: 'auth/changed', payload: { signedIn: false, email: null } })
   })
 })

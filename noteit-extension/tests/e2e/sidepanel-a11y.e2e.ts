@@ -16,8 +16,8 @@ import { strings } from '../../src/ui/strings.ts'
 import { colors } from '../../src/ui/tokens/index.ts'
 
 const SITE = '127.0.0.1'
-const ARTICLE_TITLE = 'NoteIt smoke article'
-const LONG_TITLE = 'NoteIt long article'
+const ARTICLE_TITLE = 'QingMark smoke article'
+const LONG_TITLE = 'QingMark long article'
 const RPC = '**/rest/v1/rpc/sync_push'
 // Same context length as src/content/SelectionManager.ts getSelectionContext.
 const CONTEXT_LENGTH = 64
@@ -69,7 +69,7 @@ async function waitForContentScript(serviceWorker: Worker, url: string): Promise
         const tab = (await chrome.tabs.query({})).find((t) => t.url === target)
         if (tab?.id === undefined) return false
         try {
-          const res = (await chrome.tabs.sendMessage(tab.id, { kind: 'noteit/request', type: 'page/ping', req: {} })) as { ok?: boolean }
+          const res = (await chrome.tabs.sendMessage(tab.id, { kind: 'qingmark/request', type: 'page/ping', req: {} })) as { ok?: boolean }
           return res?.ok === true
         } catch {
           return false

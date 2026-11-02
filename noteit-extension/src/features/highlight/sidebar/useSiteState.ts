@@ -59,7 +59,7 @@ export function useSiteState(url: string): SiteState {
     if (!site) return { url, reach: 'unsupported' as Reach, enabled: null }
     const [reach, result] = await Promise.all([reachActiveTab(url), client.send('page/getState', { url })])
     if (!result.ok) {
-      console.warn('[NoteIt] page/getState failed:', result.error.code)
+      console.warn('[QingMark] page/getState failed:', result.error.code)
       return { url, reach, enabled: null }
     }
     return { url, reach, enabled: result.data.enabled }
@@ -92,7 +92,7 @@ export function useSiteState(url: string): SiteState {
   const setEnabled = async (enabled: boolean) => {
     if (!site) return
     const result = await client.send('site/setEnabled', { siteKey: site, enabled })
-    if (!result.ok) console.warn('[NoteIt] site/setEnabled failed:', result.error.code)
+    if (!result.ok) console.warn('[QingMark] site/setEnabled failed:', result.error.code)
     // site/changed also triggers a re-read; this one covers a missed event.
     setVersion((v) => v + 1)
   }

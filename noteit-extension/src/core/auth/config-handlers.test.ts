@@ -34,7 +34,7 @@ function storeSignedInSession() {
       token_type: 'bearer',
       expires_in: 3600,
       expires_at: expiresAt,
-      user: { id: 'u1', email: 'user-a@noteit.test', aud: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: '' },
+      user: { id: 'u1', email: 'user-a@qingmark.test', aud: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: '' },
     }),
   )
 }

@@ -15,7 +15,7 @@ afterEach(() => {
   observer?.stop()
   observer = null
   document.body.replaceChildren()
-  document.querySelector('noteit-root')?.remove()
+  document.querySelector('qingmark-root')?.remove()
 })
 
 function record(id: string, text: string): HighlightRecord {
@@ -68,14 +68,14 @@ describe('PageObserver', () => {
     expect(changes).toHaveLength(0)
   })
 
-  it('ignores the shadow host and NoteIt nodes but reacts to page changes after a 300ms quiet period', async () => {
+  it('ignores the shadow host and QingMark nodes but reacts to page changes after a 300ms quiet period', async () => {
     const { changes, observer } = setup()
-    const host = document.createElement('noteit-root')
+    const host = document.createElement('qingmark-root')
     document.body.append(host)
     await wait(0)
     const before = observer.foreignMutations
     host.append(document.createElement('div'))
-    const error = Object.assign(document.createElement('div'), { id: 'noteit-error' })
+    const error = Object.assign(document.createElement('div'), { id: 'qingmark-error' })
     document.body.append(error)
     await settle()
     expect(observer.foreignMutations).toBe(before)
@@ -106,7 +106,7 @@ describe('PageObserver', () => {
     expect(pending.map((r) => r.id)).toEqual(['h4'])
     const result = await runRestorePass(pending, { renderer, styleOf: () => STYLE })
     expect(result.painted).toBe(1)
-    const marks = Array.from(p.querySelectorAll('mark[data-noteit-id="h4"]'))
+    const marks = Array.from(p.querySelectorAll('mark[data-qingmark-id="h4"]'))
     expect(marks.map((m) => m.textContent).join('')).toBe('says something number 4.')
   })
 
@@ -139,7 +139,7 @@ describe('PageObserver', () => {
     const result = await runRestorePass(pending, { renderer, styleOf: () => STYLE, onIndexBuilt: () => builds++ })
     expect(result).toMatchObject({ resolved: 1, painted: 1 })
     expect(builds).toBe(1)
-    expect(fresh.querySelector('mark[data-noteit-id="h7"]')).not.toBeNull()
+    expect(fresh.querySelector('mark[data-qingmark-id="h7"]')).not.toBeNull()
     expect(records.every((r) => renderer.isPainted(r.id))).toBe(true)
   })
 })
@@ -183,7 +183,7 @@ describe('runRestorePass', () => {
     })
     expect(result).toMatchObject({ resolved: 30, painted: 29, completed: true })
     expect(renderer.isPainted('h9')).toBe(false)
-    expect(document.querySelector('mark[data-noteit-id="h9"]')).toBeNull()
+    expect(document.querySelector('mark[data-qingmark-id="h9"]')).toBeNull()
   })
 
   it('paints overlapping and adjacent highlights correctly across chunks', async () => {
@@ -197,7 +197,7 @@ describe('runRestorePass', () => {
     expect(result.completed).toBe(true)
     expect(result.painted).toBe(records.length)
     for (const r of records) {
-      const marks = Array.from(document.querySelectorAll(`mark[data-noteit-id="${r.id}"]`))
+      const marks = Array.from(document.querySelectorAll(`mark[data-qingmark-id="${r.id}"]`))
       expect(marks.map((m) => m.textContent).join('')).toBe(r.text)
     }
   })

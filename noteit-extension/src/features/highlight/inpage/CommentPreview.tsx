@@ -40,7 +40,7 @@ export function CommentPreview({ anchor, comment }: CommentPreviewProps) {
     <div
       ref={ref}
       class="nt-comment-preview"
-      data-noteit-preview=""
+      data-qingmark-preview=""
       data-side={position?.side ?? 'below'}
       // The title is drawn by CSS from this attribute, so the element's text is the comment alone.
       data-title={strings.commentPreviewTitle}

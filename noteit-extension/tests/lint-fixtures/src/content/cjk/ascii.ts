@@ -1,2 +1,2 @@
 // expect: none
-export const label = 'NoteIt'
+export const label = 'QingMark'

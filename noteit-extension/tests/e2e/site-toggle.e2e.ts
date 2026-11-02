@@ -17,7 +17,7 @@ import { MENU, dragSelect } from './fixtures/page-actions.ts'
 import { strings } from '../../src/ui/strings.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 // Same context length as src/content/SelectionManager.ts getSelectionContext.
 const CONTEXT_LENGTH = 64
 const TARGETS: ExpectedHighlight[] = [
@@ -37,7 +37,7 @@ const MINIMAL_PDF = [
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Badge text of the tab whose URL is exactly `url`, read in the service worker. */
@@ -86,7 +86,7 @@ test('site off: empty state with the turn-on button, hidden item-count; turning 
   await page.goto(url)
   await page.waitForLoadState('load')
   await page.waitForTimeout(300)
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
 
   const panel = await openSidePanel()
   await page.bringToFront()
@@ -108,7 +108,7 @@ test('site off: empty state with the turn-on button, hidden item-count; turning 
   await expect(header.getByTestId('site-toggle-text')).toHaveText(strings.siteOn)
   await expect(view.getByTestId('item-count')).toHaveText(strings.itemCount(2))
   await expect(view.getByTestId('highlight-item')).toHaveCount(2)
-  await expect(page.locator('.noteit-highlight').first()).toBeAttached()
+  await expect(page.locator('.qingmark-highlight').first()).toBeAttached()
 
   // The selection menu is allowed again.
   await page.bringToFront()
@@ -134,7 +134,7 @@ test('switching the site off removes page highlights and the badge; data stays i
   await ext.close()
 
   await openArticle(page, url)
-  await expect(page.locator('.noteit-highlight').first()).toBeAttached()
+  await expect(page.locator('.qingmark-highlight').first()).toBeAttached()
   await expect.poll(() => badgeOf(serviceWorker, url)).toBe('2')
 
   const panel = await openSidePanel()
@@ -144,7 +144,7 @@ test('switching the site off removes page highlights and the badge; data stays i
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-checked', 'false')
 
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
   await expect.poll(() => badgeOf(serviceWorker, url)).toBe('')
   await expect(panel.getByTestId('site-off')).toBeVisible()
 
@@ -156,7 +156,7 @@ test('switching the site off removes page highlights and the badge; data stays i
   await page.reload()
   await page.waitForLoadState('load')
   await page.waitForTimeout(500)
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
 
   expect(externalRequests).toEqual([])
 })

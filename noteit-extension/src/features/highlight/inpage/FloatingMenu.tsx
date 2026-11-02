@@ -105,7 +105,7 @@ export function FloatingMenu({ anchor, onPick, onClose, renderTranslation }: Flo
     <div
       ref={ref}
       class={`nt-overlay nt-floating-menu ${expanded ? 'nt-card nt-floating-menu-open' : 'nt-pill'}`}
-      data-noteit-menu=""
+      data-qingmark-menu=""
       role="toolbar"
       aria-label={strings.floatingMenuLabel}
       style={{

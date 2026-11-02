@@ -18,7 +18,7 @@ const META_STYLE = {
 } as const
 
 const ACTION_STYLE = { height: 28, padding: '0 var(--nt-space-2-5)' } as const
-const PANEL_ID = 'noteit-server-panel'
+const PANEL_ID = 'qingmark-server-panel'
 
 /** Progress of the last test / save / reset request. */
 type Request = { kind: 'running' } | { kind: 'ok' } | { kind: 'error'; code: ErrorCode } | null
@@ -190,11 +190,11 @@ export function ServerSettings({ config, onChange }: { config: ServerConfigState
           style={{ gap: 'var(--nt-space-2-5)' }}
         >
           <div className="flex flex-col" style={{ gap: 'var(--nt-space-1)' }}>
-            <label htmlFor="noteit-server-url" className="text-muted-foreground" style={META_STYLE}>
+            <label htmlFor="qingmark-server-url" className="text-muted-foreground" style={META_STYLE}>
               {strings.serverUrl}
             </label>
             <Input
-              id="noteit-server-url"
+              id="qingmark-server-url"
               type="url"
               inputMode="url"
               autoComplete="off"
@@ -202,27 +202,27 @@ export function ServerSettings({ config, onChange }: { config: ServerConfigState
               placeholder="https://xxxx.supabase.co"
               value={url}
               aria-invalid={errors.url ? true : undefined}
-              aria-describedby={errors.url ? 'noteit-server-url-error' : undefined}
+              aria-describedby={errors.url ? 'qingmark-server-url-error' : undefined}
               onChange={(e) => {
                 setUrl(e.target.value)
                 setRequest(null)
               }}
             />
-            <FieldError id="noteit-server-url-error" text={errors.url && URL_ERROR[errors.url]} />
+            <FieldError id="qingmark-server-url-error" text={errors.url && URL_ERROR[errors.url]} />
           </div>
           <div className="flex flex-col" style={{ gap: 'var(--nt-space-1)' }}>
-            <label htmlFor="noteit-server-key" className="text-muted-foreground" style={META_STYLE}>
+            <label htmlFor="qingmark-server-key" className="text-muted-foreground" style={META_STYLE}>
               {strings.serverAnonKey}
             </label>
             <div className="relative">
               <Input
-                id="noteit-server-key"
+                id="qingmark-server-key"
                 type={showKey ? 'text' : 'password'}
                 autoComplete="off"
                 spellCheck={false}
                 value={anonKey}
                 aria-invalid={errors.anonKey ? true : undefined}
-                aria-describedby={errors.anonKey ? 'noteit-server-key-error' : undefined}
+                aria-describedby={errors.anonKey ? 'qingmark-server-key-error' : undefined}
                 onChange={(e) => {
                   setAnonKey(e.target.value)
                   setRequest(null)
@@ -246,7 +246,7 @@ export function ServerSettings({ config, onChange }: { config: ServerConfigState
                 {showKey ? strings.serverHideKey : strings.serverShowKey}
               </button>
             </div>
-            <FieldError id="noteit-server-key-error" text={errors.anonKey && KEY_ERROR[errors.anonKey]} />
+            <FieldError id="qingmark-server-key-error" text={errors.anonKey && KEY_ERROR[errors.anonKey]} />
           </div>
           <div className="flex items-center justify-between" style={{ gap: 'var(--nt-space-2)' }}>
             <p data-testid="server-test-status" role={status?.role} className="m-0 min-w-0 text-foreground" style={META_STYLE}>

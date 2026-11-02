@@ -64,7 +64,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     }
     // Sign-in pulls the account's rows (Story 2.17): every test starts from an empty cloud account.
     clearCloudRows(TEST_USERS.a.email)
-    const userDataDir = mkdtempSync(join(tmpdir(), 'noteit-e2e-'))
+    const userDataDir = mkdtempSync(join(tmpdir(), 'qingmark-e2e-'))
     const context = await chromium.launchPersistentContext(userDataDir, {
       // The "chromium" channel uses the new headless mode, which supports extensions.
       channel: 'chromium',
@@ -118,7 +118,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 export async function signInFromPage(page: Page, user: { email: string; password: string } = TEST_USERS.a): Promise<boolean> {
   return page.evaluate(async ({ email, password }) => {
     const send = (type: string, req: unknown) =>
-      chrome.runtime.sendMessage({ kind: 'noteit/request', type, req }) as Promise<{ ok: boolean; data?: { signedIn: boolean } }>
+      chrome.runtime.sendMessage({ kind: 'qingmark/request', type, req }) as Promise<{ ok: boolean; data?: { signedIn: boolean } }>
     const state = await send('auth/getState', undefined)
     if (state.ok && state.data?.signedIn) return true
     const login = await send('auth/login', { email, password })

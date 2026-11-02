@@ -1,5 +1,5 @@
 // In-page Shadow host (architecture.md D10 "In-page UI Isolation", NFR19):
-// - one <noteit-root> per tab, appended at the end of document.documentElement (outside <body>, so it
+// - one <qingmark-root> per tab, appended at the end of document.documentElement (outside <body>, so it
 //   is not part of the page's layout flow or the body MutationObserver);
 // - open shadow root (Playwright and axe can reach the overlays);
 // - the first rule resets the host with `all: initial` and pins it as a fixed, zero-size layer on
@@ -9,7 +9,7 @@
 // match the host element too, and only an important :host rule from the shadow tree outranks them.
 import { cssVarsText } from '../tokens/index.ts'
 
-export const HOST_TAG = 'noteit-root'
+export const HOST_TAG = 'qingmark-root'
 
 /** Base stylesheet text of the shadow root (exported for tests). */
 export const HOST_CSS = `:host {

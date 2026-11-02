@@ -18,7 +18,7 @@ import { strings } from '../../src/ui/strings.ts'
 import { colors } from '../../src/ui/tokens/index.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 // Same context length as src/content/SelectionManager.ts getSelectionContext.
 const CONTEXT_LENGTH = 64
 const GHOST = 'This sentence is not on the page yet.'
@@ -32,7 +32,7 @@ function rgb(hex: string): string {
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 test.beforeEach(async ({ context, extensionId, serviceWorker }) => {

@@ -10,7 +10,7 @@ import { pickTab } from './nav.ts'
 import { setSignedInSource } from './auth-gate.ts'
 import type { AnchorRequests, CreateHighlightReq, HighlightRequests } from '../shared/protocol.ts'
 
-const EXTENSION_ID = 'noteit-test-id'
+const EXTENSION_ID = 'qingmark-test-id'
 const self = { id: EXTENSION_ID } as chrome.runtime.MessageSender
 const PAGE = 'https://example.com/post'
 
@@ -60,7 +60,7 @@ type All = HighlightRequests & AnchorRequests
 const router = createRouter<All>({ ...highlightHandlers, ...anchorHandlers })
 
 async function call<T>(type: keyof All, req: unknown): Promise<T> {
-  const r = (await router.handle({ kind: 'noteit/request', type, req }, self)) as Result<T>
+  const r = (await router.handle({ kind: 'qingmark/request', type, req }, self)) as Result<T>
   if (!r.ok) throw new Error(`${type} failed: ${r.error.code}`)
   return r.data
 }
@@ -123,7 +123,7 @@ describe('anchor/report and nav/jumpTo', () => {
 
   it('anchor/report rejects malformed payloads', async () => {
     installChromeMock([], () => undefined)
-    const r = await router.handle({ kind: 'noteit/request', type: 'anchor/report', req: { canonicalUrl: PAGE, found: 1 } }, self)
+    const r = await router.handle({ kind: 'qingmark/request', type: 'anchor/report', req: { canonicalUrl: PAGE, found: 1 } }, self)
     expect(r).toMatchObject({ ok: false, error: { code: 'bad_request' } })
   })
 
@@ -162,7 +162,7 @@ describe('anchor/report and nav/jumpTo', () => {
     installChromeMock([], () => undefined)
     const rec = await call<HighlightRecord>('highlight/create', createReq())
     await call('highlight/delete', { id: rec.id })
-    const r = await router.handle({ kind: 'noteit/request', type: 'nav/jumpTo', req: { id: rec.id } }, self)
+    const r = await router.handle({ kind: 'qingmark/request', type: 'nav/jumpTo', req: { id: rec.id } }, self)
     expect(r).toMatchObject({ ok: false, error: { code: 'not_found' } })
   })
 })

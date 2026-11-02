@@ -2,6 +2,7 @@
 // written by debug.html and the pure comparison used by scripts/verify-consistency.ts.
 // The export carries only {id, editedAt, deletedAt}: no text, comment or URL ever leaves the device.
 
+// Kept from the NoteIt era on purpose: older export files must still parse.
 export const LOCAL_ID_EXPORT_KIND = 'noteit/local-ids'
 
 export interface LocalIdEntry {
@@ -34,7 +35,7 @@ function isObject(v: unknown): v is Record<string, unknown> {
 /** Validates a parsed export file; throws with a short reason on anything unexpected. */
 export function parseLocalIdExport(value: unknown): LocalIdExport {
   if (!isObject(value) || value.kind !== LOCAL_ID_EXPORT_KIND || value.version !== 1) {
-    throw new Error('not a NoteIt local id export (kind / version)')
+    throw new Error('not a QingMark local id export (kind / version)')
   }
   if (typeof value.exportedAt !== 'number' || !Array.isArray(value.entries)) {
     throw new Error('export needs exportedAt and entries')

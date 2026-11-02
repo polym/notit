@@ -13,7 +13,7 @@ import { strings, translateErrorText } from '../../src/ui/strings.ts'
 
 const SITE = '127.0.0.1'
 const PROVIDER = 'https://api.deepseek.com'
-const SECTION = `${MENU} [data-noteit-translate]`
+const SECTION = `${MENU} [data-qingmark-translate]`
 const TOGGLE = `${MENU} button[aria-label="${strings.translateButton}"]`
 const CORS = {
   'access-control-allow-origin': '*',
@@ -54,7 +54,7 @@ async function configure(serviceWorker: Worker): Promise<void> {
 
 async function openFixture(page: Page, origin: string): Promise<void> {
   await page.goto(`${origin}/translate.html`)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Clicks the menu's translate toggle with the mouse. */
@@ -95,15 +95,15 @@ test('a word opens inside the menu with lemma, IPA and sense; the toggle closes 
 
   await clickToggle(page)
   const section = page.locator(SECTION)
-  await expect(section).toHaveAttribute('data-noteit-translate-state', 'word')
+  await expect(section).toHaveAttribute('data-qingmark-translate-state', 'word')
   await expect(page.locator(TOGGLE)).toHaveAttribute('aria-pressed', 'true')
   // Same menu: the chips and the comment button are still there.
   await expect(page.locator(`${MENU} button`).nth(0)).toHaveText(strings.colorYellow)
   await expect(page.locator(`${MENU} button[aria-label="${strings.commentButton}"]`)).toBeVisible()
-  await expect(section.locator('[data-noteit-lemma]')).toHaveText('bank')
-  await expect(section.locator('[data-noteit-ipa]')).toContainText('/bæŋk/')
-  await expect(section.locator('[data-noteit-sense]')).toHaveText('sense:riverbank')
-  await expect(section.locator('[data-noteit-other-senses]')).toContainText('sense:bank')
+  await expect(section.locator('[data-qingmark-lemma]')).toHaveText('bank')
+  await expect(section.locator('[data-qingmark-ipa]')).toContainText('/bæŋk/')
+  await expect(section.locator('[data-qingmark-sense]')).toHaveText('sense:riverbank')
+  await expect(section.locator('[data-qingmark-other-senses]')).toContainText('sense:bank')
 
   // The model got the word and its sentence, not the whole page.
   expect(calls).toHaveLength(1)
@@ -120,7 +120,7 @@ test('a word opens inside the menu with lemma, IPA and sense; the toggle closes 
   const box = (await page.locator(MENU).boundingBox())!
   expect(box.y + box.height <= sel.top || box.y >= sel.bottom).toBe(true)
 
-  const { violations } = await new AxeBuilder({ page }).include('noteit-root').analyze()
+  const { violations } = await new AxeBuilder({ page }).include('qingmark-root').analyze()
   expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
 
   // The toggle closes the section and keeps the menu; reopening is answered from the cache.
@@ -129,7 +129,7 @@ test('a word opens inside the menu with lemma, IPA and sense; the toggle closes 
   await expect(page.locator(MENU)).toBeVisible()
   await expect(page.locator(TOGGLE)).toHaveAttribute('aria-pressed', 'false')
   await clickToggle(page)
-  await expect(section).toHaveAttribute('data-noteit-translate-state', 'word')
+  await expect(section).toHaveAttribute('data-qingmark-translate-state', 'word')
   expect(calls).toHaveLength(1)
 
   await page.keyboard.press('Escape')
@@ -142,7 +142,7 @@ test('a chip highlights in its color while the translation is open', async ({ co
   const page = await context.newPage()
   await openFixture(page, server.origin)
   await translate(page, '#word')
-  await expect(page.locator(SECTION)).toHaveAttribute('data-noteit-translate-state', 'word')
+  await expect(page.locator(SECTION)).toHaveAttribute('data-qingmark-translate-state', 'word')
 
   await clickMenuButton(page, BLUE_INDEX)
   await expect(page.locator(MENU)).toHaveCount(0)
@@ -158,8 +158,8 @@ test('the comment editor inserts the translation and saves it with the highlight
   await openFixture(page, server.origin)
   await translate(page, '#sentence')
   const section = page.locator(SECTION)
-  await expect(section).toHaveAttribute('data-noteit-translate-state', 'text')
-  await expect(section.locator('[data-noteit-translation]')).toHaveText('text:break-the-ice')
+  await expect(section).toHaveAttribute('data-qingmark-translate-state', 'text')
+  await expect(section.locator('[data-qingmark-translation]')).toHaveText('text:break-the-ice')
   expect(calls[0].mode).toBe('text')
 
   await clickMenuButton(page, COMMENT_BUTTON_INDEX)
@@ -174,7 +174,7 @@ test('the comment editor inserts the translation and saves it with the highlight
   expect(rowTops).toHaveLength(6)
   expect(new Set(rowTops).size).toBe(1)
   await page.keyboard.type('note')
-  await page.locator(`${MENU} [data-noteit-insert]`).click()
+  await page.locator(`${MENU} [data-qingmark-insert]`).click()
   await expect(editor).toHaveValue('note\ntext:break-the-ice')
   await expect(editor).toBeFocused()
 
@@ -191,7 +191,7 @@ test('without the translation open the editor offers no insert', async ({ contex
   await dragSelect(page, page.locator('#sentence'))
   await clickMenuButton(page, COMMENT_BUTTON_INDEX)
   await expect(page.locator(`${MENU} textarea`)).toBeVisible()
-  await expect(page.locator(`${MENU} [data-noteit-insert]`)).toHaveCount(0)
+  await expect(page.locator(`${MENU} [data-qingmark-insert]`)).toHaveCount(0)
   // The toggle stays available while editing.
   await expect(page.locator(TOGGLE)).toBeVisible()
 })
@@ -202,7 +202,7 @@ test('without a config the section says so and offers the settings; nothing is s
   await openFixture(page, server.origin)
   await translate(page, '#word')
   const section = page.locator(SECTION)
-  await expect(section).toHaveAttribute('data-noteit-translate-state', 'error')
+  await expect(section).toHaveAttribute('data-qingmark-translate-state', 'error')
   await expect(section).toContainText(translateErrorText('not_configured'))
   await expect(section.getByRole('button', { name: strings.translateOpenSettings })).toBeVisible()
   expect(calls).toEqual([])
@@ -220,7 +220,7 @@ test('a provider error shows its text and retry asks again', async ({ context, s
 
   status = 200
   await section.getByRole('button', { name: strings.translateRetry }).click()
-  await expect(section).toHaveAttribute('data-noteit-translate-state', 'text')
+  await expect(section).toHaveAttribute('data-qingmark-translate-state', 'text')
   expect(calls).toHaveLength(2)
 })
 
@@ -230,7 +230,7 @@ test('clicking outside closes the menu', async ({ context, serviceWorker, server
   const page = await context.newPage()
   await openFixture(page, server.origin)
   await translate(page, '#word')
-  await expect(page.locator(SECTION)).toHaveAttribute('data-noteit-translate-state', 'word')
+  await expect(page.locator(SECTION)).toHaveAttribute('data-qingmark-translate-state', 'word')
   const outro = (await page.locator('#outro').boundingBox())!
   await page.mouse.click(outro.x + 5, outro.y + outro.height / 2)
   await expect(page.locator(MENU)).toHaveCount(0)
@@ -242,13 +242,13 @@ test('a page scroll keeps the menu open and moves it with the selection', async 
   const page = await context.newPage()
   await openFixture(page, server.origin)
   await translate(page, '#sentence')
-  await expect(page.locator(SECTION)).toHaveAttribute('data-noteit-translate-state', 'text')
+  await expect(page.locator(SECTION)).toHaveAttribute('data-qingmark-translate-state', 'text')
   await clickMenuButton(page, COMMENT_BUTTON_INDEX)
   await page.keyboard.type('kept')
   const before = (await page.locator(MENU).boundingBox())!
 
   await page.evaluate(() => window.scrollBy(0, 40))
   await expect.poll(async () => (await page.locator(MENU).boundingBox())!.y).toBeCloseTo(before.y - 40, 0)
-  await expect(page.locator(SECTION)).toHaveAttribute('data-noteit-translate-state', 'text')
+  await expect(page.locator(SECTION)).toHaveAttribute('data-qingmark-translate-state', 'text')
   await expect(page.locator(`${MENU} textarea`)).toHaveValue('kept')
 })

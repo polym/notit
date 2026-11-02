@@ -1,4 +1,4 @@
-// Spec "selection translation": the context menu "translate with NoteIt" works signed out and on a
+// Spec "selection translation": the context menu "translate with QingMark" works signed out and on a
 // site that is off, creates nothing, and the word card offers pronunciation. Native menus cannot be
 // driven from Playwright, so the real onClicked listener is dispatched in the service worker (same
 // approach as login-gate.e2e.ts). Speech output itself cannot be observed headless; the test checks
@@ -11,7 +11,7 @@ import { MENU, dragSelect } from './fixtures/page-actions.ts'
 import { strings } from '../../src/ui/strings.ts'
 
 const PROVIDER = 'https://api.deepseek.com'
-const CARD = 'noteit-root [data-noteit-translate]'
+const CARD = 'qingmark-root [data-qingmark-translate]'
 const CORS = {
   'access-control-allow-origin': '*',
   'access-control-allow-headers': 'authorization, content-type',
@@ -38,13 +38,13 @@ async function clickTranslateMenu(serviceWorker: Worker, url: string): Promise<v
       chrome.contextMenus.onClicked as unknown as {
         dispatch(i: Partial<chrome.contextMenus.OnClickData>, t: chrome.tabs.Tab): void
       }
-    ).dispatch({ menuItemId: 'noteit-translate', selectionText: 'bank' }, tab)
+    ).dispatch({ menuItemId: 'qingmark-translate', selectionText: 'bank' }, tab)
   }, url)
 }
 
 async function openFixture(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root').waitFor({ state: 'attached' })
 }
 
 test.beforeEach(async ({ serviceWorker }) => {
@@ -75,8 +75,8 @@ test('signed out on a site that is off: the menu entry translates without creati
 
   await clickTranslateMenu(serviceWorker, url)
   const card = page.locator(CARD)
-  await expect(card).toHaveAttribute('data-noteit-translate-state', 'word')
-  await expect(card.locator('[data-noteit-sense]')).toHaveText('sense:riverbank')
+  await expect(card).toHaveAttribute('data-qingmark-translate-state', 'word')
+  await expect(card.locator('[data-qingmark-sense]')).toHaveText('sense:riverbank')
   // No session and the site is off: the card cannot highlight.
   await expect(card.getByRole('button', { name: strings.translateHighlight })).toHaveCount(0)
 
@@ -90,7 +90,7 @@ test('signed out on a site that is off: the menu entry translates without creati
   expect(await liveRecords(serviceWorker)).toEqual([])
   const overrides = await serviceWorker.evaluate(async () => (await chrome.storage.local.get('siteOverrides')).siteOverrides)
   expect(overrides ?? {}).toEqual({})
-  await expect(page.locator('noteit-root')).not.toHaveAttribute('data-noteit-site', 'on')
+  await expect(page.locator('qingmark-root')).not.toHaveAttribute('data-qingmark-site', 'on')
 })
 
 test('the menu entry with nothing selected shows no card', async ({ context, serviceWorker, server }) => {

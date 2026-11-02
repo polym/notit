@@ -1,6 +1,6 @@
 // Design tokens: a literal transcription of the DESIGN.md frontmatter (colors, typography, rounded,
 // spacing). DESIGN.md is the single source; tokens.test.ts fails when the two drift apart.
-// Color literals are only allowed inside src/ui/tokens (lint rule noteit/no-raw-color).
+// Color literals are only allowed inside src/ui/tokens (lint rule qingmark/no-raw-color).
 
 export const colors = {
   background: '#FFFFFF',

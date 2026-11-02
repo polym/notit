@@ -54,17 +54,17 @@ export type EventType<E extends EventMap> = Extract<keyof E, string>
 
 /** Wire format of a request. `kind` lets routers ignore event broadcasts on the same channel. */
 export interface RequestEnvelope<M extends RequestMap, K extends RequestType<M> = RequestType<M>> {
-  kind: 'noteit/request'
+  kind: 'qingmark/request'
   type: K
   req: M[K]['req']
 }
 
 /** Wire format of an event. */
 export interface EventEnvelope<E extends EventMap, K extends EventType<E> = EventType<E>> {
-  kind: 'noteit/event'
+  kind: 'qingmark/event'
   type: K
   payload: E[K]
 }
 
-export const REQUEST_KIND = 'noteit/request'
-export const EVENT_KIND = 'noteit/event'
+export const REQUEST_KIND = 'qingmark/request'
+export const EVENT_KIND = 'qingmark/event'

@@ -50,7 +50,7 @@ async function exportIds(): Promise<void> {
   body.hidden = false
   const link = document.createElement('a')
   link.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }))
-  link.download = `noteit-local-ids-${data.exportedAt}.json`
+  link.download = `qingmark-local-ids-${data.exportedAt}.json`
   link.click()
   URL.revokeObjectURL(link.href)
   el('export-status').textContent = strings.debugExported(data.entries.length)

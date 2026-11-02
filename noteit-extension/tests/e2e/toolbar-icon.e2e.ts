@@ -29,7 +29,7 @@ test('the toolbar switches to the gold leaf when the page gets a highlight and b
   })
   const page = await context.newPage()
   await page.goto(`${server.origin}/article.html`)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   const toolbar = () =>
     serviceWorker.evaluate(async (url) => {
       const tab = (await chrome.tabs.query({})).find((t) => t.url === url)

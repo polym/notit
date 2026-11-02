@@ -72,7 +72,7 @@ describe('legacy migration script', () => {
   let tmp: string
 
   beforeAll(() => {
-    tmp = mkdtempSync(join(tmpdir(), 'noteit-migrate-'))
+    tmp = mkdtempSync(join(tmpdir(), 'qingmark-migrate-'))
     cleanup()
     runLocalSql(seedLegacySql())
   })

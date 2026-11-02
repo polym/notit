@@ -1,9 +1,9 @@
 ---
 name: verify-feature
-description: 对 NoteIt 扩展的新功能或修改做端到端验证与验收，产出带截图的中文测试报告。用于"验证一下这个功能""写测试报告""做回归测试""验收这个修复"等请求，尤其是涉及页面高亮渲染、选区、锚点、侧边栏等用户可见行为的改动。
+description: 对 QingMark 扩展的新功能或修改做端到端验证与验收，产出带截图的中文测试报告。用于"验证一下这个功能""写测试报告""做回归测试""验收这个修复"等请求，尤其是涉及页面高亮渲染、选区、锚点、侧边栏等用户可见行为的改动。
 ---
 
-# NoteIt 功能验证与测试报告
+# QingMark 功能验证与测试报告
 
 目标：用可复现的证据证明改动对用户有效，并且没有破坏已有功能。最终交付 `test-reports/<slug>/REPORT.md` 和截图。
 
@@ -32,7 +32,7 @@ npm run db:start && npm run db:reset && npm run env:local   # 本地 Supabase（
 |---|---|
 | 高亮后原文仍可见 | 目标元素 `getBBox().width` / `getBoundingClientRect().width` 高亮前后一致 |
 | 有可见的高亮底色 | 高亮元素数量 > 0；计算样式 `background-color` / `fill` 为高亮色；截图中高亮色像素数 > 0 |
-| 交互正常 | 点击高亮打开弹层（`noteit-root [data-noteit-popover]` 可见） |
+| 交互正常 | 点击高亮打开弹层（`qingmark-root [data-qingmark-popover]` 可见） |
 | 持久化正常 | `liveRecords` 有记录；刷新后高亮恢复 |
 | 不影响其他内容 | 同页普通段落照常高亮 |
 
@@ -41,7 +41,7 @@ npm run db:start && npm run db:reset && npm run env:local   # 本地 Supabase（
 ```bash
 # 修复前构建（只 stash 改动的源文件，测试文件保留）
 git stash push <改动的源文件...> -q
-npm run build && rm -rf /tmp/noteit-dist-before && cp -R dist /tmp/noteit-dist-before
+npm run build && rm -rf /tmp/qingmark-dist-before && cp -R dist /tmp/qingmark-dist-before
 git stash pop -q && git diff --stat               # 确认改动已恢复
 npm run build                                     # dist/ = 修复后
 ```
@@ -62,9 +62,9 @@ npm run build                                     # dist/ = 修复后
 npx vitest run --project browser <测试文件>
 npx playwright test <spec 名关键字> --project=e2e        # 注意：--project 后面接项目名，spec 用位置参数
 # 换成修复前构建再跑一次 e2e，必须失败：
-mv dist /tmp/noteit-dist-after && cp -R /tmp/noteit-dist-before dist
-npx playwright test <spec> --project=e2e --output=/tmp/noteit-before-results
-rm -rf dist && mv /tmp/noteit-dist-after dist
+mv dist /tmp/qingmark-dist-after && cp -R /tmp/qingmark-dist-before dist
+npx playwright test <spec> --project=e2e --output=/tmp/qingmark-before-results
+rm -rf dist && mv /tmp/qingmark-dist-after dist
 ```
 
 e2e 截图用 `testInfo.outputPath('xxx.png')` 存到 `test-results/`，最后复制进报告目录。
@@ -76,7 +76,7 @@ e2e 截图用 `testInfo.outputPath('xxx.png')` 存到 `test-results/`，最后�
 ```bash
 cp ../.claude/skills/verify-feature/templates/real-page-check.ts tmp-real-page-check.ts
 # 修复前 / 修复后各跑一次
-node tmp-real-page-check.ts --dist /tmp/noteit-dist-before --url '<页面>' --site '<siteKey>' --text '<要选中的文字>' --out ../test-reports/<slug>/real-before
+node tmp-real-page-check.ts --dist /tmp/qingmark-dist-before --url '<页面>' --site '<siteKey>' --text '<要选中的文字>' --out ../test-reports/<slug>/real-before
 node tmp-real-page-check.ts --dist dist                   --url '<页面>' --site '<siteKey>' --text '<要选中的文字>' --out ../test-reports/<slug>/real-after
 ```
 
@@ -121,7 +121,7 @@ npx playwright test --project=e2e    # 约 6 分钟，后台跑
 
 ```bash
 rm -f tmp-real-page-check.ts
-rm -rf /tmp/noteit-dist-before /tmp/noteit-before-results test-results
+rm -rf /tmp/qingmark-dist-before /tmp/qingmark-before-results test-results
 git status --short     # 只应剩下源码、测试、报告
 ```
 

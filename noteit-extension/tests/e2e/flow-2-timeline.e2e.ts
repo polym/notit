@@ -41,10 +41,10 @@ async function routeTimeline(context: BrowserContext, state: { deleted: boolean 
 
 async function openTimeline(page: Page): Promise<void> {
   await page.goto(HOME)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
-const markOf = (page: Page, id: string) => page.locator(`[data-noteit-id="${id}"]`)
+const markOf = (page: Page, id: string) => page.locator(`[data-qingmark-id="${id}"]`)
 const scrollFeed = (page: Page, top: number) => page.locator('#feed').evaluate((el, y) => (el.scrollTop = y), top)
 
 test.beforeEach(async ({ context, extensionId, serviceWorker }) => {

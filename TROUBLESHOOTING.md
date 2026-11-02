@@ -1,4 +1,4 @@
-# NoteIt 故障排查指南
+# QingMark 故障排查指南
 
 ## 批注功能问题
 
@@ -173,18 +173,18 @@ chrome.storage.local.get('highlights', (result) => {
 
 ### 启用详细日志
 
-扩展已经包含了详细的控制台日志，格式为 `[NoteIt] ...`。在开发者工具中过滤 "NoteIt" 可以只看相关日志。
+扩展已经包含了详细的控制台日志，格式为 `[QingMark] ...`。在开发者工具中过滤 "QingMark" 可以只看相关日志。
 
 ### 查看扩展背景页日志
 
 1. 进入 `chrome://extensions/`
-2. 找到 NoteIt 扩展
+2. 找到 QingMark 扩展
 3. 点击 "service worker" 或 "背景页"
 4. 查看背景脚本的日志
 
 ### 重新加载扩展
 
 1. 进入 `chrome://extensions/`
-2. 找到 NoteIt
+2. 找到 QingMark
 3. 点击刷新图标
 4. 重新测试功能

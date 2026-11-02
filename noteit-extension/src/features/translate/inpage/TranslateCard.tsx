@@ -42,19 +42,19 @@ export function Body({ state, onRetry, onOpenSettings, onPronounce, voiceless }:
     return (
       <div class="nt-tr-error-box">
         <p class="nt-tr-error">{translateErrorText(state.code)}</p>
-        <button type="button" class="nt-tr-action" data-noteit-translate-action={settings ? 'settings' : 'retry'} onClick={settings ? onOpenSettings : onRetry}>
+        <button type="button" class="nt-tr-action" data-qingmark-translate-action={settings ? 'settings' : 'retry'} onClick={settings ? onOpenSettings : onRetry}>
           {settings ? strings.translateOpenSettings : strings.translateRetry}
         </button>
       </div>
     )
   }
   const { result } = state
-  if (result.mode === 'text') return <p class="nt-tr-sense" data-noteit-translation="">{result.translation}</p>
+  if (result.mode === 'text') return <p class="nt-tr-sense" data-qingmark-translation="">{result.translation}</p>
   const { us, uk } = result.ipa
   return (
     <div class="nt-tr-word">
       <div class="nt-tr-head">
-        <span class="nt-tr-lemma" data-noteit-lemma="">
+        <span class="nt-tr-lemma" data-qingmark-lemma="">
           {result.lemma}
         </span>
         {result.pos && <span class="nt-tr-pos">{result.pos}</span>}
@@ -73,16 +73,16 @@ export function Body({ state, onRetry, onOpenSettings, onPronounce, voiceless }:
         )}
       </div>
       {(us || uk) && (
-        <p class="nt-tr-ipa" data-noteit-ipa="">
+        <p class="nt-tr-ipa" data-qingmark-ipa="">
           {us && <span>{`${strings.translateIpaUs} /${us}/`}</span>}
           {uk && <span>{`${strings.translateIpaUk} /${uk}/`}</span>}
         </p>
       )}
-      <p class="nt-tr-sense" data-noteit-sense="">
+      <p class="nt-tr-sense" data-qingmark-sense="">
         {result.sense}
       </p>
       {result.otherSenses.length > 0 && (
-        <p class="nt-tr-muted" data-noteit-other-senses="">
+        <p class="nt-tr-muted" data-qingmark-other-senses="">
           {strings.translateOtherSensesLine(result.otherSenses.join(strings.listJoin))}
         </p>
       )}
@@ -115,8 +115,8 @@ export function TranslateCard(props: TranslateCardProps) {
     <div
       ref={ref}
       class="nt-overlay nt-card nt-translate-card"
-      data-noteit-translate=""
-      data-noteit-translate-state={state.kind === 'result' ? state.result.mode : state.kind}
+      data-qingmark-translate=""
+      data-qingmark-translate-state={state.kind === 'result' ? state.result.mode : state.kind}
       role="dialog"
       aria-label={strings.translateCardLabel}
       style={{ left: `${position?.left ?? 0}px`, top: `${position?.top ?? 0}px`, visibility: position ? 'visible' : 'hidden' }}

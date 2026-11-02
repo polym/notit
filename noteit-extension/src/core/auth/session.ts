@@ -61,7 +61,7 @@ function emitChanged(state: AuthState): void {
     try {
       listener(state)
     } catch (error) {
-      console.error('[NoteIt] auth listener failed:', error)
+      console.error('[QingMark] auth listener failed:', error)
     }
   }
 }

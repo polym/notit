@@ -29,7 +29,7 @@ export async function isSignedIn(): Promise<boolean> {
   try {
     value = await source()
   } catch (error) {
-    console.error('[NoteIt] Failed to read sign-in state:', error)
+    console.error('[QingMark] Failed to read sign-in state:', error)
     value = false
   }
   const previous = cached

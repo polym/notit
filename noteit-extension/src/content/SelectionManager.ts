@@ -35,7 +35,7 @@ import { client } from './client';
 import { isExtensionEnabled, isSignedIn, pageRecords } from './state';
 import { generateId } from './id';
 
-const ERROR_LINE_ID = 'noteit-error-line';
+const ERROR_LINE_ID = 'qingmark-error-line';
 const ERROR_LINE_MS = 4000;
 
 export class SelectionManager {
@@ -150,7 +150,7 @@ export class SelectionManager {
   private async updateRecord(id: string, patch: { color?: ColorName; comment?: string | null }): Promise<void> {
     const result = await client.send('highlight/update', { id, patch });
     if (!result.ok) {
-      console.error('[NoteIt] Failed to update highlight:', result.error.code);
+      console.error('[QingMark] Failed to update highlight:', result.error.code);
       return;
     }
     // The highlight left this page while the write was in flight (navigation, reload, removal).
@@ -168,14 +168,14 @@ export class SelectionManager {
   private async deleteWithUndo(id: string, at: OverlayRect): Promise<void> {
     const result = await client.send('highlight/delete', { id });
     if (!result.ok) {
-      console.error('[NoteIt] Failed to delete highlight:', result.error.code);
+      console.error('[QingMark] Failed to delete highlight:', result.error.code);
       return;
     }
     this.renderer.remove(id);
     pageRecords.delete(id);
     showUndoToast(at, () => {
       void client.send('highlight/restore', { id }).then((restored) => {
-        if (!restored.ok) console.error('[NoteIt] Failed to restore highlight:', restored.error.code);
+        if (!restored.ok) console.error('[QingMark] Failed to restore highlight:', restored.error.code);
       });
     });
   }
@@ -187,7 +187,7 @@ export class SelectionManager {
     hideTranslateCard();
   }
 
-  /** True for events that come from NoteIt's own overlays in the Shadow host. */
+  /** True for events that come from QingMark's own overlays in the Shadow host. */
   private isFromOverlay(e: Event): boolean {
     return e.composedPath().some((node) => node instanceof Element && node.localName === HOST_TAG);
   }
@@ -260,7 +260,7 @@ export class SelectionManager {
       return;
     }
 
-    console.log('[NoteIt] Text selected:', text.substring(0, 50));
+    console.log('[QingMark] Text selected:', text.substring(0, 50));
 
     // Clone the range and trim whitespace
     const range = selection.getRangeAt(0).cloneRange();
@@ -392,7 +392,7 @@ export class SelectionManager {
     // 2. Persist through the service worker; roll the paint back on failure.
     const result = await client.send('highlight/create', req);
     if (!result.ok) {
-      console.error('[NoteIt] Failed to save highlight:', result.error.code);
+      console.error('[QingMark] Failed to save highlight:', result.error.code);
       this.renderer.remove(req.id);
       this.showError(errorRect, result.error.code);
       return result;

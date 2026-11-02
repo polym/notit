@@ -30,7 +30,7 @@ function write(level: LogLevel, scope: string, event: string, data?: LogData): v
   const record: LogRecord = { ts: Date.now(), level, scope, event, data: data ? { ...data } : null }
   if (isDev()) {
     const method = level === 'debug' ? 'debug' : level
-    console[method](`[NoteIt] ${scope} ${event}`, data ?? '')
+    console[method](`[QingMark] ${scope} ${event}`, data ?? '')
   }
   // Serialize writes so trimming is deterministic; a failed write is dropped, not rethrown.
   queue = queue.then(() => append(record)).catch(() => {})

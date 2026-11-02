@@ -26,7 +26,7 @@ function sessionExpiringIn(ms: number, token = 'old') {
     access_token: token,
     refresh_token: `r-${token}`,
     expires_at: Math.floor((Date.now() + ms) / 1000),
-    user: { email: 'user-a@noteit.test' },
+    user: { email: 'user-a@qingmark.test' },
   }
 }
 
@@ -138,9 +138,9 @@ describe('login / getAuthState', () => {
     const fake = fakeSupabase(null)
     getSupabaseMock.mockReturnValue(fake.client)
     fake.auth.signInWithPassword.mockResolvedValueOnce({ data: { session: sessionExpiringIn(3600_000) }, error: null })
-    const result = await login('user-a@noteit.test', 'pw')
-    expect(result).toEqual({ ok: true, data: { signedIn: true, email: 'user-a@noteit.test' } })
-    expect(emitMock).toHaveBeenCalledWith('auth/changed', { signedIn: true, email: 'user-a@noteit.test' })
+    const result = await login('user-a@qingmark.test', 'pw')
+    expect(result).toEqual({ ok: true, data: { signedIn: true, email: 'user-a@qingmark.test' } })
+    expect(emitMock).toHaveBeenCalledWith('auth/changed', { signedIn: true, email: 'user-a@qingmark.test' })
   })
 
   it('pauses sync before signInWithPassword and releases only after the sign-in hook, on every path', async () => {
@@ -158,7 +158,7 @@ describe('login / getAuthState', () => {
     })
     emitMock.mockImplementation(async () => void order.push('emit'))
     try {
-      expect((await login('user-a@noteit.test', 'pw')).ok).toBe(true)
+      expect((await login('user-a@qingmark.test', 'pw')).ok).toBe(true)
       expect(order).toEqual(['pause', 'signIn', 'reconcile', 'release', 'emit'])
 
       // A failed sign-in still releases the pause, and only once.
@@ -167,7 +167,7 @@ describe('login / getAuthState', () => {
         order.push('signIn')
         return { data: { session: null }, error: new AuthApiError('Invalid login credentials', 400, 'invalid_credentials') }
       })
-      expect((await login('user-a@noteit.test', 'bad')).ok).toBe(false)
+      expect((await login('user-a@qingmark.test', 'bad')).ok).toBe(false)
       expect(order).toEqual(['pause', 'signIn', 'release'])
     } finally {
       setBeforeSignInHook(async () => () => {})
@@ -189,7 +189,7 @@ describe('login / getAuthState', () => {
     } as never)
     getSupabaseMock.mockReturnValue(fake.client)
     storedItems.set('sb-auth', JSON.stringify(sessionExpiringIn(-3600_000)))
-    expect(await getAuthState()).toEqual({ signedIn: true, email: 'user-a@noteit.test' })
+    expect(await getAuthState()).toEqual({ signedIn: true, email: 'user-a@qingmark.test' })
     expect(emitMock).not.toHaveBeenCalled()
   })
 

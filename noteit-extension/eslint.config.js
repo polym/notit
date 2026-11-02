@@ -82,7 +82,7 @@ function importRestrictionConfigs() {
     groups.get(key).files.push(file)
   }
   return [...groups.entries()].map(([key, { zones, files: groupFiles }]) => ({
-    name: `noteit/restricted-imports/${key || 'none'}`,
+    name: `qingmark/restricted-imports/${key || 'none'}`,
     files: groupFiles,
     rules: {
       'no-restricted-imports': zones.length
@@ -114,11 +114,11 @@ const STORAGE_LOCAL = {
   selector: `:matches(${storageAreaSelector('local')})`,
   message: 'chrome.storage.local may only be used in core/settings and core/auth/storage-adapter.ts.',
 }
-// Matches any __noteit* member regardless of the object expression, so casts such as
-// (window as any).__noteit_x__ and aliases (const w = window; w.__noteit_x__) are caught too.
-const NOTEIT_GLOBAL = {
-  selector: ":matches(MemberExpression[computed=false][property.name=/^__noteit/], MemberExpression[computed=true][property.value=/^__noteit/])",
-  message: 'window.__noteit* globals are forbidden; keep state in modules.',
+// Matches any __qingmark* member regardless of the object expression, so casts such as
+// (window as any).__qingmark_x__ and aliases (const w = window; w.__qingmark_x__) are caught too.
+const QINGMARK_GLOBAL = {
+  selector: ":matches(MemberExpression[computed=false][property.name=/^__qingmark/], MemberExpression[computed=true][property.value=/^__qingmark/])",
+  message: 'window.__qingmark* globals are forbidden; keep state in modules.',
 }
 const STORAGE_LOCAL_ALLOWED = ['**/src/core/settings/**/*.{ts,tsx}', '**/src/core/auth/storage-adapter.ts']
 
@@ -318,7 +318,7 @@ const RAW_TEXT_OFFSET = [
 const RAW_TEXT_OFFSET_FILES = ['**/src/features/*/anchoring/**/*.{ts,tsx}', '**/src/features/*/inpage/**/*.{ts,tsx}']
 const RAW_TEXT_OFFSET_EXEMPT = ['**/*.test.ts', '**/*.test.tsx']
 
-const noteitPlugin = {
+const qingmarkPlugin = {
   rules: {
     'no-raw-url-compare': builtinRules.get('no-restricted-syntax'),
     'no-raw-color': builtinRules.get('no-restricted-syntax'),
@@ -333,7 +333,7 @@ const LEGACY_FILES = LEGACY_DIRS.map((d) => `${d}/*.{ts,tsx}`)
 export default defineConfig([
   globalIgnores(['dist', 'node_modules', 'tests/lint-fixtures']),
   {
-    name: 'noteit/base',
+    name: 'qingmark/base',
     files: ['**/*.{ts,tsx}'],
     extends: [
       js.configs.recommended,
@@ -355,12 +355,12 @@ export default defineConfig([
     },
   },
   {
-    name: 'noteit/node-scripts',
+    name: 'qingmark/node-scripts',
     files: ['scripts/**/*.ts', '*.config.ts'],
     languageOptions: { globals: globals.node },
   },
   {
-    name: 'noteit/plain-js',
+    name: 'qingmark/plain-js',
     files: ['**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
@@ -368,73 +368,73 @@ export default defineConfig([
 
   // Architecture rules: errors everywhere in src/ by default ...
   {
-    name: 'noteit/architecture/error',
+    name: 'qingmark/architecture/error',
     files: SRC_FILES,
     plugins: { boundaries },
     settings: boundariesSettings,
     rules: {
       'boundaries/dependencies': boundariesRule('error'),
-      'no-restricted-syntax': ['error', STORAGE_SYNC, STORAGE_LOCAL, NOTEIT_GLOBAL],
+      'no-restricted-syntax': ['error', STORAGE_SYNC, STORAGE_LOCAL, QINGMARK_GLOBAL],
     },
   },
   {
-    name: 'noteit/architecture/storage-local-allowed',
+    name: 'qingmark/architecture/storage-local-allowed',
     files: STORAGE_LOCAL_ALLOWED,
     rules: {
-      'no-restricted-syntax': ['error', STORAGE_SYNC, NOTEIT_GLOBAL],
+      'no-restricted-syntax': ['error', STORAGE_SYNC, QINGMARK_GLOBAL],
     },
   },
   ...importRestrictionConfigs(),
   {
-    name: 'noteit/architecture/raw-url-compare',
+    name: 'qingmark/architecture/raw-url-compare',
     files: SRC_FILES,
-    plugins: { noteit: noteitPlugin },
+    plugins: { qingmark: qingmarkPlugin },
     rules: {
-      'noteit/no-raw-url-compare': ['warn', ...RAW_URL_COMPARE],
+      'qingmark/no-raw-url-compare': ['warn', ...RAW_URL_COMPARE],
       // Error everywhere, legacy directories included (content was the last directory with a cycle).
-      'noteit/no-import-cycle': 'error',
+      'qingmark/no-import-cycle': 'error',
     },
   },
   {
-    name: 'noteit/architecture/raw-color',
+    name: 'qingmark/architecture/raw-color',
     files: SRC_FILES,
     ignores: RAW_COLOR_EXEMPT,
-    plugins: { noteit: noteitPlugin },
+    plugins: { qingmark: qingmarkPlugin },
     rules: {
-      'noteit/no-raw-color': ['error', ...RAW_COLOR],
+      'qingmark/no-raw-color': ['error', ...RAW_COLOR],
     },
   },
 
   {
     // Error everywhere, legacy directories included (no violations remained when it was added).
-    name: 'noteit/architecture/cjk-literal',
+    name: 'qingmark/architecture/cjk-literal',
     files: SRC_FILES,
     ignores: CJK_LITERAL_EXEMPT,
-    plugins: { noteit: noteitPlugin },
+    plugins: { qingmark: qingmarkPlugin },
     rules: {
-      'noteit/no-cjk-literal': ['error', ...CJK_LITERAL],
+      'qingmark/no-cjk-literal': ['error', ...CJK_LITERAL],
     },
   },
 
   {
-    name: 'noteit/architecture/raw-text-offset',
+    name: 'qingmark/architecture/raw-text-offset',
     files: RAW_TEXT_OFFSET_FILES,
     ignores: RAW_TEXT_OFFSET_EXEMPT,
-    plugins: { noteit: noteitPlugin },
+    plugins: { qingmark: qingmarkPlugin },
     rules: {
-      'noteit/no-raw-text-offset': ['error', ...RAW_TEXT_OFFSET],
+      'qingmark/no-raw-text-offset': ['error', ...RAW_TEXT_OFFSET],
     },
   },
 
   // ... downgraded to warnings in legacy directories (keeps the same options, only severity changes).
   {
-    name: 'noteit/architecture/legacy-warn',
+    name: 'qingmark/architecture/legacy-warn',
     files: LEGACY_FILES,
     rules: {
       'boundaries/dependencies': 'warn',
       'no-restricted-syntax': 'warn',
       'no-restricted-imports': 'warn',
-      'noteit/no-raw-color': 'warn',
+      'qingmark/no-raw-color': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'warn',
       // Pre-existing recommended-rule violations in legacy code, fixed as each directory migrates.

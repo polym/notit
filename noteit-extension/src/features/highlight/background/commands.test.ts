@@ -8,7 +8,7 @@ import { setCachedSignedIn, setSignedInSource } from './auth-gate.ts'
 function installChromeMock() {
   const store = new Map<string, unknown>()
   const chromeMock = {
-    runtime: { id: 'noteit-test-id', sendMessage: vi.fn(async () => undefined) },
+    runtime: { id: 'qingmark-test-id', sendMessage: vi.fn(async () => undefined) },
     tabs: {
       sendMessage: vi.fn(async (): Promise<unknown> => ({ ok: true, data: { id: 'x' } })),
       query: vi.fn(async () => [] as { id?: number; url?: string }[]),
@@ -30,7 +30,7 @@ function installChromeMock() {
   return { chromeMock, store }
 }
 
-const TRIGGER = { kind: 'noteit/request', type: 'page/triggerHighlight', req: { color: 'yellow' } }
+const TRIGGER = { kind: 'qingmark/request', type: 'page/triggerHighlight', req: { color: 'yellow' } }
 
 describe('shortcut and context menu commands', () => {
   let mock: ReturnType<typeof installChromeMock>
@@ -55,7 +55,7 @@ describe('shortcut and context menu commands', () => {
   })
 
   it('broadcasts site/changed when it turns a site on, and not when the site was already on', async () => {
-    const SITE_ON = { kind: 'noteit/event', type: 'site/changed', payload: { siteKey: 'example.com', enabled: true } }
+    const SITE_ON = { kind: 'qingmark/event', type: 'site/changed', payload: { siteKey: 'example.com', enabled: true } }
     mock.chromeMock.tabs.sendMessage.mockResolvedValueOnce({ ok: false, error: { code: 'bad_request', message: 'no text selected' } })
     await triggerHighlight({ id: 7, url: 'https://example.com/a' })
     await vi.waitFor(() => expect(mock.chromeMock.runtime.sendMessage).toHaveBeenCalledWith(SITE_ON))
@@ -168,7 +168,7 @@ describe('shortcut and context menu commands', () => {
     createMenus()
     const items = mock.chromeMock.contextMenus.create.mock.calls.map((call) => (call as unknown[])[0])
     expect(items.some((item) => (item as { contexts?: string[] }).contexts?.includes('page'))).toBe(false)
-    onMenuClicked({ menuItemId: 'noteit-toggle' }, { id: 4, windowId: 9, url: 'https://example.com/a' })
+    onMenuClicked({ menuItemId: 'qingmark-toggle' }, { id: 4, windowId: 9, url: 'https://example.com/a' })
     expect(mock.chromeMock.tabs.sendMessage).not.toHaveBeenCalled()
   })
 

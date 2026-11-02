@@ -155,7 +155,7 @@ export async function liveRecords(serviceWorker: Worker): Promise<HighlightRecor
 /** Sends one request envelope from an extension page and returns the router's Result. */
 export async function extensionRequest<T>(page: Page, type: string, req: unknown): Promise<Result<T>> {
   return page.evaluate(
-    async ({ type, req }) => (await chrome.runtime.sendMessage({ kind: 'noteit/request', type, req })) as Result<T>,
+    async ({ type, req }) => (await chrome.runtime.sendMessage({ kind: 'qingmark/request', type, req })) as Result<T>,
     { type, req },
   )
 }
@@ -175,7 +175,7 @@ export async function seedHighlights(page: Page, requests: CreateHighlightReq[])
   const results = await page.evaluate(async (reqs) => {
     const out: Array<{ ok: boolean; error?: unknown }> = []
     for (const req of reqs) {
-      out.push(await chrome.runtime.sendMessage({ kind: 'noteit/request', type: 'highlight/create', req }))
+      out.push(await chrome.runtime.sendMessage({ kind: 'qingmark/request', type: 'highlight/create', req }))
     }
     return out
   }, requests)

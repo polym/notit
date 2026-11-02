@@ -1,6 +1,6 @@
 // Dark host detection (DESIGN.md components.highlight-mark.dark-host): a highlight is painted with the
 // highlight-*-on-dark overlay when what shows behind it is dark. This reads the host page's computed
-// background, never a color NoteIt stored itself (architecture.md #6 forbids reading our own colors back
+// background, never a color QingMark stored itself (architecture.md #6 forbids reading our own colors back
 // from the DOM; the host page's own styles are outside that rule).
 import { luminanceFromRgb } from '../../../ui/tokens/index.ts'
 

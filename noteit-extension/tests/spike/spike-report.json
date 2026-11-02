@@ -106,7 +106,7 @@
     },
     {
       "id": "S4",
-      "title": "flash via noteit-flash for 1200ms",
+      "title": "flash via qingmark-flash for 1200ms",
       "measured": {
         "mark": {
           "observed": true,

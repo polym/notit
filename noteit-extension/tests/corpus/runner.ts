@@ -276,15 +276,15 @@ export function computeSeedsInPage(request: SeedRequest): Seed[] | string {
 
 /** Signature of the rendered marks; the runner waits until it stops changing. */
 export function markSignatureInPage(): string {
-  return Array.from(document.querySelectorAll('[data-noteit-id]'))
-    .map((el) => `${(el as HTMLElement).dataset.noteitId}:${el.textContent}`)
+  return Array.from(document.querySelectorAll('[data-qingmark-id]'))
+    .map((el) => `${(el as HTMLElement).dataset.qingmarkId}:${el.textContent}`)
     .join('|')
 }
 
 /** Classifies each expected highlight against the marks currently rendered by the legacy engine. */
 export function classifyInPage(highlights: ExpectedHighlight[]): HighlightResult[] {
   return highlights.map((h): HighlightResult => {
-    const marks = Array.from(document.querySelectorAll(`[data-noteit-id="${CSS.escape(h.id)}"]`))
+    const marks = Array.from(document.querySelectorAll(`[data-qingmark-id="${CSS.escape(h.id)}"]`))
     if (h.sourceGone) {
       return { id: h.id, outcome: 'source-gone', detail: marks.length ? `rendered ${marks.length} spurious mark(s)` : 'nothing rendered' }
     }

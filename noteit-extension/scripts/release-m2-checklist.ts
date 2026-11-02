@@ -56,7 +56,7 @@ export const EDGE_SMOKE: readonly SmokeStep[] = [
   },
   {
     action: 'Use Cmd/Ctrl+Shift+H and the right-click menu item on a new selection',
-    expect: 'Both create a yellow highlight; the context menu has a single NoteIt item',
+    expect: 'Both create a yellow highlight; the context menu has a single QingMark item',
     minutes: 2,
   },
   {
@@ -89,7 +89,7 @@ export function smokeMinutes(steps: readonly SmokeStep[] = EDGE_SMOKE): number {
 export function formatChecklist(facts: ReleaseFacts, errors: readonly string[]): string {
   const tag = releaseTag(facts.packageVersion)
   const lines = [
-    '# NoteIt M2 release checklist',
+    '# QingMark M2 release checklist',
     '',
     '## Pre-release checks (agent, offline)',
     `- version: package.json ${facts.packageVersion}, dist/manifest.json ${facts.manifestVersion ?? 'missing'}`,

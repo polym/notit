@@ -13,7 +13,7 @@ import { broadcastSiteChanged } from './broadcast.ts'
 import { cachedSignedIn, isSignedIn } from './auth-gate.ts'
 
 export const HIGHLIGHT_COMMAND = 'highlight-selection'
-export const HIGHLIGHT_MENU_ID = 'noteit-highlight'
+export const HIGHLIGHT_MENU_ID = 'qingmark-highlight'
 /** _locales key of the selection menu title (must equal strings.menuHighlightSelection). */
 export const HIGHLIGHT_MENU_MESSAGE = 'menuHighlightSelection'
 
@@ -29,9 +29,9 @@ interface TabLike {
 export const LOGIN_NEEDED_BADGE = '!'
 
 function markLoginNeeded(tab: TabLike | undefined, error: unknown): void {
-  console.error('[NoteIt] Failed to open the side panel for sign-in:', error)
+  console.error('[QingMark] Failed to open the side panel for sign-in:', error)
   const details = tab?.id !== undefined ? { text: LOGIN_NEEDED_BADGE, tabId: tab.id } : { text: LOGIN_NEEDED_BADGE }
-  chrome.action.setBadgeText(details).catch((e: unknown) => console.error('[NoteIt] Failed to set badge:', e))
+  chrome.action.setBadgeText(details).catch((e: unknown) => console.error('[QingMark] Failed to set badge:', e))
 }
 
 /**
@@ -80,7 +80,7 @@ function runTrigger(tab: TabLike | undefined): void {
       (signedIn) => {
         if (signedIn) startTrigger(tab)
       },
-      (error: unknown) => console.error('[NoteIt] Failed to read sign-in state:', error),
+      (error: unknown) => console.error('[QingMark] Failed to read sign-in state:', error),
     )
     return
   }
@@ -96,10 +96,10 @@ function startTrigger(tab: TabLike | undefined): void {
         return
       }
       if (result && !result.ok && result.error.code !== 'bad_request') {
-        console.error('[NoteIt] Highlight from shortcut / menu failed:', result.error.code)
+        console.error('[QingMark] Highlight from shortcut / menu failed:', result.error.code)
       }
     },
-    (error: unknown) => console.error('[NoteIt] Highlight from shortcut / menu failed:', error),
+    (error: unknown) => console.error('[QingMark] Highlight from shortcut / menu failed:', error),
   )
 }
 

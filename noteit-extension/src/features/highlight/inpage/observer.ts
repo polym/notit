@@ -1,6 +1,6 @@
 // Dynamic pages (architecture.md D7 "dynamic pages", FR11): one MutationObserver on <body> with
 // {childList, subtree, characterData}. Changes made by the renderer itself (Renderer.isOwnMutation),
-// changes inside a Shadow host and NoteIt's own nodes are ignored; any other change restarts a 300ms
+// changes inside a Shadow host and QingMark's own nodes are ignored; any other change restarts a 300ms
 // debounce, after which `onChange` runs once (the caller rebuilds the TextIndex and re-resolves).
 // A burst never delays `onChange` by more than OBSERVER_MAX_WAIT_MS from its first foreign change, so
 // pages that never go quiet (ticking clocks, counters) still get restored.
@@ -23,11 +23,11 @@ export interface PageObserverOptions {
   now?: () => number
 }
 
-/** NoteIt's own nodes outside the renderer (the Shadow host, the one-line error message). */
+/** QingMark's own nodes outside the renderer (the Shadow host, the one-line error message). */
 const isOwnNode = (node: Node) =>
-  node instanceof Element && (node.localName === HOST_TAG || (node.getAttribute('id')?.startsWith('noteit-') ?? false))
+  node instanceof Element && (node.localName === HOST_TAG || (node.getAttribute('id')?.startsWith('qingmark-') ?? false))
 
-/** True when `node` sits inside a Shadow root or inside the NoteIt host element. */
+/** True when `node` sits inside a Shadow root or inside the QingMark host element. */
 function insideShadow(node: Node): boolean {
   if (node.getRootNode() instanceof ShadowRoot) return true
   const el = node instanceof Element ? node : node.parentElement

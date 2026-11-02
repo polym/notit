@@ -65,8 +65,8 @@ export function TranslatePanel({ text, context, onResult, onPronounce = speak, v
   return (
     <div
       class="nt-tr-panel"
-      data-noteit-translate=""
-      data-noteit-translate-state={state.kind === 'result' ? state.result.mode : state.kind}
+      data-qingmark-translate=""
+      data-qingmark-translate-state={state.kind === 'result' ? state.result.mode : state.kind}
       aria-live="polite"
       aria-busy={state.kind === 'loading'}
     >

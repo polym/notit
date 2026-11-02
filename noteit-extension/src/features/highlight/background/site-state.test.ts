@@ -9,7 +9,7 @@ import { ensureSiteEnabled, isSiteEnabled, siteEnabledRule } from './site-state.
 function installChromeMock() {
   const store = new Map<string, unknown>()
   vi.stubGlobal('chrome', {
-    runtime: { id: 'noteit-test-id' },
+    runtime: { id: 'qingmark-test-id' },
     storage: {
       local: {
         get: vi.fn(async (key: string) => (store.has(key) ? { [key]: structuredClone(store.get(key)) } : {})),

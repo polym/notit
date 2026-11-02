@@ -123,7 +123,7 @@ export async function launchDevice(name: string, options?: { signIn?: boolean })
   if (!existsSync(join(DIST_DIR, 'manifest.json'))) {
     throw new Error('dist/manifest.json not found; run "npm run build" before the e2e tests')
   }
-  const userDataDir = mkdtempSync(join(tmpdir(), `noteit-two-device-${name}-`))
+  const userDataDir = mkdtempSync(join(tmpdir(), `qingmark-two-device-${name}-`))
   const externalRequests: string[] = []
   let internals = await launchContext(userDataDir, externalRequests)
 
@@ -151,7 +151,7 @@ export async function launchDevice(name: string, options?: { signIn?: boolean })
     async request<T>(type: string, req: unknown) {
       const page = await device.extensionPage()
       return page.evaluate(
-        async ({ type, req }) => (await chrome.runtime.sendMessage({ kind: 'noteit/request', type, req })) as Result<T>,
+        async ({ type, req }) => (await chrome.runtime.sendMessage({ kind: 'qingmark/request', type, req })) as Result<T>,
         { type, req },
       )
     },

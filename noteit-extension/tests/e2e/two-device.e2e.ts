@@ -63,7 +63,7 @@ function createReq(origin: string, label: string): CreateHighlightReq {
     color: 'yellow',
     comment: null,
     anchor: null,
-    pageTitle: 'NoteIt smoke article',
+    pageTitle: 'QingMark smoke article',
     favicon: null,
   }
 }
@@ -229,10 +229,10 @@ test('side panel closed, service worker killed, browser closed and reopened: not
   await a.closeExtensionPage()
   const article = await a.context.newPage()
   await article.goto(`${server.origin}/article.html`)
-  await article.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await article.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await dragSelect(article, article.locator('#target'))
   await clickMenuButton(article, 0)
-  await expect(article.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(article.locator('#target .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await cloud.rows()).length, { timeout: 10_000 }).toBe(1)
   await article.close()
 
@@ -245,7 +245,7 @@ test('side panel closed, service worker killed, browser closed and reopened: not
     // Precondition: the item is still unpushed, so only the restarted worker can deliver it.
     expect((await a.local()).outbox.map((o) => o.id)).toContain(afterKill.id)
     await sw.stop()
-    await sw.wake({ kind: 'noteit/request', type: 'sync/getStatus', req: undefined })
+    await sw.wake({ kind: 'qingmark/request', type: 'sync/getStatus', req: undefined })
   } finally {
     await sw.dispose()
   }

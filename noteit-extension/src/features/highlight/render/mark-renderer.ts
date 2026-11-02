@@ -1,4 +1,4 @@
-// MarkRenderer (architecture.md D7, fallback engine): wraps Ranges in <mark data-noteit-id> elements with
+// MarkRenderer (architecture.md D7, fallback engine): wraps Ranges in <mark data-qingmark-id> elements with
 // mark.js markRanges. Ranges come from the TextIndex (anchoring/), so creation and restoration share one
 // text baseline; this file only translates a Range into mark.js's own offset space before painting.
 import Mark from 'mark.js'
@@ -9,17 +9,17 @@ import { TEXT_INDEX_EXCLUDE } from '../anchoring/text-index.ts'
 import { HIGHLIGHT_FLASH_MS, type HighlightStyle, type PaintItem, type Renderer, type RendererRect } from './renderer.ts'
 
 /** Class on every mark element (host-page stylesheet below). */
-export const HIGHLIGHT_CLASS = 'noteit-highlight'
+export const HIGHLIGHT_CLASS = 'qingmark-highlight'
 /** highlight-mark-commented: the highlight has a comment (bubble marker after its last fragment). */
-export const COMMENTED_CLASS = 'noteit-commented'
+export const COMMENTED_CLASS = 'qingmark-commented'
 /** Last fragment of a highlight, where the comment marker is drawn. */
-const LAST_CLASS = 'noteit-last'
-const FLASH_CLASS = 'noteit-flash'
+const LAST_CLASS = 'qingmark-last'
+const FLASH_CLASS = 'qingmark-flash'
 /** Class on the SVG <rect> drawn behind highlighted SVG text. */
-export const SVG_HIGHLIGHT_CLASS = 'noteit-svg-highlight'
+export const SVG_HIGHLIGHT_CLASS = 'qingmark-svg-highlight'
 const SVG_NS = 'http://www.w3.org/2000/svg'
-const ID_ATTR = 'data-noteit-id'
-const STYLE_ID = 'noteit-highlight-styles'
+const ID_ATTR = 'data-qingmark-id'
+const STYLE_ID = 'qingmark-highlight-styles'
 
 // mark.js only tests a text node's direct parent against `exclude`, so every TextIndex exclusion is
 // listed both for the element and for its descendants. mark.js adds its own built-ins on top.
@@ -44,7 +44,7 @@ const STYLES = `
   }
   /* Hover deepens the tint with an inset layer under the text; the text itself never fades. */
   mark.${HIGHLIGHT_CLASS}:hover {
-    box-shadow: inset 0 0 0 100vmax var(--noteit-hover) !important;
+    box-shadow: inset 0 0 0 100vmax var(--qingmark-hover) !important;
   }
   /* highlight-flash (DESIGN.md): the jump target darkens, then eases back. */
   mark.${HIGHLIGHT_CLASS}.${FLASH_CLASS}, rect.${SVG_HIGHLIGHT_CLASS}.${FLASH_CLASS} {
@@ -60,7 +60,7 @@ const STYLES = `
     margin-left: 3px !important;
     vertical-align: 0.1em !important;
     border-radius: 3px 3px 3px 0 !important;
-    background: var(--noteit-marker) !important;
+    background: var(--qingmark-marker) !important;
   }
   /* SVG text: the overlay is a <rect> behind the <text>; clicks pass through to the host text. */
   rect.${SVG_HIGHLIGHT_CLASS} {
@@ -384,8 +384,8 @@ export class MarkRenderer implements Renderer {
       }
       if (!(el instanceof HTMLElement)) continue
       el.style.setProperty('background-color', overlayColor(style.color, onDark), 'important')
-      el.style.setProperty('--noteit-hover', `color-mix(in srgb, ${solid} 22%, transparent)`)
-      el.style.setProperty('--noteit-marker', colors[onDark ? 'comment-marker-on-dark' : 'comment-marker'])
+      el.style.setProperty('--qingmark-hover', `color-mix(in srgb, ${solid} 22%, transparent)`)
+      el.style.setProperty('--qingmark-marker', colors[onDark ? 'comment-marker-on-dark' : 'comment-marker'])
       el.classList.toggle(COMMENTED_CLASS, style.commented)
       el.classList.toggle(LAST_CLASS, el === last)
     }

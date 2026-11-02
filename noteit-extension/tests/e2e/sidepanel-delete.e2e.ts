@@ -25,10 +25,10 @@ test('deleting from the side panel while another tab is active soft-deletes the 
   // Page A: create one highlight.
   const pageA = await context.newPage()
   await pageA.goto(url)
-  await pageA.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await pageA.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await dragSelect(pageA, pageA.locator('#target'))
   await clickMenuButton(pageA, 0)
-  await expect(pageA.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(pageA.locator('#target .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   const [record] = await liveRecords(serviceWorker)
 
@@ -36,7 +36,7 @@ test('deleting from the side panel while another tab is active soft-deletes the 
   const panel = await openSidePanel()
   await panel.bringToFront()
   const view = await openAllSites(panel)
-  const group = await expandGroup(view, 'NoteIt smoke article')
+  const group = await expandGroup(view, 'QingMark smoke article')
   await group.getByTitle(strings.deleteHighlight).first().click()
 
   await expect
@@ -48,9 +48,9 @@ test('deleting from the side panel while another tab is active soft-deletes the 
   await pageA.close()
   const reopened = await context.newPage()
   await reopened.goto(url)
-  await reopened.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await reopened.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await reopened.waitForTimeout(500)
-  await expect(reopened.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(reopened.locator('.qingmark-highlight')).toHaveCount(0)
 
   expect(externalRequests).toEqual([])
 })

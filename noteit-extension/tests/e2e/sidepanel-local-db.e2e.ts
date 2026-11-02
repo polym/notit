@@ -17,7 +17,7 @@ import { strings } from '../../src/ui/strings.ts'
 import { expandGroup, openAllSites } from './fixtures/all-sites.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 // Same context length as src/content/SelectionManager.ts getSelectionContext.
 const CONTEXT_LENGTH = 64
 
@@ -32,7 +32,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Opens the all-sites view and expands the article group; returns the view. */
@@ -128,9 +128,9 @@ test('two tabs and the side panel editing three records at once keep all three e
   await expect(view.getByText('note from tab B')).toBeVisible()
   // Both page tabs repaint the comment marker from the broadcast and drop the deleted highlight.
   for (const tab of [tabA, tabB]) {
-    await expect(tab.locator(`[data-noteit-id="${recA.id}"]`).first()).toHaveClass(/noteit-commented/)
-    await expect(tab.locator(`[data-noteit-id="${recB.id}"]`).first()).toHaveClass(/noteit-commented/)
-    await expect(tab.locator(`[data-noteit-id="${recC.id}"]`)).toHaveCount(0)
+    await expect(tab.locator(`[data-qingmark-id="${recA.id}"]`).first()).toHaveClass(/qingmark-commented/)
+    await expect(tab.locator(`[data-qingmark-id="${recB.id}"]`).first()).toHaveClass(/qingmark-commented/)
+    await expect(tab.locator(`[data-qingmark-id="${recC.id}"]`)).toHaveCount(0)
   }
 
   expect(externalRequests).toEqual([])

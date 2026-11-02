@@ -13,12 +13,12 @@ const SITE = '127.0.0.1'
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Background color of the first rendered span of a highlight. */
 function markColor(page: Page, id: string): Promise<string> {
-  return page.locator(`[data-noteit-id="${id}"]`).first().evaluate((el) => getComputedStyle(el).backgroundColor)
+  return page.locator(`[data-qingmark-id="${id}"]`).first().evaluate((el) => getComputedStyle(el).backgroundColor)
 }
 
 test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
@@ -130,7 +130,7 @@ test('delete shows the undo toast in the side panel only and undo restores every
   // A second tab of the same page.
   const second = await context.newPage()
   await openArticle(second, url)
-  await expect(second.locator(`[data-noteit-id="${target.id}"]`).first()).toBeVisible()
+  await expect(second.locator(`[data-qingmark-id="${target.id}"]`).first()).toBeVisible()
 
   const panel = await openSidePanel()
   await page.bringToFront()
@@ -156,8 +156,8 @@ test('delete shows the undo toast in the side panel only and undo restores every
   if (!box || !viewport) throw new Error('no layout')
   expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThanOrEqual(1)
   expect(Math.round(viewport.height - (box.y + box.height))).toBe(16)
-  await expect(page.locator(`[data-noteit-id="${target.id}"]`)).toHaveCount(0)
-  await expect(second.locator(`[data-noteit-id="${target.id}"]`)).toHaveCount(0)
+  await expect(page.locator(`[data-qingmark-id="${target.id}"]`)).toHaveCount(0)
+  await expect(second.locator(`[data-qingmark-id="${target.id}"]`)).toHaveCount(0)
   // The page tabs never show the toast.
   await expect(page.getByText(strings.deleted)).toHaveCount(0)
   await expect(second.getByText(strings.deleted)).toHaveCount(0)
@@ -167,8 +167,8 @@ test('delete shows the undo toast in the side panel only and undo restores every
   await expect(toast).toHaveCount(0)
   await expect(items).toHaveCount(2)
   await expect(items.nth(1)).toContainText('survive')
-  await expect(page.locator(`[data-noteit-id="${target.id}"]`).first()).toBeVisible()
-  await expect(second.locator(`[data-noteit-id="${target.id}"]`).first()).toBeVisible()
+  await expect(page.locator(`[data-qingmark-id="${target.id}"]`).first()).toBeVisible()
+  await expect(second.locator(`[data-qingmark-id="${target.id}"]`).first()).toBeVisible()
   expect((await liveRecords(serviceWorker)).length).toBe(2)
 
   // Delete again and let the window pass: the toast goes, the record stays soft-deleted.

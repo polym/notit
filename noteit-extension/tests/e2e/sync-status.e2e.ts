@@ -31,7 +31,7 @@ function createReq(origin: string, text: string): CreateHighlightReq {
     color: 'yellow',
     comment: null,
     anchor: null,
-    pageTitle: 'NoteIt smoke article',
+    pageTitle: 'QingMark smoke article',
     favicon: null,
   }
 }
@@ -149,7 +149,7 @@ test('three server errors show the reason and a retry button; retry recovers and
 test('sync failure leaves the toolbar badge alone', async ({ context, serviceWorker, server, openSidePanel, externalRequests }) => {
   const page = await context.newPage()
   await page.goto(`${server.origin}/article.html`)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   const panel = await openSidePanel()
   await context.route(RPC, (route) =>
     route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ code: 'XX000', message: 'boom' }) }),

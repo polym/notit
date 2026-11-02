@@ -38,7 +38,7 @@ test('signed out shows only the login form; correct credentials show the list', 
   // DESIGN.md login-form: 30px inputs, 12px labels, full-width primary button.
   const emailBox = (await panel.getByLabel(strings.loginEmail).boundingBox())!
   expect(emailBox.height).toBe(30)
-  const label = panel.locator('label[for="noteit-login-email"]')
+  const label = panel.locator('label[for="qingmark-login-email"]')
   expect(await label.evaluate((e) => getComputedStyle(e).fontSize)).toBe('12px')
   const submit = (await panel.getByRole('button', { name: strings.loginSubmit }).boundingBox())!
   expect(submit.width).toBe(emailBox.width)

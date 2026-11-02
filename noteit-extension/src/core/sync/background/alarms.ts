@@ -27,7 +27,7 @@ export function createPushScheduler(run: () => Promise<void>): PushScheduler {
     const delayInMinutes = delayMs === undefined ? PUSH_ALARM_DELAY_MINUTES : Math.max(delayMs / 60_000, PUSH_ALARM_DELAY_MINUTES)
     // Re-creating an alarm with the same name replaces it.
     void Promise.resolve(chrome.alarms.create(PUSH_ALARM, { delayInMinutes })).catch(
-      (error: unknown) => console.error('[NoteIt] sync-push alarm failed:', error),
+      (error: unknown) => console.error('[QingMark] sync-push alarm failed:', error),
     )
   }
 
@@ -35,7 +35,7 @@ export function createPushScheduler(run: () => Promise<void>): PushScheduler {
     try {
       await chrome.alarms.clear(PUSH_ALARM)
     } catch (error) {
-      console.error('[NoteIt] sync-push alarm clear failed:', error)
+      console.error('[QingMark] sync-push alarm clear failed:', error)
     }
   }
 
@@ -78,7 +78,7 @@ export async function ensurePullAlarm(): Promise<void> {
     const existing = await chrome.alarms.get(PULL_ALARM)
     if (!existing) await chrome.alarms.create(PULL_ALARM, { periodInMinutes: PULL_ALARM_PERIOD_MINUTES })
   } catch (error) {
-    console.error('[NoteIt] sync-pull alarm failed:', error)
+    console.error('[QingMark] sync-pull alarm failed:', error)
   }
 }
 
@@ -87,7 +87,7 @@ export async function clearPullAlarm(): Promise<void> {
   try {
     await chrome.alarms.clear(PULL_ALARM)
   } catch (error) {
-    console.error('[NoteIt] sync-pull alarm clear failed:', error)
+    console.error('[QingMark] sync-pull alarm clear failed:', error)
   }
 }
 

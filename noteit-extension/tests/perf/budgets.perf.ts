@@ -59,7 +59,7 @@ const CONTEXT_LENGTH = 64
 // Long tasks that end shortly after the last mark is rendered still belong to the restore.
 const LONGTASK_TAIL_MS = 500
 
-/** In-page timing state. Kept off `window.__noteit*`, which is reserved for the extension. */
+/** In-page timing state. Kept off `window.__qingmark*`, which is reserved for the extension. */
 interface Probe {
   mouseUp?: number
   colorDown?: number
@@ -114,19 +114,19 @@ function watchInteractionInPage(): void {
     for (const m of mutations) {
       for (const node of Array.from(m.addedNodes)) {
         if (!(node instanceof HTMLElement)) continue
-        if (probe.markShown === undefined && node.classList.contains('noteit-highlight')) probe.markShown = performance.now()
+        if (probe.markShown === undefined && node.classList.contains('qingmark-highlight')) probe.markShown = performance.now()
       }
     }
   }).observe(document.body, { childList: true, subtree: true })
-  // Story 3.13: the selection menu renders inside the <noteit-root> shadow root, outside <body>.
-  const shadow = document.querySelector('noteit-root')?.shadowRoot
-  if (!shadow) throw new Error('noteit-root shadow root missing')
+  // Story 3.13: the selection menu renders inside the <qingmark-root> shadow root, outside <body>.
+  const shadow = document.querySelector('qingmark-root')?.shadowRoot
+  if (!shadow) throw new Error('qingmark-root shadow root missing')
   new MutationObserver((mutations) => {
     if (probe.menuShown !== undefined) return
     for (const m of mutations) {
       for (const node of Array.from(m.addedNodes)) {
         if (!(node instanceof Element)) continue
-        if (node.matches('[data-noteit-menu]') || node.querySelector('[data-noteit-menu]')) probe.menuShown = performance.now()
+        if (node.matches('[data-qingmark-menu]') || node.querySelector('[data-qingmark-menu]')) probe.menuShown = performance.now()
       }
     }
   }).observe(shadow, { childList: true, subtree: true })
@@ -139,8 +139,8 @@ function watchRemovedMarksInPage(): void {
     for (const m of mutations) {
       for (const node of Array.from(m.removedNodes)) {
         if (!(node instanceof HTMLElement)) continue
-        if (node.classList.contains('noteit-highlight')) probe.removedMarks++
-        probe.removedMarks += node.querySelectorAll('.noteit-highlight').length
+        if (node.classList.contains('qingmark-highlight')) probe.removedMarks++
+        probe.removedMarks += node.querySelectorAll('.qingmark-highlight').length
       }
     }
   }).observe(document.body, { childList: true, subtree: true })
@@ -173,7 +173,7 @@ function stubActiveTabInPage(url: string): void {
   tabs.query = async (q) => {
     const result = await query(q)
     if (!q.active || !q.currentWindow) return result
-    return result.map((t) => ({ ...t, url, title: 'NoteIt perf panel', status: 'complete' }))
+    return result.map((t) => ({ ...t, url, title: 'QingMark perf panel', status: 'complete' }))
   }
   const sendMessage = tabs.sendMessage.bind(chrome.tabs)
   tabs.sendMessage = async (tabId, message) => {
@@ -188,7 +188,7 @@ function readProbe(page: Page): Promise<Probe> {
 
 function distinctMarks(page: Page): Promise<number> {
   return page.evaluate(
-    () => new Set(Array.from(document.querySelectorAll<HTMLElement>('[data-noteit-id]')).map((el) => el.dataset.noteitId)).size,
+    () => new Set(Array.from(document.querySelectorAll<HTMLElement>('[data-qingmark-id]')).map((el) => el.dataset.qingmarkId)).size,
   )
 }
 
@@ -197,8 +197,8 @@ async function storedCount(serviceWorker: Worker): Promise<number> {
 }
 
 async function waitForContentScript(page: Page): Promise<void> {
-  // The host gets data-noteit-site="on" once the content script has enabled itself for the site.
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  // The host gets data-qingmark-site="on" once the content script has enabled itself for the site.
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** NFR1 + NFR2: drag-select a paragraph, wait for the menu, click the first color, wait for the mark. */
@@ -232,7 +232,7 @@ async function measureSelectionAndColor(
     await page.mouse.up()
 
     await clickMenuButton(page, 0)
-    await expect(page.locator('.noteit-highlight').first()).toBeVisible()
+    await expect(page.locator('.qingmark-highlight').first()).toBeVisible()
     // Let the save finish so it cannot leak into the next iteration.
     await expect.poll(() => storedCount(serviceWorker)).toBe(1)
 
@@ -287,7 +287,7 @@ async function measureSidepanel(
         prefix: 'prefix text before the highlight',
         suffix: 'suffix text after the highlight',
       },
-      pageTitle: onPage ? 'NoteIt perf panel' : `Site ${i % 200}`,
+      pageTitle: onPage ? 'QingMark perf panel' : `Site ${i % 200}`,
       favicon: null,
       createdAt,
       editedAt: createdAt,
@@ -353,7 +353,7 @@ async function measureRestore(
   await resetLocalData(serviceWorker, { keepSession: true })
   await seedHighlights(
     ext,
-    seeds.map((s) => seedToCreateReq(s, url, 'NoteIt perf article')),
+    seeds.map((s) => seedToCreateReq(s, url, 'QingMark perf article')),
   )
 
   const samples: number[] = []
