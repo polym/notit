@@ -17,6 +17,8 @@ const EXCLUDED_PATHS = [
   /^noteit-extension\/tests\/corpus\/[^/]+\/page\.html$/,
   // Generated copy of the historical UX DESIGN.md frontmatter (scripts/sync-design-frontmatter.ts).
   /^noteit-extension\/src\/ui\/tokens\/design-frontmatter\.md$/,
+  // This guard spells out the old name in its own patterns.
+  /^noteit-extension\/scripts\/brand-name\.test\.ts$/,
   /\.(png|jpe?g|gif|ico|webp|woff2?|zip)$/,
 ]
 
