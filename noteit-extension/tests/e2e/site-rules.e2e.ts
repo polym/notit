@@ -132,6 +132,8 @@ test('a manually closed site with highlights does not render or open the menu, d
   await dragSelect(page, page.locator('#target'))
   await dispatchMenuClick(serviceWorker, url)
   await expect(page.locator('.qingmark-highlight').first()).toBeVisible()
+  // The highlight paints before the record commits; wait for the write to land.
+  await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   const [record] = await liveRecords(serviceWorker)
 
   const off = await extensionRequest(ext, 'site/setEnabled', { siteKey: '127.0.0.1', enabled: false })
