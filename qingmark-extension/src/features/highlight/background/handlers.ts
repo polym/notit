@@ -269,8 +269,9 @@ export const anchorHandlers: Handlers<AnchorRequests> = {
       return { result: 'flashed' }
     }
     // Only a content answer on an enabled site is an anchoring verdict; a closed site renders
-    // nothing and a missing content script says nothing about the page text.
-    if (answer && (await isSiteEnabled(record.siteKey))) await recordAnchors([], [id])
+    // nothing and a missing content script says nothing about the page text. A highlight the page
+    // showed earlier (virtual list scrolled it out) is not lost either.
+    if (answer && !answer.seen && (await isSiteEnabled(record.siteKey))) await recordAnchors([], [id])
     return { result: 'lost' }
   },
 }

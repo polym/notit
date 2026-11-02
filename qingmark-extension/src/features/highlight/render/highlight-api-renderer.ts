@@ -226,6 +226,10 @@ export class HighlightApiRenderer implements Renderer {
     return this.highlights.get(highlightName(style)) ?? this.highlights.get(highlightName({ ...style, color: 'yellow' }))!
   }
 
+  anchorNode(id: string): Node | null {
+    return this.live(id)?.startNode ?? null
+  }
+
   private live(id: string): Entry | null {
     const entry = this.entries.get(id)
     return entry && this.isLive(entry) ? entry : null

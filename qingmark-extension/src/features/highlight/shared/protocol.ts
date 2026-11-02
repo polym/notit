@@ -101,7 +101,11 @@ export interface PageSync {
 export type PageRequests = {
   'page/triggerHighlight': { req: { color: ColorName }; res: HighlightRecord }
   /** Scrolls to and flashes one highlight, waiting up to the lost window for it to render. */
-  'page/flash': { req: { id: string }; res: { found: boolean } }
+  /**
+   * Scrolls to and flashes one highlight, waiting up to the lost window for it to render. `seen`: it
+   * rendered earlier in this page session (a virtual list unmounted it), so a miss is not a lost verdict.
+   */
+  'page/flash': { req: { id: string }; res: { found: boolean; seen?: boolean } }
   /**
    * Check from the side panel whether this tab can highlight. Chrome injects content scripts into
    * the PDF viewer's wrapper document, so the script answers there too and reports supported: false.

@@ -57,4 +57,6 @@ export interface Renderer {
   boundingRect(id: string): RendererRect | null
   /** Scrolls the highlight to the middle of the viewport; false when it is not painted. */
   scrollIntoView(id: string): boolean
+  /** A connected page node the highlight starts in (its scroll container is found from it), or null. */
+  anchorNode(id: string): Node | null
 }
