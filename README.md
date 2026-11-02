@@ -40,7 +40,7 @@
 ### 方法一：从发布包安装（推荐）
 
 1. **下载扩展包**
-   - 在 [GitHub Releases](https://github.com/polym/notit/releases) 页面下载最新版本的 `qingmark-extension.zip`
+   - 在 [GitHub Releases](https://github.com/polym/QingMark/releases) 页面下载最新版本的 `qingmark-extension.zip`
    - 或从 GitHub Actions 的构建产物中下载
 
 2. **解压文件**
@@ -58,8 +58,8 @@
 
 1. **克隆仓库**
    ```bash
-   git clone https://github.com/你的用户名/notit.git
-   cd notit/noteit-extension
+   git clone https://github.com/你的用户名/QingMark.git
+   cd QingMark/qingmark-extension
    ```
 
 2. **安装依赖**
@@ -76,7 +76,7 @@
    - 打开 `chrome://extensions/`
    - 启用「开发者模式」
    - 点击「加载已解压的扩展程序」
-   - 选择 `noteit-extension/dist` 文件夹
+   - 选择 `qingmark-extension/dist` 文件夹
 
 ---
 
@@ -277,7 +277,7 @@
 
 ```bash
 # 安装依赖
-cd noteit-extension
+cd qingmark-extension
 npm install
 
 # 开发模式（自动重载）

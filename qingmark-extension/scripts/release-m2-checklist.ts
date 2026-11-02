@@ -2,7 +2,7 @@
 // (same as M1: versions match, tag is new, scan:dist passes) and prints the handoff: the gates that must
 // be green before the tag, the E5 tag command and a <= 30 minute manual Edge smoke test.
 //
-// Usage (Node 24, cwd = noteit-extension, after `npm run build`):
+// Usage (Node 24, cwd = qingmark-extension, after `npm run build`):
 //   node scripts/release-m2-checklist.ts
 //
 // Exit 1 when a pre-release check fails. The script never contacts Supabase or GitHub, never reads
@@ -97,7 +97,7 @@ export function formatChecklist(facts: ReleaseFacts, errors: readonly string[]):
     `- scan:dist: ${facts.scanStatus === 0 ? 'pass' : `FAIL (exit ${facts.scanStatus ?? 'not run'})`}`,
     errors.length === 0 ? '- result: READY' : `- result: NOT READY\n${errors.map((e) => `  - ${e}`).join('\n')}`,
     '',
-    '## Gates that must be green before the tag (cwd = noteit-extension)',
+    '## Gates that must be green before the tag (cwd = qingmark-extension)',
     '1. npm run verify (CI verify.yml runs the same steps), which includes the Key Flow E2E:',
     ...KEY_FLOW_E2E.map((f) => `   - ${f}`),
     '   plus the axe and keyboard review (tests/e2e/sidepanel-a11y.e2e.ts) and the SC-3 perf cases.',

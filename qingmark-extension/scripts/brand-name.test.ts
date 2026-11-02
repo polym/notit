@@ -14,18 +14,16 @@ const EXCLUDED_PATHS = [
   // Past test reports describe the product as it was named then.
   /^test-reports\//,
   // Captured web pages used as anchoring test input, not product copy.
-  /^noteit-extension\/tests\/corpus\/[^/]+\/page\.html$/,
+  /^qingmark-extension\/tests\/corpus\/[^/]+\/page\.html$/,
   // Generated copy of the historical UX DESIGN.md frontmatter (scripts/sync-design-frontmatter.ts).
-  /^noteit-extension\/src\/ui\/tokens\/design-frontmatter\.md$/,
+  /^qingmark-extension\/src\/ui\/tokens\/design-frontmatter\.md$/,
   // This guard spells out the old name in its own patterns.
-  /^noteit-extension\/scripts\/brand-name\.test\.ts$/,
+  /^qingmark-extension\/scripts\/brand-name\.test\.ts$/,
   /\.(png|jpe?g|gif|ico|webp|woff2?|zip)$/,
 ]
 
 /** Old-name occurrences that are allowed, with the reason each one is kept. */
 const ALLOWED: { pattern: RegExp; reason: string }[] = [
-  { pattern: /noteit-extension/g, reason: 'directory name; renamed in its own follow-up change' },
-  { pattern: /github\.com\/polym\/notit\b|\/notit\.git|cd notit\//g, reason: 'repository name; renamed on GitHub after this change' },
   { pattern: /ux-noteit-/g, reason: 'path of the gitignored UX planning artifacts' },
   { pattern: /noteit\/local-ids/g, reason: 'persisted export kind; older export files must still parse' },
   { pattern: /data-noteit-inlined/g, reason: 'attribute baked into the committed corpus pages' },

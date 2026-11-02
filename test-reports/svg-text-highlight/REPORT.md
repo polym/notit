@@ -9,7 +9,7 @@
 - 页面：https://claude.dev/blog/solving-code-review-at-anthropic/
 - 选中文字：「Lint, types, tests across platforms, build and packaging. Red / blocks the merge」
 - 原因：这段文字在内联 SVG 的 `<text>` 元素里。MarkRenderer 用 mark.js 把选中的文字包进 HTML 的 `<mark>`，但 SVG 不渲染 HTML 元素，被包住的文字就画不出来了。
-- 修复（`noteit-extension/src/features/highlight/render/mark-renderer.ts`）：
+- 修复（`qingmark-extension/src/features/highlight/render/mark-renderer.ts`）：
   - `MARK_EXCLUDE` 加入 `svg`，mark.js 不再处理 SVG 里的文字。
   - SVG 里被选中的文字节点，各自在对应 `<text>` 前面插入一个半透明 `<rect class="noteit-svg-highlight">`，作为高亮底色。坐标按父元素的用户坐标系计算，所以 transform 和 viewBox 缩放都能跟上。
   - 换颜色、深色背景适配、闪烁、删除、`clear`、`hitTest`、`boundingRect`、`scrollIntoView` 都支持这些 rect。rect 设了 `pointer-events: none`，点击由 `hitTest` 按 rect 的包围盒判断。

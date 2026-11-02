@@ -1,4 +1,4 @@
-// Real-page check for the built QingMark extension. Copy into noteit-extension/ (it imports test helpers)
+// Real-page check for the built QingMark extension. Copy into qingmark-extension/ (it imports test helpers)
 // and run with Node 24 while the local Supabase stack is up:
 //   node tmp-real-page-check.ts --dist dist --url <page> --site <siteKey> --text <start text> \
 //     [--text-end <end text>] --out <path prefix for screenshots>
