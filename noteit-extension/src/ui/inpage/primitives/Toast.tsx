@@ -15,7 +15,7 @@ export interface ToastProps {
 
 export function Toast({ left, top, message, actionLabel, onAction }: ToastProps) {
   return (
-    <div class="nt-overlay nt-toast" data-noteit-toast="" style={{ left: `${left}px`, top: `${top}px` }}>
+    <div class="nt-overlay nt-toast" data-qingmark-toast="" style={{ left: `${left}px`, top: `${top}px` }}>
       <span>{message}</span>
       <button type="button" class="nt-toast-action" onClick={onAction}>
         {actionLabel}

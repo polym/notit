@@ -157,7 +157,7 @@ describe('v2 highlights RLS', () => {
     expect(authSection).toMatch(/^enable_signup = false$/m)
 
     const { data, error } = await newClient(env).auth.signUp({
-      email: `signup-${crypto.randomUUID()}@noteit.test`,
+      email: `signup-${crypto.randomUUID()}@qingmark.test`,
       password: 'some-password-123',
     })
     expect(error).not.toBeNull()

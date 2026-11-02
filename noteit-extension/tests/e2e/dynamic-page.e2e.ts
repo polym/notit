@@ -2,7 +2,7 @@
 // The x.com virtual timeline (tests/e2e/pages/timeline.html served as https://x.com/home, no network):
 // rows leave the DOM when scrolled out and come back as fresh nodes (or as the same node). The
 // highlight reappears within 1s, and the extension's own paints never trigger a TextIndex rebuild
-// (counted through the host's data-noteit-index-builds attribute).
+// (counted through the host's data-qingmark-index-builds attribute).
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { BrowserContext, Page } from '@playwright/test'
@@ -25,10 +25,10 @@ async function routeTimeline(context: BrowserContext): Promise<void> {
   })
 }
 
-const markOf = (page: Page, id: string) => page.locator(`[data-noteit-id="${id}"]`)
+const markOf = (page: Page, id: string) => page.locator(`[data-qingmark-id="${id}"]`)
 const scrollFeed = (page: Page, top: number) => page.locator('#feed').evaluate((el, y) => (el.scrollTop = y), top)
 const indexBuilds = (page: Page) =>
-  page.locator('noteit-root').evaluate((el) => Number(el.getAttribute('data-noteit-index-builds') ?? '0'))
+  page.locator('qingmark-root').evaluate((el) => Number(el.getAttribute('data-qingmark-index-builds') ?? '0'))
 
 test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
   await resetLocalData(serviceWorker)
@@ -42,7 +42,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 /** Opens the timeline and highlights the target post; returns the record id. */
 async function highlightPost(page: Page, serviceWorker: Parameters<typeof liveRecords>[0]): Promise<string> {
   await page.goto(HOME)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   const post = page.locator('.row[data-index="3"] p')
   await expect(post).toHaveText(POST)
   await dragSelect(page, post)

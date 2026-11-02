@@ -64,7 +64,7 @@ async function dispatchMenuClick(serviceWorker: Worker, url: string): Promise<vo
       chrome.contextMenus.onClicked as unknown as {
         dispatch(i: Partial<chrome.contextMenus.OnClickData>, t: chrome.tabs.Tab): void
       }
-    ).dispatch({ menuItemId: 'noteit-highlight', selectionText: '' }, tab)
+    ).dispatch({ menuItemId: 'qingmark-highlight', selectionText: '' }, tab)
   }, url)
 }
 
@@ -131,14 +131,14 @@ test('a manually closed site with highlights does not render or open the menu, d
   await page.bringToFront()
   await dragSelect(page, page.locator('#target'))
   await dispatchMenuClick(serviceWorker, url)
-  await expect(page.locator('.noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('.qingmark-highlight').first()).toBeVisible()
   const [record] = await liveRecords(serviceWorker)
 
   const off = await extensionRequest(ext, 'site/setEnabled', { siteKey: '127.0.0.1', enabled: false })
   expect(off.ok).toBe(true)
   await page.reload()
   await page.waitForTimeout(500)
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
   await dragSelect(page, page.locator('#intro'))
   await page.waitForTimeout(300)
   await expect(page.locator(MENU)).toHaveCount(0)
@@ -172,7 +172,7 @@ for (const via of ['shortcut', 'context menu'] as const) {
     if (via === 'shortcut') await dispatchShortcut(serviceWorker, url)
     else await dispatchMenuClick(serviceWorker, url)
 
-    await expect(page.locator('.noteit-highlight').first()).toBeVisible()
+    await expect(page.locator('.qingmark-highlight').first()).toBeVisible()
     await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
     expect((await liveRecords(serviceWorker))[0]).toMatchObject({ text, color: 'yellow' })
     expect(await overrides(serviceWorker)).toEqual({ '127.0.0.1': 'on' })
@@ -180,7 +180,7 @@ for (const via of ['shortcut', 'context menu'] as const) {
 
     // Still there after a reload.
     await page.reload()
-    await expect(page.locator('.noteit-highlight').first()).toBeVisible()
+    await expect(page.locator('.qingmark-highlight').first()).toBeVisible()
     expect(externalRequests).toEqual([])
   })
 }

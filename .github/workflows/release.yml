@@ -51,13 +51,13 @@ jobs:
       working-directory: ./noteit-extension
       run: |
         cd dist
-        zip -r ../noteit-extension-${{ github.ref_name }}.zip .
+        zip -r ../qingmark-extension-${{ github.ref_name }}.zip .
         cd ..
         
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        files: noteit-extension/noteit-extension-${{ github.ref_name }}.zip
+        files: noteit-extension/qingmark-extension-${{ github.ref_name }}.zip
         generate_release_notes: true  # generate release notes automatically
         draft: false
         prerelease: false

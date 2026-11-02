@@ -50,7 +50,7 @@ export function AccountPanel({
     const result = await authClient.send('auth/logout', undefined)
     setBusy(false)
     setConfirmCount(null)
-    if (!result.ok) console.warn('[NoteIt] auth/logout failed:', result.error.code)
+    if (!result.ok) console.warn('[QingMark] auth/logout failed:', result.error.code)
   }
 
   const requestLogout = async () => {

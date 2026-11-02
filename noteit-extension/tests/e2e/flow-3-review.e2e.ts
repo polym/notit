@@ -19,7 +19,7 @@ const RPC = '**/rest/v1/rpc/sync_push'
 const WARNING_RGB = 'rgb(183, 121, 31)'
 // Offline uploads wait for the push alarm (30s backoff) once the network is back.
 const RECOVERY_MS = 90_000
-const ARTICLE = 'NoteIt smoke article'
+const ARTICLE = 'QingMark smoke article'
 
 test.setTimeout(240_000)
 

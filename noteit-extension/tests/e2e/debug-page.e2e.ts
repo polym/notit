@@ -28,7 +28,7 @@ test('debug.html shows sync status, outbox and logs and exports ids only', async
     color: 'yellow',
     comment: COMMENT,
     anchor: null,
-    pageTitle: 'NoteIt smoke article',
+    pageTitle: 'QingMark smoke article',
     favicon: null,
   }))
   // Offline so the outbox keeps both items while the page is inspected.
@@ -48,7 +48,7 @@ test('debug.html shows sync status, outbox and logs and exports ids only', async
 
     const download = page.waitForEvent('download')
     await page.getByRole('button', { name: strings.debugExport }).click()
-    expect((await download).suggestedFilename()).toMatch(/^noteit-local-ids-\d+\.json$/)
+    expect((await download).suggestedFilename()).toMatch(/^qingmark-local-ids-\d+\.json$/)
     await expect(page.getByRole('status')).toHaveText(strings.debugExported(2))
 
     const raw = (await page.getByTestId('debug-export-json').textContent()) ?? ''

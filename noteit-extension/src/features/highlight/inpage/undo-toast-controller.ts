@@ -29,7 +29,7 @@ export function showUndoToast(at: OverlayRect, onUndo: () => void): boolean {
     region = document.createElement('div')
     region.setAttribute('role', 'status')
     region.setAttribute('aria-live', 'polite')
-    region.dataset.noteitToastRegion = ''
+    region.dataset.qingmarkToastRegion = ''
     shadow.root.append(region)
   }
   clearTimer()

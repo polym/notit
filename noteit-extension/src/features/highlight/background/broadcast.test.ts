@@ -78,7 +78,7 @@ describe('broadcastCommitted', () => {
     const targets = chromeMock.tabs.sendMessage.mock.calls.map((c) => c[0])
     expect(targets.sort()).toEqual([1, 2, 3])
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-      kind: 'noteit/event',
+      kind: 'qingmark/event',
       type: 'page/sync',
       payload: { canonicalUrl: PAGE, upserts: [live], removes: [gone.id], enabled: true, signedIn: false },
     })
@@ -120,7 +120,7 @@ describe('broadcastCommitted', () => {
     await expect(broadcastAuthChanged(true)).resolves.toBeUndefined()
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledTimes(2)
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-      kind: 'noteit/event',
+      kind: 'qingmark/event',
       type: 'page/sync',
       payload: { canonicalUrl: PAGE, upserts: [], removes: [], enabled: true, signedIn: true },
     })

@@ -96,7 +96,7 @@ export function tailwindThemeCss(): string {
 
 /** Installs the sidebar :root variables once (no-op when already present). */
 export function installRootCssVars(doc: Document = document): void {
-  const id = 'noteit-tokens'
+  const id = 'qingmark-tokens'
   if (doc.getElementById(id)) return
   const style = doc.createElement('style')
   style.id = id

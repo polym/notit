@@ -10,7 +10,7 @@ import type { CreateHighlightReq } from '../../src/features/highlight/index.ts'
 import { strings } from '../../src/ui/strings.ts'
 import { openAllSites, pageGroup } from './fixtures/all-sites.ts'
 
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 const X_TITLE = 'Home / X'
 const BROKEN_TITLE = 'Broken favicon page'
 const CONTEXT_LENGTH = 64

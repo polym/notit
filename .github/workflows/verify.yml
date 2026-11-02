@@ -88,13 +88,13 @@ jobs:
         run: npm run test:perf
 
       - name: Package extension
-        run: cd dist && zip -r ../noteit-extension.zip .
+        run: cd dist && zip -r ../qingmark-extension.zip .
 
       - name: Upload extension artifact
         uses: actions/upload-artifact@v4
         with:
-          name: noteit-extension
-          path: noteit-extension/noteit-extension.zip
+          name: qingmark-extension
+          path: noteit-extension/qingmark-extension.zip
           retention-days: 30
 
       - name: Upload test reports

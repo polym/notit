@@ -28,7 +28,7 @@ import type { CreateHighlightReq } from '../../src/features/highlight/index.ts'
 import { errorText, strings } from '../../src/ui/strings.ts'
 import { colors } from '../../src/ui/tokens/index.ts'
 
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 const QUESTION = 'Why would a fox jump at all?'
 const AFTERTHOUGHT = 'Reload safety is the whole point.'
 const GHOST = 'This sentence was never on the article page.'
@@ -52,13 +52,13 @@ async function syncStatus(page: Page): Promise<SyncStatus> {
   return result.data
 }
 
-const marksOf = (page: Page, id: string) => page.locator(`[data-noteit-id="${id}"]`)
+const marksOf = (page: Page, id: string) => page.locator(`[data-qingmark-id="${id}"]`)
 const markOf = (page: Page, id: string) => marksOf(page, id).first()
 
 async function idOf(page: Page, scope: string): Promise<string> {
-  const mark = page.locator(`${scope} .noteit-highlight`).first()
+  const mark = page.locator(`${scope} .qingmark-highlight`).first()
   await expect(mark).toBeVisible()
-  const id = await mark.getAttribute('data-noteit-id')
+  const id = await mark.getAttribute('data-qingmark-id')
   if (!id) throw new Error(`no highlight in ${scope}`)
   return id
 }
@@ -95,7 +95,7 @@ test('Key Flow 1: read, highlight, comment, review and restore on a second devic
   await expect(off).toContainText(strings.siteOff)
   await off.getByRole('button', { name: strings.siteTurnOn }).click()
   await expect(panel.getByTestId('sidebar-header').getByTestId('site-toggle-text')).toHaveText(strings.siteOn)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 
   // Step 3: one click on the yellow dot creates a highlight; the toolbar badge counts it.
   await page.bringToFront()
@@ -153,8 +153,8 @@ test('Key Flow 1: read, highlight, comment, review and restore on a second devic
   // clicked in the background while the article stays the active tab.
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
   await items.nth(0).getByTestId('highlight-text').click()
-  await expect(markOf(page, blueId)).toHaveClass(/noteit-flash/)
-  await expect(markOf(page, blueId)).not.toHaveClass(/noteit-flash/, { timeout: 4000 })
+  await expect(markOf(page, blueId)).toHaveClass(/qingmark-flash/)
+  await expect(markOf(page, blueId)).not.toHaveClass(/qingmark-flash/, { timeout: 4000 })
 
   // Failure path: offline, highlighting still works and the header counts it as pending.
   await expect.poll(async () => (await syncStatus(panel)).state).toBe('idle')
@@ -213,7 +213,7 @@ test('Key Flow 1: read, highlight, comment, review and restore on a second devic
     // Step 9: the article on device B shows every highlight as it was (site enabled by its highlights).
     const pageB = await deviceB.context.newPage()
     await pageB.goto(url)
-    await pageB.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+    await pageB.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
     for (const record of expected.filter((r) => r.id !== ghost.id)) {
       const mark = markOf(pageB, record.id)
       await expect(mark).toBeVisible()

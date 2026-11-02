@@ -5,10 +5,10 @@
 import type { ErrorCode } from '../core/messaging/types.ts'
 
 export const strings = {
-  appName: 'NoteIt',
+  appName: 'QingMark',
   // Toolbar tooltip per tab; the idle one must equal actionTitle in messages.json.
-  actionTitleIdle: '打开 NoteIt',
-  actionTitleWithHighlights: (count: number) => `NoteIt · 本页有 ${count} 条摘抄`,
+  actionTitleIdle: '打开 QingMark',
+  actionTitleWithHighlights: (count: number) => `QingMark · 本页有 ${count} 条摘抄`,
   menuHighlightSelection: '摘抄选中文字',
   anchorLost: '页面上未找到此摘抄',
   loginEmail: '邮箱',
@@ -55,7 +55,7 @@ export const strings = {
   accountBack: '返回',
   logoutCancel: '取消',
   logoutConfirm: (count: number) => `有 ${count} 条摘抄尚未同步，退出后将丢失。确认退出吗？`,
-  debugTitle: 'NoteIt 诊断',
+  debugTitle: 'QingMark 诊断',
   debugSyncStatus: '同步状态',
   debugOutbox: (count: number) => `待上传队列（${count}）`,
   debugLogs: (count: number) => `最近日志（${count}）`,
@@ -76,7 +76,7 @@ export const strings = {
   undo: '撤销',
   pageUnsupported: '此页面不支持摘抄',
   // unsupported-notice (Story 3.11, FR44): browsers without the Side Panel API, such as Arc.
-  browserUnsupported: '当前浏览器不支持侧栏，NoteIt 暂时无法使用。请在 Chrome 或 Edge 中打开',
+  browserUnsupported: '当前浏览器不支持侧栏，QingMark 暂时无法使用。请在 Chrome 或 Edge 中打开',
   separator: ' · ',
 
   // Side panel shell (Story 3.3): module tab row label and the highlight module tab.
@@ -150,7 +150,7 @@ export const strings = {
   translatePronounceUnavailable: '朗读（没有可用的英文语音）',
   translateOtherSensesLine: (list: string) => `其他释义：${list}`,
   translateTooLong: '选中的文字太长，请缩短后再翻译',
-  menuTranslateSelection: '用 NoteIt 翻译',
+  menuTranslateSelection: '用 QingMark 翻译',
 } as const
 
 /** Error text for translation requests; the highlight copy in ERROR_TEXT talks about saving. */

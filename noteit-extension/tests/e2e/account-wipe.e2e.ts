@@ -72,7 +72,7 @@ function createReq(origin: string, text: string, comment: string): CreateHighlig
     color: 'yellow',
     comment,
     anchor: null,
-    pageTitle: 'NoteIt smoke article',
+    pageTitle: 'QingMark smoke article',
     favicon: null,
   }
 }
@@ -120,10 +120,10 @@ test('sign-out with pending items asks first; confirming wipes everything but de
   )
   const page = await context.newPage()
   await page.goto(`${server.origin}/article.html`)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await dragSelect(page, page.locator('#target'))
   await clickMenuButton(page, 0)
-  await expect(page.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#target .qingmark-highlight').first()).toBeVisible()
 
   const panel = await openSidePanel()
   await seedHighlights(panel, [createReq(server.origin, 'zebra-marker-text', 'zebra-marker-comment')])
@@ -157,7 +157,7 @@ test('sign-out with pending items asks first; confirming wipes everything but de
   expect(local).toEqual({ deviceId })
 
   // Every tab's renders are gone and the badge is empty.
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
   const tabId = await serviceWorker.evaluate(async (url) => (await chrome.tabs.query({})).find((t) => t.url === url)?.id, page.url())
   expect(tabId).toBeDefined()
   await expect.poll(() => serviceWorker.evaluate((id) => chrome.action.getBadgeText({ tabId: id }), tabId as number)).toBe('')

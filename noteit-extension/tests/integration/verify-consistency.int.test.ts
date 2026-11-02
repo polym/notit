@@ -56,7 +56,7 @@ describe('verify-consistency against the local stack', () => {
     await insertAs(env, TEST_USERS.a, rowA)
     // Another account's row must be invisible to user A under RLS.
     await insertAs(env, TEST_USERS.b, v2HighlightRow())
-    dir = mkdtempSync(join(tmpdir(), 'noteit-consistency-'))
+    dir = mkdtempSync(join(tmpdir(), 'qingmark-consistency-'))
     const exp = buildLocalIdExport([{ id: rowA.id as string, editedAt: rowA.edited_at as number, deletedAt: null }], Date.now())
     for (const name of ['a.json', 'b.json']) writeFileSync(join(dir, name), JSON.stringify(exp))
   })
@@ -71,8 +71,8 @@ describe('verify-consistency against the local stack', () => {
   const userEnv = (key: string) => ({
     SUPABASE_URL: env.url,
     SUPABASE_ANON_KEY: key,
-    NOTEIT_EMAIL: TEST_USERS.a.email,
-    NOTEIT_PASSWORD: TEST_USERS.a.password,
+    QINGMARK_EMAIL: TEST_USERS.a.email,
+    QINGMARK_PASSWORD: TEST_USERS.a.password,
   })
 
   it('reports 0 / 0 using only the anon key and the user session', () => {

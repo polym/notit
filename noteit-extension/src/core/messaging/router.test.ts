@@ -10,7 +10,7 @@ type TestEvents = {
   'test/changed': { count: number }
 }
 
-const EXTENSION_ID = 'noteit-test-id'
+const EXTENSION_ID = 'qingmark-test-id'
 type Listener = (message: unknown, sender: chrome.runtime.MessageSender, sendResponse: (r?: unknown) => void) => unknown
 
 // Minimal in-memory chrome.runtime: sendMessage delivers to registered onMessage listeners.
@@ -68,33 +68,33 @@ describe('createRouter', () => {
   })
 
   it('routes a known type to its handler and returns ok', async () => {
-    const result = await makeRouter().handle({ kind: 'noteit/request', type: 'test/echo', req: { text: 'hi' } }, self)
+    const result = await makeRouter().handle({ kind: 'qingmark/request', type: 'test/echo', req: { text: 'hi' } }, self)
     expect(result).toEqual({ ok: true, data: { text: 'hi' } })
   })
 
   it('turns a throwing handler into an internal error instead of throwing', async () => {
-    const result = await makeRouter().handle({ kind: 'noteit/request', type: 'test/fail', req: {} }, self)
+    const result = await makeRouter().handle({ kind: 'qingmark/request', type: 'test/fail', req: {} }, self)
     expect(result).toMatchObject({ ok: false, error: { code: 'internal' } })
   })
 
   it('maps a thrown HandlerError to its own error code', async () => {
-    const result = await makeRouter().handle({ kind: 'noteit/request', type: 'test/missing', req: {} }, self)
+    const result = await makeRouter().handle({ kind: 'qingmark/request', type: 'test/missing', req: {} }, self)
     expect(result).toEqual({ ok: false, error: { code: 'not_found', message: 'no such record' } })
   })
 
   it('returns bad_request for an unknown type', async () => {
-    const result = await makeRouter().handle({ kind: 'noteit/request', type: 'test/nope', req: {} }, self)
+    const result = await makeRouter().handle({ kind: 'qingmark/request', type: 'test/nope', req: {} }, self)
     expect(result).toMatchObject({ ok: false, error: { code: 'bad_request' } })
   })
 
   it('returns bad_request for inherited object keys used as type', async () => {
-    const result = await makeRouter().handle({ kind: 'noteit/request', type: 'toString', req: {} }, self)
+    const result = await makeRouter().handle({ kind: 'qingmark/request', type: 'toString', req: {} }, self)
     expect(result).toMatchObject({ ok: false, error: { code: 'bad_request' } })
   })
 
   it('rejects messages whose sender.id is not this extension', async () => {
     const result = await makeRouter().handle(
-      { kind: 'noteit/request', type: 'test/echo', req: { text: 'x' } },
+      { kind: 'qingmark/request', type: 'test/echo', req: { text: 'x' } },
       { id: 'other-extension' },
     )
     expect(result).toMatchObject({ ok: false, error: { code: 'bad_request' } })
@@ -102,7 +102,7 @@ describe('createRouter', () => {
 
   it('ignores messages that are not requests (events, legacy actions)', () => {
     const router = makeRouter()
-    expect(router.handle({ kind: 'noteit/event', type: 'test/changed', payload: { count: 1 } }, self)).toBeNull()
+    expect(router.handle({ kind: 'qingmark/event', type: 'test/changed', payload: { count: 1 } }, self)).toBeNull()
     expect(router.handle({ action: 'legacy' }, self)).toBeNull()
     expect(router.handle(null, self)).toBeNull()
   })
@@ -136,7 +136,7 @@ describe('createClient', () => {
   it('sends to a tab when tabId is given', async () => {
     const stop = makeRouter().listen()
     const result = await createClient<TestRequests>().send('test/echo', { text: 'tab' }, { tabId: 7 })
-    expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(7, { kind: 'noteit/request', type: 'test/echo', req: { text: 'tab' } })
+    expect(chrome.tabs.sendMessage).toHaveBeenCalledWith(7, { kind: 'qingmark/request', type: 'test/echo', req: { text: 'tab' } })
     expect(result).toEqual({ ok: true, data: { text: 'tab' } })
     stop()
   })

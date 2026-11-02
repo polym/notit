@@ -19,7 +19,7 @@ const META_STYLE = {
   lineHeight: 'var(--nt-meta-line-height)',
 } as const
 const ACTION_STYLE = { height: 28, padding: '0 var(--nt-space-2-5)' } as const
-const PANEL_ID = 'noteit-translate-panel'
+const PANEL_ID = 'qingmark-translate-panel'
 
 type Request =
   | { kind: 'running'; what: 'test' | 'save' }
@@ -211,57 +211,57 @@ export function TranslateSettings() {
             {strings.translatePrivacyNote}
           </p>
           <div className="flex flex-col" style={{ gap: 'var(--nt-space-1)' }}>
-            <label htmlFor="noteit-translate-url" className="text-muted-foreground" style={META_STYLE}>
+            <label htmlFor="qingmark-translate-url" className="text-muted-foreground" style={META_STYLE}>
               {strings.translateBaseUrl}
             </label>
             <Input
-              id="noteit-translate-url"
+              id="qingmark-translate-url"
               type="url"
               inputMode="url"
               autoComplete="off"
               spellCheck={false}
               value={baseUrl}
               aria-invalid={errors.baseUrl ? true : undefined}
-              aria-describedby={errors.baseUrl ? 'noteit-translate-url-error' : undefined}
+              aria-describedby={errors.baseUrl ? 'qingmark-translate-url-error' : undefined}
               onChange={(e) => {
                 setBaseUrl(e.target.value)
                 setRequest(null)
               }}
             />
-            <FieldError id="noteit-translate-url-error" text={errors.baseUrl} />
+            <FieldError id="qingmark-translate-url-error" text={errors.baseUrl} />
           </div>
           <div className="flex flex-col" style={{ gap: 'var(--nt-space-1)' }}>
-            <label htmlFor="noteit-translate-model" className="text-muted-foreground" style={META_STYLE}>
+            <label htmlFor="qingmark-translate-model" className="text-muted-foreground" style={META_STYLE}>
               {strings.translateModel}
             </label>
             <Input
-              id="noteit-translate-model"
+              id="qingmark-translate-model"
               autoComplete="off"
               spellCheck={false}
               value={model}
               aria-invalid={errors.model ? true : undefined}
-              aria-describedby={errors.model ? 'noteit-translate-model-error' : undefined}
+              aria-describedby={errors.model ? 'qingmark-translate-model-error' : undefined}
               onChange={(e) => {
                 setModel(e.target.value)
                 setRequest(null)
               }}
             />
-            <FieldError id="noteit-translate-model-error" text={errors.model} />
+            <FieldError id="qingmark-translate-model-error" text={errors.model} />
           </div>
           <div className="flex flex-col" style={{ gap: 'var(--nt-space-1)' }}>
-            <label htmlFor="noteit-translate-key" className="text-muted-foreground" style={META_STYLE}>
+            <label htmlFor="qingmark-translate-key" className="text-muted-foreground" style={META_STYLE}>
               {strings.translateApiKey}
             </label>
             <div className="relative">
               <Input
-                id="noteit-translate-key"
+                id="qingmark-translate-key"
                 type={showKey ? 'text' : 'password'}
                 autoComplete="off"
                 spellCheck={false}
                 value={apiKey}
                 placeholder={view.hasKey ? strings.translateApiKeyKeep : undefined}
                 aria-invalid={errors.apiKey ? true : undefined}
-                aria-describedby={errors.apiKey ? 'noteit-translate-key-error' : undefined}
+                aria-describedby={errors.apiKey ? 'qingmark-translate-key-error' : undefined}
                 onChange={(e) => {
                   setApiKey(e.target.value)
                   setRequest(null)
@@ -285,7 +285,7 @@ export function TranslateSettings() {
                 {showKey ? strings.serverHideKey : strings.serverShowKey}
               </button>
             </div>
-            <FieldError id="noteit-translate-key-error" text={errors.apiKey} />
+            <FieldError id="qingmark-translate-key-error" text={errors.apiKey} />
           </div>
           {permissionDenied && (
             <p data-testid="translate-permission" role="note" className="m-0 text-muted-foreground" style={META_STYLE}>

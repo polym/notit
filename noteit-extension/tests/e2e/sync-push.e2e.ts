@@ -40,10 +40,10 @@ async function cloudHas(id: string): Promise<boolean> {
 
 async function createOnArticle(page: Page, serviceWorker: Worker, url: string): Promise<string> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await dragSelect(page, page.locator('#target'))
   await clickMenuButton(page, 0)
-  await expect(page.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#target .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   return (await liveRecords(serviceWorker))[0].id
 }

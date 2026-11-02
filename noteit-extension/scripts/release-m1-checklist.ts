@@ -69,7 +69,7 @@ export function formatChecklist(facts: ReleaseFacts, errors: readonly string[]):
   const backupFile = 'backup-highlights-legacy.json'
   const backupNote = facts.backupRows === null ? '<rows in backup file>' : String(facts.backupRows)
   const lines = [
-    '# NoteIt M1 release checklist',
+    '# QingMark M1 release checklist',
     '',
     '## Pre-release checks (agent, offline)',
     `- version: package.json ${facts.packageVersion}, dist/manifest.json ${facts.manifestVersion ?? 'missing'}`,
@@ -109,7 +109,7 @@ export function formatChecklist(facts: ReleaseFacts, errors: readonly string[]):
     '',
     `6. E5 release: git tag ${tag} && git push origin ${tag} (release.yml builds and publishes the zip).`,
     '   Smoke test once in Edge. Then start the one-week two-device trial and run daily:',
-    '   SUPABASE_URL=<live url> SUPABASE_ANON_KEY=<anon key> NOTEIT_EMAIL=<email> NOTEIT_PASSWORD=<password> \\',
+    '   SUPABASE_URL=<live url> SUPABASE_ANON_KEY=<anon key> QINGMARK_EMAIL=<email> QINGMARK_PASSWORD=<password> \\',
     '     node scripts/verify-consistency.ts <device-a.json> <device-b.json>',
     '   0 missing / 0 duplicates every day means SC-1 is met.',
     '',

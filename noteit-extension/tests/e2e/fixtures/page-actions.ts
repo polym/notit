@@ -1,22 +1,22 @@
 // Page interactions shared by the e2e and perf cases.
-// - Selection menu (Story 3.13): Preact FloatingMenu inside the open <noteit-root> shadow root; its
+// - Selection menu (Story 3.13): Preact FloatingMenu inside the open <qingmark-root> shadow root; its
 //   buttons are real <button>s, located through the shadow root.
 // - Comment preview (Story 3.14): read-only tooltip in the same shadow root, shown on hover.
 import type { Locator, Page } from '@playwright/test'
 
 /** Selection menu selector (pierces the open shadow root). */
-export const MENU = 'noteit-root [data-noteit-menu]'
+export const MENU = 'qingmark-root [data-qingmark-menu]'
 /** Selection menu order: four color dots (yellow first), then the comment button. */
 export const MENU_COLORS = ['yellow', 'orange', 'blue', 'green'] as const
 export const COMMENT_BUTTON_INDEX = MENU_COLORS.length
 
 /** Comment preview selector (pierces the open shadow root). */
-export const PREVIEW = 'noteit-root [data-noteit-preview]'
+export const PREVIEW = 'qingmark-root [data-qingmark-preview]'
 
 /** Highlight popover selector (Story 3.15, pierces the open shadow root). */
-export const POPOVER = 'noteit-root [data-noteit-popover]'
+export const POPOVER = 'qingmark-root [data-qingmark-popover]'
 /** In-page undo toast selector (Story 3.15, pierces the open shadow root). */
-export const TOAST = 'noteit-root [data-noteit-toast]'
+export const TOAST = 'qingmark-root [data-qingmark-toast]'
 
 /** Clicks a rendered highlight with the mouse (a real mousedown / mouseup / click on the page). */
 export async function clickHighlight(page: Page, highlight: Locator): Promise<void> {

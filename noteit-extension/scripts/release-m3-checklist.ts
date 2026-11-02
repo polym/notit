@@ -166,7 +166,7 @@ export function formatChecklist(
         ]
 
   const lines = [
-    '# NoteIt M3 release checklist',
+    '# QingMark M3 release checklist',
     '',
     '## Pre-release checks (agent, offline)',
     `- version: package.json ${facts.packageVersion}, dist/manifest.json ${facts.manifestVersion ?? 'missing'}`,

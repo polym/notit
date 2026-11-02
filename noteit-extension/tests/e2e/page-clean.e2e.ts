@@ -1,6 +1,6 @@
 // Story 3.16 (FR42, Q44): the page shows no site status overlay. Besides the highlights themselves
-// (spans and their stylesheet), everything NoteIt adds to a page lives inside the single
-// <noteit-root> shadow host; site state is shown only in the side panel header and the badge. The
+// (spans and their stylesheet), everything QingMark adds to a page lives inside the single
+// <qingmark-root> shadow host; site state is shown only in the side panel header and the badge. The
 // legacy status overlay code is gone.
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
@@ -17,15 +17,15 @@ import {
 } from '../helpers/local-db.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
-const HOST_ON = 'noteit-root[data-noteit-site="on"]'
+const TITLE = 'QingMark smoke article'
+const HOST_ON = 'qingmark-root[data-qingmark-site="on"]'
 // The highlight span stylesheet in <head> belongs to the highlights themselves: the spans live in
 // the page DOM, so their styles cannot move into the shadow root. It shows nothing on its own.
-const HIGHLIGHT_STYLES = 'style#noteit-highlight-styles'
+const HIGHLIGHT_STYLES = 'style#qingmark-highlight-styles'
 
 /**
  * Elements in the live document that the fixture HTML does not have, ignoring highlight spans and
- * anything inside <noteit-root>. Compared as tag#id.class signatures in document order.
+ * anything inside <qingmark-root>. Compared as tag#id.class signatures in document order.
  */
 async function injectedOutsideHost(page: Page): Promise<string[]> {
   return page.evaluate(async (allowed) => {
@@ -43,7 +43,7 @@ async function injectedOutsideHost(page: Page): Promise<string[]> {
     const before = count(original, () => false)
     const after = count(
       document,
-      (el) => el.closest('noteit-root') !== null || el.closest('.noteit-highlight') !== null || el.matches(allowed),
+      (el) => el.closest('qingmark-root') !== null || el.closest('.qingmark-highlight') !== null || el.matches(allowed),
     )
     const extra: string[] = []
     for (const [key, n] of after) {
@@ -58,7 +58,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
   await signIn(context, extensionId)
 })
 
-test('an enabled page with highlights has no NoteIt element outside <noteit-root> besides the highlights', async ({
+test('an enabled page with highlights has no QingMark element outside <qingmark-root> besides the highlights', async ({
   context,
   extensionId,
   server,
@@ -81,26 +81,26 @@ test('an enabled page with highlights has no NoteIt element outside <noteit-root
 
   await page.reload()
   await page.locator(HOST_ON).waitFor({ state: 'attached' })
-  await expect(page.locator('.noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('.qingmark-highlight').first()).toBeVisible()
   // Give any delayed overlay (the legacy one faded in and out over 3 s) time to appear.
   await page.waitForTimeout(500)
   expect(await injectedOutsideHost(page)).toEqual([])
-  expect(await page.locator(`[id^="noteit-"]:not(${HIGHLIGHT_STYLES})`).count()).toBe(0)
-  expect(await page.evaluate(() => document.querySelectorAll('noteit-root').length)).toBe(1)
+  expect(await page.locator(`[id^="qingmark-"]:not(${HIGHLIGHT_STYLES})`).count()).toBe(0)
+  expect(await page.evaluate(() => document.querySelectorAll('qingmark-root').length)).toBe(1)
 
   // Turning the site off from the side panel path adds nothing either.
   const off = await extensionRequest<void>(ext, 'site/setEnabled', { siteKey: SITE, enabled: false })
   expect(off.ok).toBe(true)
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
-  await expect(page.locator('noteit-root')).not.toHaveAttribute('data-noteit-site', 'on')
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
+  await expect(page.locator('qingmark-root')).not.toHaveAttribute('data-qingmark-site', 'on')
   expect(await injectedOutsideHost(page)).toEqual([])
   expect(externalRequests).toEqual([])
 })
 
-test('a page on a closed site has no NoteIt element outside <noteit-root>', async ({ context, server }) => {
+test('a page on a closed site has no QingMark element outside <qingmark-root>', async ({ context, server }) => {
   const page = await context.newPage()
   await page.goto(`${server.origin}/article.html`)
-  await expect.poll(() => page.evaluate(() => document.querySelectorAll('noteit-root').length)).toBe(1)
+  await expect.poll(() => page.evaluate(() => document.querySelectorAll('qingmark-root').length)).toBe(1)
   await page.waitForTimeout(500)
   expect(await injectedOutsideHost(page)).toEqual([])
 })
@@ -117,7 +117,7 @@ test('the legacy status overlay and site toggle menu code no longer exist in src
   walk(join(import.meta.dirname, '../../src'))
   walk(join(import.meta.dirname, '../../public'))
   const legacy =
-    /noteit-status-indicator|createStatusIndicator|updateStatusIndicator|TOGGLE_EXTENSION|GET_EXTENSION_STATE|TOGGLE_MENU_ID|noteit-toggle|menuToggleSite/
+    /qingmark-status-indicator|createStatusIndicator|updateStatusIndicator|TOGGLE_EXTENSION|GET_EXTENSION_STATE|TOGGLE_MENU_ID|qingmark-toggle|menuToggleSite/
   const hits = files.filter((f) => !f.endsWith('.test.ts') && legacy.test(readFileSync(f, 'utf8')))
   expect(hits).toEqual([])
 })

@@ -104,8 +104,8 @@ export function v2HighlightRow(overrides: Record<string, unknown> = {}): Record<
 
 // Test users created by supabase/seed.sql (local stack only).
 export const TEST_USERS = {
-  a: { email: 'user-a@noteit.test', password: 'test-password-a' },
-  b: { email: 'user-b@noteit.test', password: 'test-password-b' },
+  a: { email: 'user-a@qingmark.test', password: 'test-password-a' },
+  b: { email: 'user-b@qingmark.test', password: 'test-password-b' },
 } as const
 
 /**

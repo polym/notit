@@ -4,6 +4,7 @@ import { Dexie, type EntityTable } from 'dexie'
 import type { HighlightRecord } from '../model/highlight.ts'
 import type { LogRecord } from '../log/types.ts'
 
+// Kept from the NoteIt era on purpose: renaming would open a new empty database and orphan unsynced data.
 export const DB_NAME = 'noteit'
 
 /** One pending upload per highlight id (D4). */
@@ -28,7 +29,7 @@ export interface MetaRecord {
   value: string | number | null
 }
 
-export type NoteitDb = Dexie & {
+export type QingmarkDb = Dexie & {
   highlights: EntityTable<HighlightRecord, 'id'>
   outbox: EntityTable<OutboxItem, 'id'>
   anchorStatus: EntityTable<AnchorStatusRecord, 'id'>
@@ -36,8 +37,8 @@ export type NoteitDb = Dexie & {
   logs: EntityTable<LogRecord, 'seq'>
 }
 
-function createDb(): NoteitDb {
-  const db = new Dexie(DB_NAME) as NoteitDb
+function createDb(): QingmarkDb {
+  const db = new Dexie(DB_NAME) as QingmarkDb
   db.version(1).stores({
     highlights: 'id, canonicalUrl, siteKey, createdAt, [canonicalUrl+deletedAt]',
     outbox: 'id',
@@ -48,10 +49,10 @@ function createDb(): NoteitDb {
   return db
 }
 
-let instance: NoteitDb | null = null
+let instance: QingmarkDb | null = null
 
 /** Lazily opened singleton so importing this module has no IndexedDB side effects. */
-export function getDb(): NoteitDb {
+export function getDb(): QingmarkDb {
   instance ??= createDb()
   return instance
 }

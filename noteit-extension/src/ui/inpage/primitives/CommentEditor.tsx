@@ -66,7 +66,7 @@ export function CommentEditor({ initial = '', onSave, onCancel, autoFocus = true
       <div class="nt-editor-foot">
         {leading}
         {insert && (
-          <button type="button" class="nt-editor-insert" data-noteit-insert="" onClick={() => append(insert.text)}>
+          <button type="button" class="nt-editor-insert" data-qingmark-insert="" onClick={() => append(insert.text)}>
             {insert.label}
           </button>
         )}

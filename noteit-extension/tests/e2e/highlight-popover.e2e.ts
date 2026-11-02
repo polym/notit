@@ -34,7 +34,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Creates a highlight of `#scope` through the floating menu (dot `colorIndex`) and returns its id. */
@@ -43,14 +43,14 @@ async function createHighlight(page: Page, scope: string, colorIndex: number, se
   await dragSelect(page, page.locator(scope))
   await clickMenuButton(page, colorIndex)
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(before + 1)
-  const mark = page.locator(`${scope} .noteit-highlight`).first()
+  const mark = page.locator(`${scope} .qingmark-highlight`).first()
   await expect(mark).toBeVisible()
-  const id = await mark.getAttribute('data-noteit-id')
+  const id = await mark.getAttribute('data-qingmark-id')
   if (!id) throw new Error('highlight missing')
   return id
 }
 
-const markOf = (page: Page, id: string) => page.locator(`[data-noteit-id="${id}"]`).first()
+const markOf = (page: Page, id: string) => page.locator(`[data-qingmark-id="${id}"]`).first()
 
 test('popover shows the current color and record comment; dots, save, Esc and outside click', async ({
   context,
@@ -106,7 +106,7 @@ test('popover shows the current color and record comment; dots, save, Esc and ou
   await editor.press('ControlOrMeta+Enter')
   await expect(popover).toHaveCount(0)
   await expect.poll(async () => (await liveRecords(serviceWorker))[0]?.comment).toBe('Worth a second read')
-  await expect(mark).toHaveClass(/noteit-commented/)
+  await expect(mark).toHaveClass(/qingmark-commented/)
   await expect.poll(() => hasCommentMarker(mark)).toBe(true)
   expect((await liveRecords(serviceWorker))[0]?.color).toBe('orange')
 
@@ -170,7 +170,7 @@ test('only one overlay at a time: the popover closes the floating menu and the p
   const editor = page.locator(`${POPOVER} textarea`)
   await editor.fill('has a comment')
   await editor.press('ControlOrMeta+Enter')
-  await expect(mark).toHaveClass(/noteit-commented/)
+  await expect(mark).toHaveClass(/qingmark-commented/)
 
   // Hover shows the preview; clicking the highlight replaces it with the popover. The mouse is still
   // on the highlight after the save, so it leaves first to produce a fresh mouseover.
@@ -193,7 +193,7 @@ test('only one overlay at a time: the popover closes the floating menu and the p
   await clickHighlight(page, mark)
   await expect(page.locator(POPOVER)).toBeVisible()
   await expect(page.locator(MENU)).toHaveCount(0)
-  expect(await page.locator('noteit-root .nt-overlay').count()).toBe(1)
+  expect(await page.locator('qingmark-root .nt-overlay').count()).toBe(1)
 })
 
 test('popover delete shows the undo toast in place, in this tab only; undo restores everywhere', async ({
@@ -227,8 +227,8 @@ test('popover delete shows the undo toast in place, in this tab only; undo resto
 
   // Popover closed, highlight gone here and in the other tab, record soft-deleted.
   await expect(popover).toHaveCount(0)
-  await expect(page.locator(`[data-noteit-id="${id}"]`)).toHaveCount(0)
-  await expect(second.locator(`[data-noteit-id="${id}"]`)).toHaveCount(0)
+  await expect(page.locator(`[data-qingmark-id="${id}"]`)).toHaveCount(0)
+  await expect(second.locator(`[data-qingmark-id="${id}"]`)).toHaveCount(0)
   await expect(items).toHaveCount(1)
   expect((await dumpLocalDb(serviceWorker)).records.find((r) => r.id === id)?.deletedAt).not.toBeNull()
 
@@ -237,7 +237,7 @@ test('popover delete shows the undo toast in place, in this tab only; undo resto
   await expect(toast).toBeVisible()
   await expect(toast).toContainText(strings.deleted)
   await expect(toast).toContainText(strings.undo)
-  await expect(page.locator('noteit-root [data-noteit-toast-region]')).toHaveAttribute('aria-live', 'polite')
+  await expect(page.locator('qingmark-root [data-qingmark-toast-region]')).toHaveAttribute('aria-live', 'polite')
   const toastBox = (await toast.boundingBox())!
   expect(Math.abs(toastBox.x - popBox.x)).toBeLessThanOrEqual(1)
   expect(Math.abs(toastBox.y - popBox.y)).toBeLessThanOrEqual(1)
@@ -258,7 +258,7 @@ test('popover delete shows the undo toast in place, in this tab only; undo resto
   await expect(toast).toBeVisible()
   await expect(toast).toHaveCount(0, { timeout: 7000 })
   expect((await dumpLocalDb(serviceWorker)).records.find((r) => r.id === id)?.deletedAt).not.toBeNull()
-  await expect(page.locator(`[data-noteit-id="${id}"]`)).toHaveCount(0)
+  await expect(page.locator(`[data-qingmark-id="${id}"]`)).toHaveCount(0)
   expect(dialogs).toBe(0)
 
   expect(externalRequests).toEqual([])

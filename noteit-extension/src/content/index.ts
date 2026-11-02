@@ -1,4 +1,4 @@
-console.log('[NoteIt] Content Script Loaded');
+console.log('[QingMark] Content Script Loaded');
 
 import { SelectionManager } from './SelectionManager';
 import { client } from './client';
@@ -35,13 +35,13 @@ installFloatingMenuKeyGuard();
 try {
   mountShadowHost();
 } catch (error) {
-  console.warn('[NoteIt] Shadow host not mounted', error);
+  console.warn('[QingMark] Shadow host not mounted', error);
 }
 
 // Initialize Managers
 const renderer = createRenderer();
 // The active engine (Story 4.6 spike) on the host, so tests know how to read painted highlights.
-mountShadowHost()?.host.setAttribute('data-noteit-renderer', renderer.paintsElements ? 'mark' : 'highlight-api');
+mountShadowHost()?.host.setAttribute('data-qingmark-renderer', renderer.paintsElements ? 'mark' : 'highlight-api');
 const selectionManager = new SelectionManager(renderer);
 
 const styleOf = (record: HighlightRecord) => ({ color: record.color, commented: Boolean(record.comment) });
@@ -76,7 +76,7 @@ const anchorTracker = new AnchorTracker({
   canonicalUrl: () => canonicalUrl(window.location.href),
   send: (report) => {
     void client.send('anchor/report', report).then((result) => {
-      if (!result.ok) console.error('[NoteIt] Failed to report anchors:', result.error.code);
+      if (!result.ok) console.error('[QingMark] Failed to report anchors:', result.error.code);
     });
   },
   windowMs: ANCHOR_LOST_WINDOW_MS,
@@ -88,15 +88,15 @@ const anchorTracker = new AnchorTracker({
 const markSiteState = (enabled: boolean) => {
   const host = mountShadowHost()?.host;
   if (!host) return;
-  if (enabled) host.setAttribute('data-noteit-site', 'on');
-  else host.removeAttribute('data-noteit-site');
+  if (enabled) host.setAttribute('data-qingmark-site', 'on');
+  else host.removeAttribute('data-qingmark-site');
 };
 
 /** Page state from the service worker; null for pages it does not handle (non-http(s), no receiver). */
 const fetchPageState = async (url: string): Promise<PageState | null> => {
   const result = await client.send('page/getState', { url });
   if (!result.ok) {
-    if (result.error.code !== 'bad_request') console.error('[NoteIt] Failed to read page state:', result.error.code);
+    if (result.error.code !== 'bad_request') console.error('[QingMark] Failed to read page state:', result.error.code);
     return null;
   }
   return result.data;
@@ -105,7 +105,7 @@ const fetchPageState = async (url: string): Promise<PageState | null> => {
 // Turns the page on after the service worker has already decided the site is enabled (D8).
 const enableExtension = async () => {
   setExtensionEnabled(true);
-  console.log('[NoteIt] Extension enabled for:', window.location.href);
+  console.log('[QingMark] Extension enabled for:', window.location.href);
   markSiteState(true);
   await requestPass('full');
 };
@@ -118,7 +118,7 @@ const styleById = (id: string) => {
 
 const countIndexBuild = () => {
   indexBuilds++;
-  mountShadowHost()?.host.setAttribute('data-noteit-index-builds', String(indexBuilds));
+  mountShadowHost()?.host.setAttribute('data-qingmark-index-builds', String(indexBuilds));
 };
 
 /** Records the next pass should restore, or null when there is nothing to do. */
@@ -136,7 +136,7 @@ const prepareFullPass = async (isStale: () => boolean): Promise<HighlightRecord[
   lastLoadUrl = passUrl;
   const openKey = openHighlightPopoverKey();
   if (openKey !== null && !pageRecords.has(openKey)) hideHighlightPopover();
-  console.log(`[NoteIt] Found ${state.highlights.length} highlights for current page`);
+  console.log(`[QingMark] Found ${state.highlights.length} highlights for current page`);
   renderer.clear();
   return state.highlights;
 };
@@ -183,7 +183,7 @@ const drainPasses = async () => {
       try {
         await runPass(kind);
       } catch (error) {
-        console.error('[NoteIt] Failed to restore highlights:', error);
+        console.error('[QingMark] Failed to restore highlights:', error);
       } finally {
         passRunning = false;
       }
@@ -218,10 +218,10 @@ const init = async () => {
   const state = await fetchPageState(currentUrl);
   if (state) setSignedIn(state.signedIn);
   if (state?.enabled) {
-    console.log('[NoteIt] Site enabled, loading highlights');
+    console.log('[QingMark] Site enabled, loading highlights');
     await enableExtension();
   } else {
-    console.log('[NoteIt] Extension disabled by default for this site');
+    console.log('[QingMark] Extension disabled by default for this site');
   }
 };
 
@@ -316,7 +316,7 @@ const flashHighlight = async (id: string): Promise<boolean> => {
 // existing highlights are loaded only after the create so their repaint cannot drop the selection.
 // One router per content script: a second one would answer the first one's types with bad_request.
 const pageHandlers: Handlers<PageRequests & TranslatePageRequests> = {
-  // Context menu "translate with NoteIt" (spec "selection translation"): works signed out and on
+  // Context menu "translate with QingMark" (spec "selection translation"): works signed out and on
   // sites that are off, and changes no site state.
   async 'page/translateSelection'() {
     return { shown: selectionManager.translateSelection() };
@@ -351,4 +351,4 @@ const pageHandlers: Handlers<PageRequests & TranslatePageRequests> = {
 
 createRouter<PageRequests & TranslatePageRequests>(pageHandlers).listen();
 
-console.log('[NoteIt] Managers Initialized');
+console.log('[QingMark] Managers Initialized');

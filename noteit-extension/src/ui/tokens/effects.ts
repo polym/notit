@@ -1,6 +1,6 @@
 // Component effect values from the DESIGN.md frontmatter "components" section (shadows, scrims, rings).
 // They are composite CSS values rather than color tokens, so they are not --nt-* variables; they live
-// here because color literals are only allowed inside src/ui/tokens (lint rule noteit/no-raw-color).
+// here because color literals are only allowed inside src/ui/tokens (lint rule qingmark/no-raw-color).
 // Values that reference color tokens are written with var(--nt-*), so they work in both UI trees.
 export const effects = {
   /** components.floating-menu.shadow; also the sync-error-popover base (Q68). */

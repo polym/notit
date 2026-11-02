@@ -15,7 +15,7 @@ import { strings } from '../../src/ui/strings.ts'
 import { expandGroup, openAllSites } from './fixtures/all-sites.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 const GHOST = 'This sentence is not on the page yet.'
 const LOST_TEXT = strings.anchorLost
 
@@ -26,7 +26,7 @@ function req(url: string, text: string, comment: string | null = null): CreateHi
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 async function jumpTo(ext: Page, id: string): Promise<string> {
@@ -60,7 +60,7 @@ test('a missing highlight is marked lost after 3s and cleared once its text appe
   const page = await context.newPage()
   const openedAt = Date.now()
   await openArticle(page, url)
-  await expect(page.locator(`[data-noteit-id="${present.id}"]`).first()).toBeVisible()
+  await expect(page.locator(`[data-qingmark-id="${present.id}"]`).first()).toBeVisible()
   // Not lost before the window ends.
   await page.waitForTimeout(1500)
   expect(await anchorStatusIds(serviceWorker)).toEqual([])
@@ -82,7 +82,7 @@ test('a missing highlight is marked lost after 3s and cleared once its text appe
     p.textContent = text
     document.body.appendChild(p)
   }, GHOST)
-  await expect(page.locator(`[data-noteit-id="${ghost.id}"]`).first()).toBeVisible({ timeout: 5000 })
+  await expect(page.locator(`[data-qingmark-id="${ghost.id}"]`).first()).toBeVisible({ timeout: 5000 })
   await expect.poll(() => anchorStatusIds(serviceWorker)).toEqual([])
   await expect(view.getByTestId('anchor-lost')).toHaveCount(0)
 
@@ -110,7 +110,7 @@ test('nav/jumpTo reuses an open tab, opens a new one when needed and reports los
   expect(await jumpTo(ext, present.id)).toBe('flashed')
   const page = await opened
   expect(new URL(page.url()).pathname).toBe('/article.html')
-  await expect(page.locator(`[data-noteit-id="${present.id}"]`).first()).toBeVisible()
+  await expect(page.locator(`[data-qingmark-id="${present.id}"]`).first()).toBeVisible()
   const tabCount = context.pages().length
 
   // The same page (other URL variant) is reused, no new tab.

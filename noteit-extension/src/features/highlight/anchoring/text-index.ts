@@ -2,7 +2,7 @@
 // (offsets -> Range) both go through one TextIndex so they share the same "page body text":
 // - TreeWalker(SHOW_TEXT) over document.body, in document order;
 // - text nodes with an ancestor in TEXT_INDEX_EXCLUDE are skipped (inline scripts, styles, form
-//   values and NoteIt's own Shadow host are not part of the readable text);
+//   values and QingMark's own Shadow host are not part of the readable text);
 // - the remaining text nodes are concatenated into one virtual string, with a (node, start) table.
 // Never compute offsets from body.textContent or Range.toString() (both include excluded text);
 // lint enforces this in anchoring/ and inpage/.

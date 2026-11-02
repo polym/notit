@@ -9,7 +9,7 @@ import { MENU, POPOVER, clickMenuButton, dragSelect } from './fixtures/page-acti
 
 const SITE = '127.0.0.1'
 const ROWS = ['#row1', '#row2', '#row3']
-const SVG_RECTS = '#diagram rect.noteit-svg-highlight'
+const SVG_RECTS = '#diagram rect.qingmark-svg-highlight'
 
 test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
   await resetLocalData(serviceWorker)
@@ -21,7 +21,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 
 async function openDiagram(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Rendered width of every SVG text row (0 when its text is not drawn). */
@@ -111,7 +111,7 @@ test('HTML text on the same page is still painted; a range into the SVG paints b
   // Control: a plain paragraph highlight still paints a mark.
   await dragSelect(page, page.locator('#outro'))
   await clickMenuButton(page, 0)
-  await expect(page.locator('#outro .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#outro .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
 
   // Mixed: from the intro paragraph into the first diagram row.
@@ -119,10 +119,10 @@ test('HTML text on the same page is still painted; a range into the SVG paints b
   expect(selected).toContain('Every pull request')
   await clickMenuButton(page, 2)
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(2)
-  await expect(page.locator('#intro .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#intro .qingmark-highlight').first()).toBeVisible()
   // The drag crosses the "Required CI" label before #row1 in document order: both get a rect.
   await expect(page.locator(SVG_RECTS)).toHaveCount(2)
-  expect(await page.locator('#row1').evaluate((el) => el.previousElementSibling?.matches('rect.noteit-svg-highlight'))).toBe(true)
+  expect(await page.locator('#row1').evaluate((el) => el.previousElementSibling?.matches('rect.qingmark-svg-highlight'))).toBe(true)
   expect(await page.locator('#diagram mark').count()).toBe(0)
   expect(await rowWidths(page)).toEqual(before)
   await page.screenshot({ path: testInfo.outputPath('mixed-page.png') })

@@ -11,7 +11,7 @@ import { PREVIEW, computedColor, hasCommentMarker, hoverHighlight } from './fixt
 import { colors } from '../../src/ui/tokens/index.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 const CONTEXT_LENGTH = 64
 const COMMENT = 'Why does this survive?\nSecond line.'
 
@@ -25,7 +25,7 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Seeds one blue highlight with a comment (#target) and one blue highlight without (#intro). */
@@ -56,14 +56,14 @@ test('commented highlights carry the marker, keep their color, and preview the r
   const { commented, plain } = await seedPair(page, url, context, extensionId)
   await openArticle(page, url)
 
-  const commentedMark = page.locator(`[data-noteit-id="${commented.id}"]`).first()
-  const plainMark = page.locator(`[data-noteit-id="${plain.id}"]`).first()
+  const commentedMark = page.locator(`[data-qingmark-id="${commented.id}"]`).first()
+  const plainMark = page.locator(`[data-qingmark-id="${plain.id}"]`).first()
   await expect(commentedMark).toBeVisible()
   await expect(plainMark).toBeVisible()
 
   // highlight-mark-commented: the marker only on the commented highlight.
-  expect(await hasCommentMarker(page.locator(`[data-noteit-id="${commented.id}"]`))).toBe(true)
-  expect(await hasCommentMarker(page.locator(`[data-noteit-id="${plain.id}"]`))).toBe(false)
+  expect(await hasCommentMarker(page.locator(`[data-qingmark-id="${commented.id}"]`))).toBe(true)
+  expect(await hasCommentMarker(page.locator(`[data-qingmark-id="${plain.id}"]`))).toBe(false)
   // Same color for both: a comment never changes it (no legacy purple).
   const bg = (el: Element) => getComputedStyle(el).backgroundColor
   const blue = await computedColor(page, colors['highlight-blue'])
@@ -74,7 +74,7 @@ test('commented highlights carry the marker, keep their color, and preview the r
   await hoverHighlight(page, plainMark)
   await page.waitForTimeout(200)
   await expect(page.locator(PREVIEW)).toHaveCount(0)
-  await expect(page.locator('noteit-root .nt-overlay')).toHaveCount(0)
+  await expect(page.locator('qingmark-root .nt-overlay')).toHaveCount(0)
 
   // Hovering the commented highlight shows the preview with the record's comment.
   await hoverHighlight(page, commentedMark)
@@ -88,11 +88,11 @@ test('commented highlights carry the marker, keep their color, and preview the r
   const previewBox = (await preview.boundingBox())!
   expect(Math.round(previewBox.y - (markBox.y + markBox.height))).toBe(6)
   const dom = await commentedMark.evaluate((el) => {
-    const host = document.querySelector('noteit-root')
-    const inShadow = host?.shadowRoot?.querySelector('[data-noteit-preview]') ?? null
+    const host = document.querySelector('qingmark-root')
+    const inShadow = host?.shadowRoot?.querySelector('[data-qingmark-preview]') ?? null
     return {
       childElements: el.children.length,
-      previewInLightDom: document.querySelectorAll('[data-noteit-preview]').length,
+      previewInLightDom: document.querySelectorAll('[data-qingmark-preview]').length,
       inShadow: inShadow !== null,
     }
   })
@@ -116,7 +116,7 @@ test('the legacy hover-to-edit code path no longer exists in src', () => {
   }
   walk(join(import.meta.dirname, '../../src'))
   // Markers of the removed hover edit menu and the in-span tooltip it relied on.
-  const legacy = /LegacyEditMenu|EDIT_MENU_ATTR|data-noteit-edit-menu|noteit-comment-tooltip|attachCommentTooltip|noteit-with-comment|editMenu\.show/
+  const legacy = /LegacyEditMenu|EDIT_MENU_ATTR|data-qingmark-edit-menu|qingmark-comment-tooltip|attachCommentTooltip|qingmark-with-comment|editMenu\.show/
   const hits = files.filter((f) => legacy.test(readFileSync(f, 'utf8')))
   expect(hits).toEqual([])
 })

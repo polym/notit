@@ -57,7 +57,7 @@ afterEach(() => {
 })
 
 describe('createTextIndex', () => {
-  it('excludes every character of script, style, noscript, template, textarea and noteit-root', () => {
+  it('excludes every character of script, style, noscript, template, textarea and qingmark-root', () => {
     const index = createTextIndex()
     for (const ch of EXCLUDED_CHARS) expect(index.text).not.toContain(ch)
     expect(index.text).toContain('Before after template.')

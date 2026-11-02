@@ -105,7 +105,7 @@ export function evaluateCriteria(runs: Record<SpikeEngine, SpikeRun>): SpikeCrit
     },
     {
       id: 'S4',
-      title: `flash via noteit-flash for ${SPIKE_FLASH_MS}ms`,
+      title: `flash via qingmark-flash for ${SPIKE_FLASH_MS}ms`,
       measured: both((r) => r.flash),
       pass: flashOk(api),
     },

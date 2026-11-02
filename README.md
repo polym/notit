@@ -1,4 +1,4 @@
-# NoteIt 📝
+# QingMark 📝
 
 一个简洁优雅的 Chrome 网页高亮笔记扩展，让你可以在任何网页上标记重要内容，添加笔记，并跨设备同步。
 
@@ -40,11 +40,11 @@
 ### 方法一：从发布包安装（推荐）
 
 1. **下载扩展包**
-   - 在 [GitHub Releases](https://github.com/polym/notit/releases) 页面下载最新版本的 `noteit-extension.zip`
+   - 在 [GitHub Releases](https://github.com/polym/notit/releases) 页面下载最新版本的 `qingmark-extension.zip`
    - 或从 GitHub Actions 的构建产物中下载
 
 2. **解压文件**
-   - 将下载的 `noteit-extension.zip` 解压到一个文件夹
+   - 将下载的 `qingmark-extension.zip` 解压到一个文件夹
 
 3. **安装到 Chrome**
    - 打开 Chrome 浏览器
@@ -93,7 +93,7 @@
 2. **创建新项目**
    - 登录后点击「New Project」
    - 填写项目信息：
-     - **Name（项目名称）**：随意填写，例如 `noteit`
+     - **Name（项目名称）**：随意填写，例如 `qingmark`
      - **Database Password（数据库密码）**：设置一个强密码，**务必保存好**
      - **Region（地区）**：选择离你最近的地区（推荐 Singapore 或 Tokyo）
    - 点击「Create new project」，等待 1-2 分钟初始化完成
@@ -161,7 +161,7 @@
 ### 第四步：在扩展中配置
 
 1. **打开扩展设置**
-   - 点击 Chrome 工具栏的 NoteIt 图标，打开侧边栏
+   - 点击 Chrome 工具栏的 QingMark 图标，打开侧边栏
    - 点击右上角的 ⚙️（设置）图标
 
 2. **填写配置信息**

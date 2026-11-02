@@ -50,7 +50,7 @@ export function useSidebarOpened(): void {
     void (async () => {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
       const result = await syncClient.send('sidebar/opened', tab?.id === undefined ? {} : { tabId: tab.id })
-      if (!result.ok) console.warn('[NoteIt] sidebar/opened failed:', result.error.code)
+      if (!result.ok) console.warn('[QingMark] sidebar/opened failed:', result.error.code)
     })()
   }, [])
 }

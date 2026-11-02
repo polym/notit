@@ -41,7 +41,7 @@ export async function updateBadge(tabId: number, url: string | undefined): Promi
     ])
     if (hasHighlights) await chrome.action.setBadgeBackgroundColor({ color: BADGE_COLOR, tabId })
   } catch (error) {
-    console.error('[NoteIt] Failed to update badge:', error)
+    console.error('[QingMark] Failed to update badge:', error)
   }
 }
 
@@ -51,7 +51,7 @@ export async function updateActiveBadges(): Promise<void> {
     const tabs = await chrome.tabs.query({ active: true })
     await Promise.all(tabs.map((tab) => (tab.id === undefined ? undefined : updateBadge(tab.id, tab.url))))
   } catch (error) {
-    console.error('[NoteIt] Failed to update active badges:', error)
+    console.error('[QingMark] Failed to update active badges:', error)
   }
 }
 
@@ -64,7 +64,7 @@ export function startBadge(): void {
     chrome.tabs
       .get(activeInfo.tabId)
       .then((tab) => updateBadge(activeInfo.tabId, tab.url))
-      .catch((error: unknown) => console.error('[NoteIt] Failed to update badge on tab activation:', error))
+      .catch((error: unknown) => console.error('[QingMark] Failed to update badge on tab activation:', error))
   })
   void updateActiveBadges()
 }

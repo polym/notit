@@ -46,10 +46,10 @@ async function cloudDeletedAt(id: string): Promise<number | null> {
 
 async function createOnArticle(page: Page, serviceWorker: Worker, url: string): Promise<HighlightRecord> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await dragSelect(page, page.locator('#target'))
   await clickMenuButton(page, 0)
-  await expect(page.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#target .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   return (await liveRecords(serviceWorker))[0]
 }
@@ -73,7 +73,7 @@ test('pull only: a row from another device appears locally with an empty outbox'
     color: 'green',
     comment: null,
     anchor: null,
-    pageTitle: 'NoteIt smoke article',
+    pageTitle: 'QingMark smoke article',
     favicon: null,
     createdAt: now,
     editedAt: now,
@@ -86,7 +86,7 @@ test('pull only: a row from another device appears locally with an empty outbox'
   const panel = await openSidePanel()
   await expect.poll(async () => (await liveRecords(serviceWorker)).map((r) => r.id)).toEqual([id])
   await panel.getByRole('button', { name: strings.viewAllSites }).click()
-  await expect(panel.getByTestId('all-sites-view').getByText('NoteIt smoke article').first()).toBeVisible()
+  await expect(panel.getByTestId('all-sites-view').getByText('QingMark smoke article').first()).toBeVisible()
 
   // No echo (FR36, #2): the pulled row never entered the outbox and nothing is pending.
   const dump = await dumpLocalDb(serviceWorker)
@@ -119,11 +119,11 @@ test('a delete on device B removes the highlight on A; the older live snapshot o
   await expect
     .poll(async () => (await dumpLocalDb(serviceWorker)).records.find((r) => r.id === mine.id)?.deletedAt ?? null)
     .toBe(deletedAt)
-  await expect(page.locator('#target .noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('#target .qingmark-highlight')).toHaveCount(0)
   expect((await dumpLocalDb(serviceWorker)).outbox).toHaveLength(0)
   await panel.getByRole('button', { name: strings.viewAllSites }).click()
   await expect(panel.getByTestId('empty-all-sites')).toBeVisible()
-  await expect(panel.getByTestId('all-sites-view').getByText('NoteIt smoke article')).toHaveCount(0)
+  await expect(panel.getByTestId('all-sites-view').getByText('QingMark smoke article')).toHaveCount(0)
 
   // Another push/pull round keeps it deleted, locally and in the cloud.
   await panel.reload()

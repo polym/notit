@@ -1,4 +1,4 @@
-// Context menu "translate with NoteIt" and translate/openSettings (spec "selection translation").
+// Context menu "translate with QingMark" and translate/openSettings (spec "selection translation").
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { HandlerError } from '../../../core/messaging/index.ts'
 import { strings } from '../../../ui/strings.ts'
@@ -38,7 +38,7 @@ describe('translate context menu', () => {
   })
 
   it('asks the clicked tab to translate its selection and ignores other items', async () => {
-    onTranslateMenuClicked({ menuItemId: 'noteit-highlight' }, { id: 7 })
+    onTranslateMenuClicked({ menuItemId: 'qingmark-highlight' }, { id: 7 })
     expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalled()
     onTranslateMenuClicked({ menuItemId: TRANSLATE_MENU_ID }, { id: 7 })
     await vi.waitFor(() => expect(chromeMock.tabs.sendMessage).toHaveBeenCalledTimes(1))

@@ -86,7 +86,7 @@ async function doSiteBroadcast(change: SiteChanged): Promise<void> {
       }),
     )
   } catch (error) {
-    console.error('[NoteIt] Failed to broadcast site/changed:', error)
+    console.error('[QingMark] Failed to broadcast site/changed:', error)
   }
 }
 
@@ -100,7 +100,7 @@ async function doClearBroadcast(): Promise<void> {
       }),
     )
   } catch (error) {
-    console.error('[NoteIt] Failed to broadcast page/clear:', error)
+    console.error('[QingMark] Failed to broadcast page/clear:', error)
   }
 }
 
@@ -118,7 +118,7 @@ async function doAuthBroadcast(signedIn: boolean): Promise<void> {
       }),
     )
   } catch (error) {
-    console.error('[NoteIt] Failed to broadcast sign-in change:', error)
+    console.error('[QingMark] Failed to broadcast sign-in change:', error)
   }
 }
 
@@ -137,6 +137,6 @@ async function doBroadcast(records: HighlightRecord[]): Promise<void> {
       }),
     )
   } catch (error) {
-    console.error('[NoteIt] Failed to broadcast page/sync:', error)
+    console.error('[QingMark] Failed to broadcast page/sync:', error)
   }
 }

@@ -30,7 +30,7 @@ test('selected text highlighted from the floating menu survives a reload', async
   expect(selected.length).toBeGreaterThan(10)
   await clickMenuButton(page, 0)
 
-  const highlight = page.locator('#target .noteit-highlight')
+  const highlight = page.locator('#target .qingmark-highlight')
   await expect(highlight.first()).toBeVisible()
   await expect.poll(() => highlight.allTextContents().then((parts) => parts.join(''))).toBe(selected)
 
@@ -38,7 +38,7 @@ test('selected text highlighted from the floating menu survives a reload', async
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
 
   await page.reload()
-  const restored = page.locator('#target .noteit-highlight')
+  const restored = page.locator('#target .qingmark-highlight')
   await expect(restored.first()).toBeVisible()
   await expect.poll(() => restored.allTextContents().then((parts) => parts.join(''))).toBe(selected)
 

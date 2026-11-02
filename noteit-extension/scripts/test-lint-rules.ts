@@ -50,11 +50,11 @@ const REQUIRED_RULES = [
   'no-restricted-syntax',
   '@typescript-eslint/no-explicit-any',
   '@typescript-eslint/no-floating-promises',
-  'noteit/no-raw-url-compare',
-  'noteit/no-import-cycle',
-  'noteit/no-raw-color',
-  'noteit/no-cjk-literal',
-  'noteit/no-raw-text-offset',
+  'qingmark/no-raw-url-compare',
+  'qingmark/no-import-cycle',
+  'qingmark/no-raw-color',
+  'qingmark/no-cjk-literal',
+  'qingmark/no-raw-text-offset',
 ]
 for (const rule of REQUIRED_RULES) {
   if (!covered.has(rule)) failures.push(`rule ${rule}: no passing fixture`)

@@ -73,10 +73,10 @@ test('login, create, edit, delete, sync and logout only reach Supabase and the t
   // Create on the page through the floating menu.
   const page = await context.newPage()
   await page.goto(`${server.origin}/article.html`)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
   await dragSelect(page, page.locator('#target'))
   await clickMenuButton(page, 0)
-  await expect(page.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#target .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   const id = (await liveRecords(serviceWorker))[0].id
   await expect.poll(() => pending(panel)).toBe(0)

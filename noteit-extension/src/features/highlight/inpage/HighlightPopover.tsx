@@ -59,7 +59,7 @@ export function HighlightPopover({
     <div
       ref={ref}
       class="nt-overlay nt-card nt-highlight-popover"
-      data-noteit-popover=""
+      data-qingmark-popover=""
       role="dialog"
       aria-label={strings.highlightPopoverLabel}
       style={{

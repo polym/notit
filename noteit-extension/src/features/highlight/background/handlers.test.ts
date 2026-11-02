@@ -17,7 +17,7 @@ import type {
   SiteRequests,
 } from '../shared/protocol.ts'
 
-const EXTENSION_ID = 'noteit-test-id'
+const EXTENSION_ID = 'qingmark-test-id'
 const self = { id: EXTENSION_ID } as chrome.runtime.MessageSender
 
 function installChromeMock() {
@@ -57,7 +57,7 @@ function call<K extends keyof AllRequests>(
   type: K,
   req: unknown,
 ): Promise<Result<unknown>> {
-  return router.handle({ kind: 'noteit/request', type, req }, self) as Promise<Result<unknown>>
+  return router.handle({ kind: 'qingmark/request', type, req }, self) as Promise<Result<unknown>>
 }
 
 async function expectOk<T>(p: Promise<Result<unknown>>): Promise<T> {
@@ -169,7 +169,7 @@ describe('highlight background handlers', () => {
     expect(a).toEqual(b)
     expect(await read.outboxItems()).toEqual([{ id: req.id, editedAt: a.editedAt, attempts: 0 }])
     const events = mock.chromeMock.runtime.sendMessage.mock.calls.map((c) => (c as unknown[])[0])
-    expect(events).toEqual([{ kind: 'noteit/event', type: 'db/changed', payload: { ids: [req.id] } }])
+    expect(events).toEqual([{ kind: 'qingmark/event', type: 'db/changed', payload: { ids: [req.id] } }])
   })
 
   it('create on a soft-deleted id or with a different url/text returns bad_request', async () => {
@@ -255,7 +255,7 @@ describe('highlight background handlers', () => {
     await call('highlight/delete', { id: crypto.randomUUID() })
     const events = mock.chromeMock.runtime.sendMessage.mock.calls.map((c) => (c as unknown[])[0])
     expect(events).toEqual(
-      Array.from({ length: 4 }, () => ({ kind: 'noteit/event', type: 'db/changed', payload: { ids: [req.id] } })),
+      Array.from({ length: 4 }, () => ({ kind: 'qingmark/event', type: 'db/changed', payload: { ids: [req.id] } })),
     )
   })
 
@@ -335,7 +335,7 @@ describe('highlight background handlers', () => {
     await expectOk(call('highlight/create', req))
     await vi.waitFor(() => expect(mock.chromeMock.tabs.sendMessage).toHaveBeenCalledTimes(1))
     expect(mock.chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-      kind: 'noteit/event',
+      kind: 'qingmark/event',
       type: 'page/sync',
       payload: expect.objectContaining({
         canonicalUrl: 'https://www.example.com/post?id=7',
@@ -348,7 +348,7 @@ describe('highlight background handlers', () => {
     await expectOk(call('highlight/delete', { id: req.id }))
     await vi.waitFor(() => expect(mock.chromeMock.tabs.sendMessage).toHaveBeenCalledTimes(2))
     expect(mock.chromeMock.tabs.sendMessage).toHaveBeenLastCalledWith(1, {
-      kind: 'noteit/event',
+      kind: 'qingmark/event',
       type: 'page/sync',
       payload: expect.objectContaining({ upserts: [], removes: [req.id], enabled: false }),
     })

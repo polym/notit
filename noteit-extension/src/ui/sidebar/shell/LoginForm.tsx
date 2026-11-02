@@ -78,7 +78,7 @@ export function LoginForm({ onSignedIn, disabled = false }: { onSignedIn: (state
       style={{ padding: '24px var(--nt-space-header-x)', gap: 'var(--nt-space-2-5)' }}
     >
       <Field
-        id="noteit-login-email"
+        id="qingmark-login-email"
         label={strings.loginEmail}
         type="email"
         autoComplete="username"
@@ -88,7 +88,7 @@ export function LoginForm({ onSignedIn, disabled = false }: { onSignedIn: (state
         onChange={(e) => setEmail(e.target.value)}
       />
       <Field
-        id="noteit-login-password"
+        id="qingmark-login-password"
         label={strings.loginPassword}
         type="password"
         autoComplete="current-password"

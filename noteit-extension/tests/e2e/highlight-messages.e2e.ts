@@ -19,15 +19,15 @@ test.beforeEach(async ({ context, extensionId, serviceWorker }) => {
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  // The host gets data-noteit-site="on" once the content script has read page/getState and enabled itself.
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  // The host gets data-qingmark-site="on" once the content script has read page/getState and enabled itself.
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 async function createWithColor(page: Page, serviceWorker: Worker, colorIndex: number): Promise<string> {
   const selected = await dragSelect(page, page.locator('#target'))
   expect(selected.length).toBeGreaterThan(10)
   await clickMenuButton(page, colorIndex)
-  await expect(page.locator('#target .noteit-highlight').first()).toBeVisible()
+  await expect(page.locator('#target .qingmark-highlight').first()).toBeVisible()
   await expect.poll(async () => (await liveRecords(serviceWorker)).length).toBe(1)
   return selected
 }
@@ -52,10 +52,10 @@ test('a legacy palette color survives a reload and is stored as its Q50 name', a
   expect(outbox.map((o) => o.id)).toEqual(pushed ? [] : [record.id])
 
   await page.reload()
-  const restored = page.locator('#target .noteit-highlight')
+  const restored = page.locator('#target .qingmark-highlight')
   await expect(restored.first()).toBeVisible()
   await expect.poll(() => restored.allTextContents().then((parts) => parts.join(''))).toBe(selected)
-  await expect(restored.first()).toHaveAttribute('data-noteit-id', record.id)
+  await expect(restored.first()).toHaveAttribute('data-qingmark-id', record.id)
   // Painted from the record's color name, not from a stored CSS value.
   expect(await restored.first().evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
     await computedColor(page, colors['highlight-blue']),
@@ -76,7 +76,7 @@ test('editing a comment keeps the color, and the page preview shows the record c
   await openArticle(page, `${server.origin}/article.html`)
   await createWithColor(page, serviceWorker, 1) // second dot: orange
   const [created] = await liveRecords(serviceWorker)
-  const mark = page.locator('#target .noteit-highlight').first()
+  const mark = page.locator('#target .qingmark-highlight').first()
 
   // The in-page editor arrives with the click popover (Story 3.15); the comment is written by message.
   const ext = await openExtensionPage(context, extensionId)
@@ -87,7 +87,7 @@ test('editing a comment keeps the color, and the page preview shows the record c
   expect(afterEdit).toMatchObject({ comment: 'first thought', color: 'orange' })
 
   await page.bringToFront()
-  await expect(mark).toHaveClass(/noteit-commented/)
+  await expect(mark).toHaveClass(/qingmark-commented/)
   await hoverHighlight(page, mark)
   await expect(page.locator(PREVIEW)).toHaveText('first thought')
 
@@ -119,10 +119,10 @@ test('a 3 s favicon does not delay the highlight and is never requested by the e
     const probe = { down: 0, shown: 0 }
     ;(window as unknown as { __probe: typeof probe }).__probe = probe
     window.addEventListener('mousedown', () => {
-      if (document.querySelector('noteit-root')?.shadowRoot?.querySelector('[data-noteit-menu]') && probe.down === 0) probe.down = performance.now()
+      if (document.querySelector('qingmark-root')?.shadowRoot?.querySelector('[data-qingmark-menu]') && probe.down === 0) probe.down = performance.now()
     }, true)
     new MutationObserver(() => {
-      if (probe.shown === 0 && document.querySelector('.noteit-highlight')) probe.shown = performance.now()
+      if (probe.shown === 0 && document.querySelector('.qingmark-highlight')) probe.shown = performance.now()
     }).observe(document.body, { childList: true, subtree: true })
   })
   // The browser may load the tab icon itself at page load; let that settle and snapshot it, so only
@@ -174,10 +174,10 @@ test('a quota error from the handler rolls the optimistic highlight back', async
   await dragSelect(page, page.locator('#target'))
   await clickMenuButton(page, 0)
 
-  const errorLine = page.locator('#noteit-error-line')
+  const errorLine = page.locator('#qingmark-error-line')
   await expect(errorLine).toBeVisible()
   await expect(errorLine).toHaveAttribute('role', 'alert')
-  await expect(page.locator('.noteit-highlight')).toHaveCount(0)
+  await expect(page.locator('.qingmark-highlight')).toHaveCount(0)
   expect((await dumpLocalDb(serviceWorker)).records).toEqual([])
 
   expect(externalRequests).toEqual([])

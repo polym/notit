@@ -14,7 +14,7 @@ import {
 import { clickMenuButton, dragSelect } from './fixtures/page-actions.ts'
 
 const SITE = '127.0.0.1'
-const TITLE = 'NoteIt smoke article'
+const TITLE = 'QingMark smoke article'
 // Same context length as src/content/SelectionManager.ts getSelectionContext.
 const CONTEXT_LENGTH = 64
 const TARGETS: ExpectedHighlight[] = [
@@ -24,7 +24,7 @@ const TARGETS: ExpectedHighlight[] = [
 
 async function openArticle(page: Page, url: string): Promise<void> {
   await page.goto(url)
-  await page.locator('noteit-root[data-noteit-site="on"]').waitFor({ state: 'attached' })
+  await page.locator('qingmark-root[data-qingmark-site="on"]').waitFor({ state: 'attached' })
 }
 
 /** Badge text of the tab whose URL is exactly `url`, read in the service worker. */
@@ -75,21 +75,21 @@ test('delete and restore reach every tab of the same page (hash and utm_source d
   await openArticle(tabB, urlB)
   // A page opened with ?utm_source=x#sec renders every highlight of its canonicalUrl.
   for (const rec of [recA, recB]) {
-    await expect(tabA.locator(`[data-noteit-id="${rec.id}"]`).first()).toBeVisible()
-    await expect(tabB.locator(`[data-noteit-id="${rec.id}"]`).first()).toBeVisible()
+    await expect(tabA.locator(`[data-qingmark-id="${rec.id}"]`).first()).toBeVisible()
+    await expect(tabB.locator(`[data-qingmark-id="${rec.id}"]`).first()).toBeVisible()
   }
 
   // The legacy page UI has no delete action; the request goes through the same SW router.
   const deleted = await extensionRequest(ext, 'highlight/delete', { id: recA.id })
   expect(deleted.ok).toBe(true)
-  await expect(tabB.locator(`[data-noteit-id="${recA.id}"]`)).toHaveCount(0, { timeout: 1000 })
-  await expect(tabA.locator(`[data-noteit-id="${recA.id}"]`)).toHaveCount(0, { timeout: 1000 })
-  await expect(tabB.locator(`[data-noteit-id="${recB.id}"]`).first()).toBeVisible()
+  await expect(tabB.locator(`[data-qingmark-id="${recA.id}"]`)).toHaveCount(0, { timeout: 1000 })
+  await expect(tabA.locator(`[data-qingmark-id="${recA.id}"]`)).toHaveCount(0, { timeout: 1000 })
+  await expect(tabB.locator(`[data-qingmark-id="${recB.id}"]`).first()).toBeVisible()
 
   const restored = await extensionRequest(ext, 'highlight/restore', { id: recA.id })
   expect(restored.ok).toBe(true)
-  await expect(tabB.locator(`[data-noteit-id="${recA.id}"]`).first()).toBeVisible({ timeout: 1000 })
-  await expect(tabA.locator(`[data-noteit-id="${recA.id}"]`).first()).toBeVisible({ timeout: 1000 })
+  await expect(tabB.locator(`[data-qingmark-id="${recA.id}"]`).first()).toBeVisible({ timeout: 1000 })
+  await expect(tabA.locator(`[data-qingmark-id="${recA.id}"]`).first()).toBeVisible({ timeout: 1000 })
 
   expect(externalRequests).toEqual([])
 })
@@ -110,8 +110,8 @@ test('a highlight created in one tab appears in the other tab of the same page',
   await tabA.bringToFront()
   await dragSelect(tabA, tabA.locator('#target'))
   await clickMenuButton(tabA, 0)
-  await expect(tabA.locator('.noteit-highlight').first()).toBeVisible()
-  await expect(tabB.locator('.noteit-highlight').first()).toBeVisible({ timeout: 1000 })
+  await expect(tabA.locator('.qingmark-highlight').first()).toBeVisible()
+  await expect(tabB.locator('.qingmark-highlight').first()).toBeVisible({ timeout: 1000 })
 
   expect(externalRequests).toEqual([])
 })
