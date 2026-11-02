@@ -6,6 +6,9 @@ import type { ErrorCode } from '../core/messaging/types.ts'
 
 export const strings = {
   appName: 'NoteIt',
+  // Toolbar tooltip per tab; the idle one must equal actionTitle in messages.json.
+  actionTitleIdle: '打开 NoteIt',
+  actionTitleWithHighlights: (count: number) => `NoteIt · 本页有 ${count} 条摘抄`,
   menuHighlightSelection: '摘抄选中文字',
   anchorLost: '页面上未找到此摘抄',
   loginEmail: '邮箱',

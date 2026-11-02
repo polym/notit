@@ -37,7 +37,12 @@ function installChromeMock(tabs: Tab[], flash: (tabId: number) => unknown) {
       ),
     },
     windows: { getLastFocused: vi.fn(async () => ({ id: 1 })), update: vi.fn(async () => ({})) },
-    action: { setBadgeText: vi.fn(async () => {}), setBadgeBackgroundColor: vi.fn(async () => {}) },
+    action: {
+      setBadgeText: vi.fn(async () => {}),
+      setBadgeBackgroundColor: vi.fn(async () => {}),
+      setIcon: vi.fn(async () => {}),
+      setTitle: vi.fn(async () => {}),
+    },
     storage: {
       local: {
         get: vi.fn(async (key: string) => (store.has(key) ? { [key]: structuredClone(store.get(key)) } : {})),

@@ -22,8 +22,21 @@ export default defineManifest({
   side_panel: {
     default_path: 'src/entries/sidepanel/index.html',
   },
+  // Ginkgo icons (public/icons, rendered from icons-src by scripts/build-icons.ts). The toolbar starts
+  // as the hollow green leaf; the badge code switches each tab to the gold leaf when it has highlights.
+  icons: {
+    16: 'icons/leaf-on-16.png',
+    32: 'icons/leaf-on-32.png',
+    48: 'icons/leaf-on-48.png',
+    128: 'icons/leaf-128.png',
+  },
   action: {
     default_title: '__MSG_actionTitle__',
+    default_icon: {
+      16: 'icons/leaf-off-16.png',
+      32: 'icons/leaf-off-32.png',
+      48: 'icons/leaf-off-48.png',
+    },
   },
   commands: {
     'highlight-selection': {

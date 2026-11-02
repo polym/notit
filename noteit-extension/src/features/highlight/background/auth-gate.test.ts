@@ -21,7 +21,12 @@ function installChromeMock() {
       query: vi.fn(async () => [{ id: 1, url: PAGE }] as chrome.tabs.Tab[]),
       sendMessage: vi.fn(async () => {}),
     },
-    action: { setBadgeText: vi.fn(async () => {}), setBadgeBackgroundColor: vi.fn(async () => {}) },
+    action: {
+      setBadgeText: vi.fn(async () => {}),
+      setBadgeBackgroundColor: vi.fn(async () => {}),
+      setIcon: vi.fn(async () => {}),
+      setTitle: vi.fn(async () => {}),
+    },
   }
   vi.stubGlobal('chrome', chromeMock)
   return chromeMock

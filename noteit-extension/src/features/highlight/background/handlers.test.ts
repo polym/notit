@@ -31,7 +31,12 @@ function installChromeMock() {
       ]),
       sendMessage: vi.fn(async () => undefined),
     },
-    action: { setBadgeText: vi.fn(async () => {}), setBadgeBackgroundColor: vi.fn(async () => {}) },
+    action: {
+      setBadgeText: vi.fn(async () => {}),
+      setBadgeBackgroundColor: vi.fn(async () => {}),
+      setIcon: vi.fn(async () => {}),
+      setTitle: vi.fn(async () => {}),
+    },
     storage: {
       local: {
         get: vi.fn(async (key: string) => (store.has(key) ? { [key]: structuredClone(store.get(key)) } : {})),

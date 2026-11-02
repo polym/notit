@@ -1,0 +1,5 @@
+<!-- Toolbar icon, page with highlights (32 grid, used for 32 and 48px). Solid gold with a dark outline. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <path d="M16 21 C12 20 5 16 3 10 C6 6.5 10 5 14 5.8 L16 11.5 L18 5.8 C22 5 26 6.5 29 10 C27 16 20 20 16 21 Z" fill="#E8A317" stroke="#7A4E00" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M16 20 Q16.4 25 14.8 29" fill="none" stroke="#7A4E00" stroke-width="2.4" stroke-linecap="round"/>
+</svg>
