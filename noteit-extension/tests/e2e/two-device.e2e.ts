@@ -250,6 +250,9 @@ test('side panel closed, service worker killed, browser closed and reopened: not
     await sw.dispose()
   }
   await expect.poll(async () => (await cloud.rows()).some((r) => r.id === afterKill.id), { timeout: 10_000 }).toBe(true)
+  // The server commits the row before its response reaches the worker, which only then clears the
+  // outbox item; going offline in between would drop the response and leave the item queued.
+  await expect.poll(async () => (await a.local()).outbox.map((o) => o.id), { timeout: 10_000 }).toEqual([])
 
   // 3. Created offline, then the whole browser is closed and reopened online on the same profile.
   await a.setOffline(true)
