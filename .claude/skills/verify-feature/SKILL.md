@@ -15,8 +15,8 @@ description: 对 QingMark 扩展的新功能或修改做端到端验证与验收
 ## 0. 准备环境
 
 ```bash
-export PATH=/opt/homebrew/opt/node@24/bin:$PATH   # 项目要求 Node 24（noteit-extension/.nvmrc），默认 Node 20 跑不了 lint
-cd noteit-extension
+export PATH=/opt/homebrew/opt/node@24/bin:$PATH   # 项目要求 Node 24（qingmark-extension/.nvmrc），默认 Node 20 跑不了 lint
+cd qingmark-extension
 npm ci                                            # worktree 里没有 node_modules 时
 npx playwright install chromium
 npm run db:start && npm run db:reset && npm run env:local   # 本地 Supabase（docker），e2e 登录需要

@@ -2,7 +2,7 @@
 // Reads public.highlights_legacy with the service role, converts every row with the same core/url
 // and core/color code the extension uses, and inserts it into the v2 public.highlights table.
 //
-// Usage (Node 24 runs this TypeScript file natively, cwd = noteit-extension):
+// Usage (Node 24 runs this TypeScript file natively, cwd = qingmark-extension):
 //   SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... node scripts/migrate-legacy.ts --user <uid> [--dry-run] [--backup <file>]
 //   SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... node scripts/migrate-legacy.ts --backup <file> --source highlights
 //

@@ -128,10 +128,10 @@ describe('.github/workflows/verify.yml', () => {
     expect(on.some((l) => /^\s+tags:/.test(l))).toBe(false)
   })
 
-  it('uses Node 24 from noteit-extension/.nvmrc', () => {
+  it('uses Node 24 from qingmark-extension/.nvmrc', () => {
     const setup = steps.find((s) => s.uses?.startsWith('actions/setup-node@'))
     expect(setup).toBeDefined()
-    expect(yaml).toMatch(/node-version-file:\s*noteit-extension\/\.nvmrc/)
+    expect(yaml).toMatch(/node-version-file:\s*qingmark-extension\/\.nvmrc/)
     expect(readFileSync(resolve(import.meta.dirname, '../.nvmrc'), 'utf8').trim()).toMatch(/^24(\.|$)/)
   })
 

@@ -3,7 +3,7 @@
 // spike, perf) and prints the handoff: the E5 tag step with its Edge smoke test, and the E7 decision on
 // dropping highlights_legacy after the SC-1 one-week trial.
 //
-// Usage (Node 24, cwd = noteit-extension, after `npm run build`, `npm run test:corpus` and `npm run test:perf`):
+// Usage (Node 24, cwd = qingmark-extension, after `npm run build`, `npm run test:corpus` and `npm run test:perf`):
 //   node scripts/release-m3-checklist.ts
 //
 // Exit 1 when a pre-release check or an evidence gate fails. The script never contacts Supabase or GitHub,
@@ -17,7 +17,7 @@ import { EDGE_SMOKE, KEY_FLOW_E2E, smokeMinutes, type SmokeStep } from './releas
 import { compareToBudgets, type PerfReport } from '../tests/perf/perf.ts'
 import { decideRenderer, type SpikeReport } from '../tests/spike/spike.ts'
 
-/** Report files the checklist reads, relative to noteit-extension. */
+/** Report files the checklist reads, relative to qingmark-extension. */
 export const CORPUS_REPORT = 'tests/corpus/corpus-report.json'
 export const SPIKE_REPORT = 'tests/spike/spike-report.json'
 export const PERF_REPORT = 'tests/perf/perf-report.json'
@@ -179,7 +179,7 @@ export function formatChecklist(
     ...spikeLines,
     ...perfLines,
     '',
-    '## Gates that must be green before the tag (cwd = noteit-extension)',
+    '## Gates that must be green before the tag (cwd = qingmark-extension)',
     '1. npm run verify (CI verify.yml runs the same steps): corpus >= 95% and the Key Flow E2E:',
     ...KEY_FLOW_E2E.map((f) => `   - ${f}`),
     '2. On the Polym machine: npm run build && npm run test:perf -- --absolute (all budgets pass).',
