@@ -3,6 +3,7 @@ console.log('[QingMark] Content Script Loaded');
 import { SelectionManager } from './SelectionManager';
 import { client } from './client';
 import { AnchorTracker } from './anchors';
+import { ScrollMemory } from './scroll-memory';
 import { isExtensionEnabled, pageRecords, setExtensionEnabled, setSignedIn } from './state';
 import { canonicalUrl, siteKey } from '../core/url';
 import { HandlerError, createRouter, onEvent, type Handlers } from '../core/messaging';
@@ -42,7 +43,26 @@ try {
 const renderer = createRenderer();
 // The active engine (Story 4.6 spike) on the host, so tests know how to read painted highlights.
 mountShadowHost()?.host.setAttribute('data-qingmark-renderer', renderer.paintsElements ? 'mark' : 'highlight-api');
-const selectionManager = new SelectionManager(renderer);
+// Only called on user creates, after anchorTracker below is initialized.
+const selectionManager = new SelectionManager(renderer, (id) => {
+  anchorTracker.markSeen(id);
+  rememberSpot(id);
+});
+
+// Where each highlight last rendered, so a jump can scroll a virtual list back to an unmounted one.
+const scrollMemory = new ScrollMemory();
+
+const rememberSpot = (id: string) => {
+  const node = renderer.anchorNode(id);
+  const rect = renderer.boundingRect(id);
+  if (node && rect) scrollMemory.remember(id, node, rect.top);
+};
+
+/** After highlights rendered: updates their spots and the lost decision. */
+const afterRender = () => {
+  for (const id of pageRecords.keys()) if (renderer.isPainted(id)) rememberSpot(id);
+  anchorTracker.afterRender();
+};
 
 const styleOf = (record: HighlightRecord) => ({ color: record.color, commented: Boolean(record.comment) });
 
@@ -132,7 +152,11 @@ const prepareFullPass = async (isStale: () => boolean): Promise<HighlightRecord[
   // A full pass may follow an SPA navigation or drop records: overlays bound to a highlight that is
   // no longer on this page must close (and a URL change closes the undo toast too).
   const passUrl = canonicalUrl(window.location.href);
-  if (lastLoadUrl !== null && passUrl !== lastLoadUrl) selectionManager.hideOverlays();
+  if (lastLoadUrl !== null && passUrl !== lastLoadUrl) {
+    selectionManager.hideOverlays();
+    // Spots belong to the previous page's scroll positions.
+    scrollMemory.clear();
+  }
   lastLoadUrl = passUrl;
   const openKey = openHighlightPopoverKey();
   if (openKey !== null && !pageRecords.has(openKey)) hideHighlightPopover();
@@ -157,7 +181,7 @@ const runPass = async (kind: PassKind) => {
   // after a full pass has opened the window).
   if (kind === 'incremental' && records.length === 0) {
     passRunning = false;
-    if (lastLoadUrl !== null) anchorTracker.afterRender();
+    if (lastLoadUrl !== null) afterRender();
     return;
   }
   await runRestorePass(records, { renderer, styleOf: styleById, cancelled: isStale, onIndexBuilt: countIndexBuild });
@@ -168,7 +192,7 @@ const runPass = async (kind: PassKind) => {
   }
   // Cleared before the evaluation, so this pass's own verdicts are not deferred as busy.
   passRunning = false;
-  anchorTracker.afterRender();
+  afterRender();
 };
 
 /** Runs queued passes one after another until none is left. */
@@ -268,7 +292,7 @@ const applyPageSync = (sync: PageSync) => {
   }
   // While a pass runs, a full pass has unpainted every highlight; evaluating now would report them
   // all lost. The pass's own afterRender covers these records.
-  if (painted && !passRunning) anchorTracker.afterRender();
+  if (painted && !passRunning) afterRender();
 };
 
 // Sign-out / first sign-in wipe (Story 2.19): local data is gone, so every render goes too.
@@ -296,6 +320,7 @@ const applySiteChanged = (change: SiteChanged) => {
     renderer.clear();
     pageRecords.clear();
     anchorTracker.reset();
+    scrollMemory.clear();
   }
 };
 
@@ -303,6 +328,9 @@ onEvent<PageEvents>({ 'page/sync': applyPageSync, 'page/clear': applyPageClear, 
 
 /** Waits up to the lost window for a highlight to render, then scrolls to and flashes it. */
 const flashHighlight = async (id: string): Promise<boolean> => {
+  // Unmounted by a virtual list: scroll back to where it was, so the page renders it again and the
+  // mutation-driven restore pass paints it.
+  if (!renderer.isPainted(id)) scrollMemory.restore(id);
   for (let waited = 0; !renderer.isPainted(id) && waited < ANCHOR_LOST_WINDOW_MS; waited += 100) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
@@ -340,7 +368,8 @@ const pageHandlers: Handlers<PageRequests & TranslatePageRequests> = {
     if (typeof req !== 'object' || req === null || typeof req.id !== 'string') {
       throw new HandlerError('bad_request', 'id is required');
     }
-    return { found: await flashHighlight(req.id) };
+    const found = await flashHighlight(req.id);
+    return found ? { found } : { found, seen: anchorTracker.hasSeen(req.id) };
   },
 
   async 'page/ping'() {

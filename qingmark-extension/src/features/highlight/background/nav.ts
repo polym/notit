@@ -54,7 +54,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
  * Sends page/flash, retrying while the tab has no content script yet (new tab, still loading).
  * Returns the content answer, or null when no content script answered in time.
  */
-export async function flashInTab(tabId: number, id: string): Promise<{ found: boolean } | null> {
+export async function flashInTab(tabId: number, id: string): Promise<PageRequests['page/flash']['res'] | null> {
   const deadline = Date.now() + CONTENT_READY_TIMEOUT_MS + ANCHOR_LOST_WINDOW_MS
   for (;;) {
     const result = await pageClient.send('page/flash', { id }, { tabId })

@@ -43,8 +43,12 @@ export class SelectionManager {
   private currentSelectionRange: Range | null = null;
   private justClosedMenu: boolean = false;
 
-  constructor(renderer: Renderer) {
+  /** Called when a create paints its highlight (the lost decision counts it as seen). */
+  private onPainted: (id: string) => void;
+
+  constructor(renderer: Renderer, onPainted: (id: string) => void = () => {}) {
     this.renderer = renderer;
+    this.onPainted = onPainted;
     this.init();
   }
 
@@ -387,7 +391,10 @@ export class SelectionManager {
     this.currentSelectionRange = null;
 
     // 1. Optimistic paint (architecture.md "Process Patterns": create path only).
-    if (paintRange) this.renderer.paint(req.id, paintRange, { color, commented: Boolean(req.comment) });
+    if (paintRange) {
+      this.renderer.paint(req.id, paintRange, { color, commented: Boolean(req.comment) });
+      if (this.renderer.isPainted(req.id)) this.onPainted(req.id);
+    }
 
     // 2. Persist through the service worker; roll the paint back on failure.
     const result = await client.send('highlight/create', req);

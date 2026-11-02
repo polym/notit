@@ -420,6 +420,10 @@ export class MarkRenderer implements Renderer {
     return true
   }
 
+  anchorNode(id: string): Node | null {
+    return this.connected(id)[0] ?? null
+  }
+
   private connected(id: string): Element[] {
     return (this.marks.get(id) ?? []).filter((el) => el.isConnected)
   }

@@ -66,6 +66,27 @@ describe('content AnchorTracker', () => {
     expect(reports).toEqual([{ canonicalUrl: 'https://example.com/p', found: ['a'], lost: ['b'] }])
   })
 
+  it('a highlight the page unmounted after it rendered is never reported lost (virtual lists)', () => {
+    rendered.add('a').add('b')
+    tracker.afterRender()
+    vi.advanceTimersByTime(3000)
+    // The page scrolled 'a' out of the DOM, then 'b'.
+    rendered.delete('a')
+    tracker.afterRender()
+    rendered.add('a').delete('b')
+    tracker.afterRender()
+    expect(reports).toEqual([{ canonicalUrl: 'https://example.com/p', found: ['a', 'b'], lost: [] }])
+  })
+
+  it('a highlight painted by a local create counts as seen even if no pass saw it', () => {
+    tracker.afterRender()
+    rendered.add('a')
+    tracker.markSeen('a')
+    rendered.delete('a')
+    vi.advanceTimersByTime(3000)
+    expect(reports).toEqual([{ canonicalUrl: 'https://example.com/p', found: [], lost: ['b'] }])
+  })
+
   it('reset closes the window and forgets verdicts', () => {
     tracker.afterRender()
     tracker.reset()
@@ -90,16 +111,16 @@ describe('content AnchorTracker', () => {
     rendered.clear()
     afterSyncRender()
     expect(reports).toHaveLength(1)
-    // The load pass re-renders only 'a', clears its pass flag and evaluates while still busy.
+    // The load pass re-renders only 'a'; 'b' was seen before, so it is not reported lost.
     rendered.add('a')
     loadPass = false
     tracker.afterRender()
-    expect(reports.at(-1)).toEqual({ canonicalUrl: 'https://example.com/p', found: [], lost: ['b'] })
-    // A sync render outside a load pass is evaluated.
+    expect(reports).toHaveLength(1)
+    // A sync render outside a load pass is evaluated; 'b' is already found, nothing new is sent.
     busy = false
     rendered.add('b')
     afterSyncRender()
-    expect(reports.at(-1)).toEqual({ canonicalUrl: 'https://example.com/p', found: ['b'], lost: [] })
+    expect(reports).toEqual([{ canonicalUrl: 'https://example.com/p', found: ['a', 'b'], lost: [] }])
   })
 })
 

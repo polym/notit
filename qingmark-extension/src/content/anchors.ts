@@ -3,6 +3,8 @@
 // rendered stay pending while mutation-driven reloads retry them; when the window ends they are
 // reported as lost. Any later pass that renders one reports it as found. Each id is reported only
 // when its verdict changes, so steady pages send nothing after the first report.
+// A highlight seen rendered once in this page session is never reported lost afterwards: virtual
+// lists (x.com threads) unmount posts scrolled out of view, which says nothing about the page text.
 import type { AnchorReport } from '../features/highlight/index.ts';
 
 type Verdict = 'found' | 'lost';
@@ -32,6 +34,8 @@ export class AnchorTracker {
   private state: 'idle' | 'started' | 'over' = 'idle';
   private timer: ReturnType<typeof setTimeout> | undefined;
   private readonly reported = new Map<string, Verdict>();
+  /** Ids rendered at least once since the last reset; they can no longer be reported lost. */
+  private readonly seen = new Set<string>();
   private readonly deps: AnchorTrackerDeps;
 
   constructor(deps: AnchorTrackerDeps) {
@@ -47,11 +51,22 @@ export class AnchorTracker {
     this.evaluate();
   }
 
+  /** Records a highlight painted outside a render pass (local create), so it is never reported lost. */
+  markSeen(id: string): void {
+    this.seen.add(id);
+  }
+
+  /** True when the highlight rendered at least once since the last reset. */
+  hasSeen(id: string): boolean {
+    return this.seen.has(id);
+  }
+
   /** Forgets every verdict and closes the window (site turned off). */
   reset(): void {
     clearTimeout(this.timer);
     this.state = 'idle';
     this.reported.clear();
+    this.seen.clear();
   }
 
   private onWindowEnd(): void {
@@ -73,8 +88,9 @@ export class AnchorTracker {
     for (const id of this.deps.expectedIds()) {
       const previous = this.reported.get(id);
       if (this.deps.isRendered(id)) {
+        this.seen.add(id);
         if (previous !== 'found') found.push(id);
-      } else if (windowOver && previous !== 'lost') {
+      } else if (windowOver && previous !== 'lost' && !this.seen.has(id)) {
         lost.push(id);
       }
     }
