@@ -1,5 +1,8 @@
 // Story 2.21: manifest permission snapshot (NFR15, #20). The permission set must stay exactly the
 // least-privilege list; adding one is a deliberate change to this test.
+import { existsSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import manifest from '../manifest.config.ts'
 
@@ -38,5 +41,24 @@ describe('manifest permissions', () => {
 
   it('keeps the content script match as the only host access', () => {
     expect(resolved.content_scripts?.map((c) => c.matches)).toEqual([['<all_urls>']])
+  })
+})
+
+describe('manifest icons', () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+  const resolved = manifest as { icons?: Record<string, string>; action?: { default_icon?: Record<string, string> } }
+
+  it('declares the store icon sizes and the toolbar default icon, all present in public/', () => {
+    expect(Object.keys(resolved.icons ?? {}).sort()).toEqual(['128', '16', '32', '48'])
+    expect(Object.keys(resolved.action?.default_icon ?? {}).sort()).toEqual(['16', '32', '48'])
+    for (const path of [...Object.values(resolved.icons ?? {}), ...Object.values(resolved.action?.default_icon ?? {})]) {
+      expect(existsSync(resolve(root, 'public', path)), path).toBe(true)
+    }
+  })
+
+  it('ships both toolbar states the badge code switches between', () => {
+    for (const state of ['off', 'on']) {
+      for (const size of [16, 32, 48]) expect(existsSync(resolve(root, `public/icons/leaf-${state}-${size}.png`))).toBe(true)
+    }
   })
 })

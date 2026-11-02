@@ -62,6 +62,10 @@ describe('manifest i18n', () => {
     expect(messages.menuToggleSite).toBeUndefined()
   })
 
+  it('the default toolbar tooltip in zh_CN matches the runtime idle tooltip', () => {
+    expect(messages.actionTitle?.message).toBe(strings.actionTitleIdle)
+  })
+
   it('every message has a non-empty value without exclamation marks', () => {
     for (const [key, entry] of Object.entries(messages)) {
       expect(entry.message.trim().length, key).toBeGreaterThan(0)

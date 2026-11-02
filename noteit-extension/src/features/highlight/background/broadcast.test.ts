@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getDb } from '../../../core/db/schema.ts'
 import type { HighlightRecord } from '../../../core/model/index.ts'
 import { broadcastAuthChanged, broadcastCommitted } from './broadcast.ts'
-import { badgeText } from './badge.ts'
+import { actionIconPaths, badgeText, updateBadge } from './badge.ts'
+import { strings } from '../../../ui/strings.ts'
 
 const PAGE = 'https://example.com/post'
 
@@ -39,7 +40,12 @@ function installChromeMock(tabs: chrome.tabs.Tab[], overrides: Record<string, 'o
         if (tabId === 3) throw new Error('Could not establish connection. Receiving end does not exist.')
       }),
     },
-    action: { setBadgeText: vi.fn(async () => {}), setBadgeBackgroundColor: vi.fn(async () => {}) },
+    action: {
+      setBadgeText: vi.fn(async () => {}),
+      setBadgeBackgroundColor: vi.fn(async () => {}),
+      setIcon: vi.fn(async () => {}),
+      setTitle: vi.fn(async () => {}),
+    },
   }
   vi.stubGlobal('chrome', chromeMock)
   return chromeMock
@@ -148,5 +154,25 @@ describe('badgeText', () => {
     expect(await badgeText(undefined)).toBe('')
     installChromeMock([], { 'example.com': 'off' })
     expect(await badgeText(PAGE)).toBe('')
+  })
+})
+
+describe('updateBadge icon and tooltip', () => {
+  beforeEach(async () => {
+    await Promise.all(getDb().tables.map((t) => t.clear()))
+  })
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('shows the gold leaf and the count tooltip on a page with highlights, the green leaf otherwise', async () => {
+    await getDb().highlights.bulkPut([record(), record()])
+    const chromeMock = installChromeMock([])
+    await updateBadge(1, PAGE)
+    expect(chromeMock.action.setIcon).toHaveBeenCalledWith({ path: actionIconPaths(true), tabId: 1 })
+    expect(chromeMock.action.setTitle).toHaveBeenCalledWith({ title: strings.actionTitleWithHighlights(2), tabId: 1 })
+    await updateBadge(2, 'https://example.com/other')
+    expect(chromeMock.action.setIcon).toHaveBeenCalledWith({ path: actionIconPaths(false), tabId: 2 })
+    expect(chromeMock.action.setTitle).toHaveBeenCalledWith({ title: strings.actionTitleIdle, tabId: 2 })
+    await updateBadge(3, 'chrome://newtab')
+    expect(chromeMock.action.setIcon).toHaveBeenCalledWith({ path: actionIconPaths(false), tabId: 3 })
   })
 })
